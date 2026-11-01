@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 const BASE = 'https://fonts.gstatic.com/s/e/notoemoji/latest/'
 
 const ANIMATED = new Set(
-  ('23f3 2615 2699 26a0 2705 270c 270d 270f 274c 2753 2764 2b50 2728 1f195 1f305 1f307 1f30d 1f30e 1f30f 1f31f 1f338 ' +
+  ('23f3 2615 2699 26a0 2705 270c 270d 270f 274c 2764 2b50 2728 1f195 1f305 1f307 1f30d 1f30e 1f30f 1f31f 1f338 ' +
     '1f33c 1f343 1f35c 1f381 1f389 1f393 1f39f 1f3ad 1f3af 1f3c6 1f41f 1f422 1f427 1f431 1f438 1f43c 1f44d 1f44e ' +
     '1f44f 1f451 1f48e 1f4a1 1f4aa 1f4ab 1f4ac 1f4af 1f4b8 1f4c8 1f4ca 1f4e3 1f4f7 1f4f8 1f50e 1f512 1f514 1f525 ' +
     '1f5d1 1f606 1f60d 1f621 1f622 1f62e 1f92c 1f64c 1f64f 1f680 1f682 1f90d 1f91d 1f929 1f947 1f948 1f949 1f962 1f970 1f973 1f981 1f984 1f98a ' +
@@ -44,12 +44,17 @@ export default function Emoji({ e, size = '1.2em', play = 'loop', label, classNa
   const canAnimate = ANIMATED.has(cp) && play !== 'static' && !reducedMotion()
   const boxRef = useRef(null)
   const animRef = useRef(null)
-  const [ready, setReady] = useState(false)
+  const [playing, setPlaying] = useState(false)
   const [broken, setBroken] = useState(false)
+
+  useEffect(() => setBroken(false), [cp])
 
   useEffect(() => {
     if (!canAnimate) return
     let cancelled = false
+    let loaded = false
+    let inView = false
+    let playedOnce = false
     let observer
     const el = boxRef.current
 
@@ -66,20 +71,37 @@ export default function Emoji({ e, size = '1.2em', play = 'loop', label, classNa
           rendererSettings: { preserveAspectRatio: 'xMidYMid meet' },
         })
         animRef.current = anim
-        anim.addEventListener('DOMLoaded', () => !cancelled && setReady(true))
-        if (play === 'once') anim.addEventListener('complete', () => anim.goToAndStop(0, true))
 
-        // chỉ chạy khi đang nằm trong màn hình để tiết kiệm pin
-        let playedOnce = false
-        observer = new IntersectionObserver(([entry]) => {
-          if (play === 'hover') return
-          if (entry.isIntersecting) {
-            if (play === 'loop') anim.play()
-            else if (!playedOnce) {
+        const sync = () => {
+          if (cancelled || !loaded || play === 'hover') return
+          if (inView) {
+            if (play === 'loop') {
+              setPlaying(true)
+              anim.play()
+            } else if (!playedOnce) {
               playedOnce = true
+              setPlaying(true)
               anim.goToAndPlay(0, true)
             }
-          } else if (play === 'loop') anim.pause()
+          } else if (play === 'loop') {
+            anim.pause()
+            setPlaying(false)
+          }
+        }
+
+        anim.addEventListener('DOMLoaded', () => {
+          loaded = true
+          sync()
+        })
+        // Một số emoji Noto (như ❓) có frame 0 trống rỗng → phát xong quay lại hiện ảnh SVG tĩnh
+        if (play !== 'loop') {
+          anim.addEventListener('complete', () => !cancelled && setPlaying(false))
+        }
+
+        // chỉ chạy khi đang nằm trong màn hình để tiết kiệm pin
+        observer = new IntersectionObserver(([entry]) => {
+          inView = entry.isIntersecting
+          sync()
         })
         observer.observe(el)
       })
@@ -90,12 +112,15 @@ export default function Emoji({ e, size = '1.2em', play = 'loop', label, classNa
       observer?.disconnect()
       animRef.current?.destroy()
       animRef.current = null
-      setReady(false)
+      setPlaying(false)
     }
   }, [cp, canAnimate, play])
 
   const onEnter = () => {
-    if (play === 'hover' && animRef.current) animRef.current.goToAndPlay(0, true)
+    if (play === 'hover' && animRef.current) {
+      setPlaying(true)
+      animRef.current.goToAndPlay(0, true)
+    }
   }
 
   if (!e) return null
@@ -107,10 +132,9 @@ export default function Emoji({ e, size = '1.2em', play = 'loop', label, classNa
 
   return (
     <span className={`emo ${className}`} style={style} role="img" aria-label={label || e} onPointerEnter={onEnter}>
-      {!ready && (
-        <img src={`${BASE}${cp}/emoji.svg`} alt="" draggable="false" loading="lazy" onError={() => setBroken(true)} />
-      )}
-      {canAnimate && <span ref={boxRef} className="emo-anim" style={{ opacity: ready ? 1 : 0 }} />}
+      <img src={`${BASE}${cp}/emoji.svg`} alt="" draggable="false" loading="lazy"
+        style={playing ? { opacity: 0 } : undefined} onError={() => setBroken(true)} />
+      {canAnimate && <span ref={boxRef} className="emo-anim" style={{ opacity: playing ? 1 : 0 }} />}
     </span>
   )
 }

@@ -64,7 +64,7 @@ export default function TourDetail() {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/tours', { replace: true }))}>← Quay lại</button>
 
       <section className="tour-hero" style={{ '--tour': tour.color }}>
         <span className="tour-hero-emoji"><Emoji e={tour.emoji} play="loop" /></span>

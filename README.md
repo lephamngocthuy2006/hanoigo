@@ -42,6 +42,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    5. [`supabase/005_admin.sql`](supabase/005_admin.sql) — trang quản trị
    6. [`supabase/006_super_admin.sql`](supabase/006_super_admin.sql) — quản trị tối cao, phân quyền trong app
    7. [`supabase/007_reactions.sql`](supabase/007_reactions.sql) — thả cảm xúc kiểu Facebook
+   8. [`supabase/008_delete_user.sql`](supabase/008_delete_user.sql) — quyền xoá tài khoản cho Tối cao & dọn dữ liệu test
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -96,7 +97,7 @@ Cấp quyền **quản trị tối cao** cho tài khoản đầu tiên (chỉ c�
 update public.profiles set is_admin = true, is_super_admin = true where username = 'ten_dang_nhap';
 ```
 
-Từ đó tài khoản Tối cao cấp / thu hồi quyền **Admin** hoặc **Tối cao** cho người khác ngay trong app (Trang quản trị → Người dùng → 🔑 Phân quyền).
+Từ đó tài khoản Tối cao cấp / thu hồi quyền **Admin** hoặc **Tối cao** và xoá tài khoản vi phạm / tài khoản test ngay trong app (Trang quản trị → Người dùng).
 
 Vào **Tôi → 🛡️ Trang quản trị** để: xem thống kê đăng ký, duyệt / từ chối / thu hồi đối tác (kèm lời nhắn), bật tắt chế độ demo cho người dùng, xoá đánh giá vi phạm.
 

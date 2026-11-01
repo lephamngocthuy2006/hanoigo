@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { friendlyError } from '../lib/supabase'
 import Logo from '../components/Logo'
 
 export default function AuthPage({ mode }) {
   const isLogin = mode === 'login'
+  const location = useLocation()
   const { signIn, signUp } = useAuth()
   const [form, setForm] = useState({ username: '', password: '', confirm: '', displayName: '' })
   const [showPw, setShowPw] = useState(false)
@@ -69,7 +70,7 @@ export default function AuthPage({ mode }) {
           {busy ? 'Đang xử lý…' : isLogin ? 'Đăng nhập' : 'Đăng ký & bắt đầu'}
         </button>
         <p className="center muted">
-          {isLogin ? <>Chưa có tài khoản? <Link to="/register">Đăng ký</Link></> : <>Đã có tài khoản? <Link to="/login">Đăng nhập</Link></>}
+          {isLogin ? <>Chưa có tài khoản? <Link to="/register" state={location.state}>Đăng ký</Link></> : <>Đã có tài khoản? <Link to="/login" state={location.state}>Đăng nhập</Link></>}
         </p>
       </form>
     </div>

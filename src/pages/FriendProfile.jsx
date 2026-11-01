@@ -61,7 +61,7 @@ export default function FriendProfile() {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/friends', { replace: true }))}>← Quay lại</button>
 
       <section className="journal-cover">
         <div className="cover-avatar"><Emoji e={person.avatar} play="loop" /></div>

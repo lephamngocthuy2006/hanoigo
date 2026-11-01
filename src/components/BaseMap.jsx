@@ -32,6 +32,10 @@ export default function BaseMap() {
       if (cancelled) return
       layer = L.maplibreGL({ style: STYLE_URL, attributionControl: false }).addTo(map)
       const gl = layer.getMaplibreMap()
+      // Một vài POI trong style OpenFreeMap thiếu icon sprite → nạp ảnh rỗng 1x1 để tránh warning console
+      gl.on('styleimagemissing', ({ id }) => {
+        if (!gl.hasImage(id)) gl.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) })
+      })
       gl.once('style.load', () => applyVietnameseLabels(gl))
     })
     const attribution =

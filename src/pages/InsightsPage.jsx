@@ -55,7 +55,7 @@ export default function InsightsPage() {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back mobile-only" onClick={() => navigate(-1)}>← Quay lại</button>
       <section className="insights-hero">
         <div className="eyebrow light">Quản trị chất lượng dịch vụ</div>
         <h1>Thống kê trải nghiệm</h1>

@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { lazy } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import AuthPage from './pages/AuthPage'
 import Layout from './components/Layout'
@@ -13,22 +14,30 @@ import FriendsPage from './pages/FriendsPage'
 import FriendProfile from './pages/FriendProfile'
 import ToursPage from './pages/ToursPage'
 import TourDetail from './pages/TourDetail'
-import InsightsPage from './pages/InsightsPage'
-import PartnerPage from './pages/PartnerPage'
-import AdminPage from './pages/AdminPage'
+
+const InsightsPage = lazy(() => import('./pages/InsightsPage'))
+const PartnerPage = lazy(() => import('./pages/PartnerPage'))
+const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 export default function App() {
   const { session, loading } = useAuth()
+  const location = useLocation()
   if (loading) return <Splash />
   if (!session) {
     return (
       <Routes>
         <Route path="/login" element={<AuthPage mode="login" />} />
         <Route path="/register" element={<AuthPage mode="register" />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" state={{ from: location }} replace />} />
       </Routes>
     )
   }
+  const from = location.state?.from
+  const backTo = from?.pathname && !['/login', '/register', '/'].includes(from.pathname)
+    ? { pathname: from.pathname, search: from.search || '' }
+    : '/'
+  const backState = backTo !== '/' ? from.state : undefined
+
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -46,7 +55,7 @@ export default function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/u/:username" element={<FriendProfile />} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to={backTo} state={backState} replace />} />
     </Routes>
   )
 }

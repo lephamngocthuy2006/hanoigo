@@ -26,7 +26,7 @@ export default function AdminPage() {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back mobile-only" onClick={() => navigate(-1)}>← Quay lại</button>
       <section className="admin-hero">
         <div className="eyebrow light">Quản trị hệ thống · {emojify(profile.is_super_admin ? '👑 Tối cao' : '🛡️ Admin')}</div>
         <h1><Emoji e="🛡️" play="static" /> Trang quản trị</h1>
@@ -167,8 +167,13 @@ function UsersTab() {
   const [rows, setRows] = useState(null)
   const [stats, setStats] = useState(null)
   const [editing, setEditing] = useState(null)
+  const [deleting, setDeleting] = useState(null)
   const [busy, setBusy] = useState(false)
   const isSuper = profile?.is_super_admin
+
+  const loadStats = useCallback(() => {
+    supabase.rpc('admin_user_stats').then(({ data }) => setStats(data))
+  }, [])
 
   const load = useCallback(async () => {
     const col = SORTS.find((x) => x.id === sort).col
@@ -188,9 +193,7 @@ function UsersTab() {
     return () => clearTimeout(t)
   }, [load])
 
-  useEffect(() => {
-    supabase.rpc('admin_user_stats').then(({ data }) => setStats(data))
-  }, [])
+  useEffect(() => { loadStats() }, [loadStats])
 
   const toggleDemo = async (u) => {
     const { error } = await supabase.rpc('admin_set_demo', { p_user_id: u.id, p_on: !u.is_demo })
@@ -207,6 +210,23 @@ function UsersTab() {
     toast(`@${editing.username} giờ là ${ROLES[role].label}`, 'success')
     setEditing(null)
     load()
+    loadStats()
+  }
+
+  const deleteUser = async () => {
+    setBusy(true)
+    const { error } = await supabase.rpc('admin_delete_user', { p_user_id: deleting.id })
+    setBusy(false)
+    if (error) {
+      const msg = /admin_delete_user|schema cache/i.test(error.message || '')
+        ? 'Hãy chạy file supabase/008_delete_user.sql trong Supabase SQL Editor để bật tính năng xoá tài khoản'
+        : friendlyError(error)
+      return toast(msg, 'error')
+    }
+    toast(`Đã xoá tài khoản @${deleting.username}`, 'success')
+    setDeleting(null)
+    load()
+    loadStats()
   }
 
   const isNew = (u) => Date.now() - new Date(u.created_at).getTime() < 86400000
@@ -253,6 +273,9 @@ function UsersTab() {
                   {isSuper && u.id !== user.id && (
                     <button className="chip" onClick={() => setEditing(u)}><Emoji e="🔑" play="static" /> Phân quyền</button>
                   )}
+                  {isSuper && u.id !== user.id && !u.is_super_admin && (
+                    <button className="chip danger-text" onClick={() => setDeleting(u)}><Emoji e="🗑️" play="static" /> Xoá</button>
+                  )}
                 </div>
               </div>
             </div>
@@ -274,6 +297,22 @@ function UsersTab() {
               ))}
             </div>
             <p className="muted small">Quản trị viên tối cao có thể cấp hoặc thu hồi quyền của người khác, nhưng không tự hạ quyền của mình.</p>
+          </>
+        )}
+      </Modal>
+
+      <Modal open={!!deleting} onClose={() => !busy && setDeleting(null)} title="Xoá tài khoản">
+        {deleting && (
+          <>
+            <p>{emojify(deleting.avatar)} <b>{deleting.display_name || deleting.username}</b> <span className="muted">@{deleting.username}</span></p>
+            <p className="muted small">
+              Tài khoản này cùng toàn bộ dữ liệu liên quan (Sổ hành trình, lượt hoàn thành, đánh giá, hồ sơ đối tác và ưu đãi nếu có)
+              sẽ bị xoá vĩnh viễn và không thể hoàn tác.
+            </p>
+            <div className="row">
+              <button className="btn grow" disabled={busy} onClick={() => setDeleting(null)}>Huỷ</button>
+              <button className="btn danger grow" disabled={busy} onClick={deleteUser}>{busy ? 'Đang xoá…' : 'Xoá vĩnh viễn'}</button>
+            </div>
           </>
         )}
       </Modal>

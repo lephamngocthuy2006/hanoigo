@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
@@ -92,7 +93,9 @@ export default function Layout() {
         </div>
       </header>
       <main className="content">
-        <Outlet context={friendships} />
+        <Suspense fallback={<div className="page"><div className="spinner" /></div>}>
+          <Outlet context={friendships} />
+        </Suspense>
       </main>
       <nav className="bottomnav">
         {TABS.map((t) => (

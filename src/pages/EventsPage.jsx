@@ -134,7 +134,7 @@ function Leaderboard() {
 
   useEffect(() => {
     setRows(null)
-    let q = supabase.from('profiles').select('id, username, display_name, avatar, xp').order('xp', { ascending: false }).limit(30)
+    let q = supabase.from('profiles').select('id, username, display_name, avatar, xp, is_demo').order('xp', { ascending: false }).limit(30)
     if (scope === 'friends') q = q.in('id', [user.id, ...friendKey.split(',').filter(Boolean)])
     q.then(({ data }) => setRows(data || []))
   }, [scope, friendKey, user.id])
@@ -154,7 +154,7 @@ function Leaderboard() {
           <span className="rank-no">{i < 3 ? <Emoji e={['🥇', '🥈', '🥉'][i]} play="loop" /> : i + 1}</span>
           <span className="rank-avatar"><Emoji e={r.avatar} play="hover" /></span>
           <span className="rank-name">
-            <strong>{r.display_name || r.username}</strong>
+            <strong>{r.display_name || r.username}</strong>{r.is_demo && <span className="tag new" title="Tài khoản demo: check-in được ở bất kỳ đâu">Demo</span>}
             <span className="muted small">@{r.username} · Lv {levelInfo(r.xp).level}</span>
           </span>
           <span className="rank-xp">{r.xp} XP</span>

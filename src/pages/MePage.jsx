@@ -71,7 +71,7 @@ export default function MePage() {
         <button onClick={() => navigate('/partner')}><Emoji e="🏪" play="static" /> Cổng đối tác (dành cho doanh nghiệp)</button>
         {profile.is_admin && <button onClick={() => navigate('/admin')}><Emoji e="🛡️" play="static" /> Trang quản trị</button>}
         <button onClick={() => setPwOpen(true)}><Emoji e="🔒" play="static" /> Đổi mật khẩu</button>
-        <button className="danger-text" onClick={signOut}>↪ Đăng xuất</button>
+        <button className="danger-text" onClick={() => { navigate('/', { replace: true }); signOut() }}>↪ Đăng xuất</button>
       </section>
       <p className="muted small center">Tham gia từ {new Date(profile.created_at).toLocaleDateString('vi-VN')}</p>
       </div>

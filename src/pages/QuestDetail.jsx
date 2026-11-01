@@ -109,7 +109,7 @@ function QuestDetailInner({ id }) {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/', { replace: true }))}>← Quay lại</button>
 
       <div className="two-col detail-cols">
       <div className="col">

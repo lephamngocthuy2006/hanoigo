@@ -50,7 +50,7 @@ export default function PartnerPage() {
   if (!partner) {
     return (
       <div className="page">
-        <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+        <button className="ghost back mobile-only" onClick={() => navigate(-1)}>← Quay lại</button>
         <section className="partner-hero">
           <div className="eyebrow light">Dành cho doanh nghiệp</div>
           <h1>Trở thành đối tác HANOI GO!</h1>
@@ -72,7 +72,7 @@ export default function PartnerPage() {
   if (partner.status !== 'approved') {
     return (
       <div className="page">
-        <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+        <button className="ghost back mobile-only" onClick={() => navigate(-1)}>← Quay lại</button>
         <section className="card center">
           <div className="empty-emoji"><Emoji e={partner.status === 'pending' ? '⏳' : '❌'} play="loop" /></div>
           <h2>{emojify(partner.emoji)} {partner.name}</h2>
@@ -96,7 +96,7 @@ export default function PartnerPage() {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back mobile-only" onClick={() => navigate(-1)}>← Quay lại</button>
       <section className="partner-hero compact">
         <div className="partner-head">
           <span className="partner-emoji"><Emoji e={partner.emoji} play="loop" /></span>

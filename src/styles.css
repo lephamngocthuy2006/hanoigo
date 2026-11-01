@@ -539,7 +539,6 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 /* ---------- Animated emoji ---------- */
 .emo { position: relative; display: inline-block; vertical-align: -0.2em; flex-shrink: 0; line-height: 0; }
 .emo > img, .emo-anim { position: absolute; inset: 0; width: 100%; height: 100%; }
-.emo-anim { transition: opacity 0.2s; }
 .emo-anim svg { display: block; }
 .emo-text { width: auto !important; height: auto !important; line-height: 1; vertical-align: baseline; }
 .pill { display: inline-flex; align-items: center; gap: 4px; }
@@ -629,7 +628,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
   .modal { max-width: 560px; border-radius: 24px; }
   .modal-backdrop { align-items: center; }
   .toasts { top: 24px; }
-  .back { display: none; }
+  .back.mobile-only { display: none; }
 
   /* lưới tiện dụng */
   .kpi-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
@@ -730,7 +729,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 }
 
 /* ---------- Thả cảm xúc ---------- */
-.reaction-wrap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px; }
+.reaction-wrap { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px; width: 100%; }
 .reaction-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .reaction-btn {
   display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 999px;
@@ -746,11 +745,12 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .reaction-stack .emo:first-child { margin-left: 0; }
 .reaction-picker {
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 20;
-  display: flex; gap: 2px; padding: 6px 8px; border-radius: 999px; background: var(--card);
+  display: flex; gap: 2px; padding: 6px 8px; max-width: calc(100vw - 40px); border-radius: 999px; background: var(--card);
   box-shadow: 0 10px 30px rgba(60, 30, 20, 0.22); border: 1px solid var(--line); animation: picker-in 0.18s ease-out;
 }
+.reaction-picker.below { bottom: auto; top: calc(100% + 6px); }
 .reaction-option { position: relative; background: none; border: 0; padding: 4px; border-radius: 50%; line-height: 0; transition: transform 0.15s; animation: pop-up 0.25s ease-out both; }
-.reaction-option .emo { width: 2.1rem !important; height: 2.1rem !important; }
+.reaction-option .emo { width: 1.95rem !important; height: 1.95rem !important; }
 .reaction-option:hover, .reaction-option:focus-visible { transform: translateY(-6px) scale(1.25); }
 .reaction-option.picked { background: var(--brand-soft); }
 .reaction-tip {
@@ -765,7 +765,14 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .journal-likes .emo { width: 1.1em !important; height: 1.1em !important; }
 @keyframes picker-in { from { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.9); } }
 @keyframes pop-up { from { opacity: 0; transform: translateY(10px) scale(0.6); } }
-@media (max-width: 380px) { .reaction-option .emo { width: 1.8rem !important; height: 1.8rem !important; } }
+@media (max-width: 440px) {
+  .reaction-picker { gap: 1px; padding: 5px 6px; }
+  .reaction-option { padding: 3px; }
+  .reaction-option .emo { width: 1.55rem !important; height: 1.55rem !important; }
+}
+@media (max-width: 359px) {
+  .reaction-picker { flex-wrap: wrap; justify-content: center; border-radius: 20px; max-width: 220px; }
+}
 /* 🤬 Đập bàn: rung màn hình (cảm xúc vui, có thể tắt bằng ENABLE_FUN_REACTIONS) */
 body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97); }
 @keyframes table-slam {
@@ -774,6 +781,4 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   30%, 50%, 70% { transform: translate3d(-7px, 3px, 0) rotate(-0.6deg); }
   40%, 60% { transform: translate3d(7px, -3px, 0) rotate(0.6deg); }
 }
-.reaction-option .emo { width: 1.95rem !important; height: 1.95rem !important; }
-@media (max-width: 380px) { .reaction-option .emo { width: 1.65rem !important; height: 1.65rem !important; } }
 @media (prefers-reduced-motion: reduce) { body.table-slam #root { animation: none; } }

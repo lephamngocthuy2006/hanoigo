@@ -24,12 +24,21 @@ function applyChange(like, next) {
 export default function ReactionBar({ entryId, userId, like, onChange, showPeople }) {
   const toast = useToast()
   const [open, setOpen] = useState(false)
+  const [below, setBelow] = useState(false)
   const [busy, setBusy] = useState(false)
   const pressTimer = useRef(null)
   const hoverTimer = useRef(null)
   const longPressed = useRef(false)
   const wrapRef = useRef(null)
   const mine = like?.mine || null
+
+  const showPicker = () => {
+    const rect = wrapRef.current?.getBoundingClientRect()
+    const host = wrapRef.current?.closest('.modal')?.getBoundingClientRect()
+    const topEdge = host ? host.top : 0
+    setBelow(rect ? rect.top - topEdge < 96 : false)
+    setOpen(true)
+  }
 
   useEffect(() => {
     if (!open) return
@@ -63,7 +72,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
     longPressed.current = false
     pressTimer.current = setTimeout(() => {
       longPressed.current = true
-      setOpen(true)
+      showPicker()
       navigator.vibrate?.(15)
     }, 420)
   }
@@ -75,7 +84,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
 
   const onEnter = (e) => {
     if (e.pointerType !== 'mouse') return
-    hoverTimer.current = setTimeout(() => setOpen(true), 450)
+    hoverTimer.current = setTimeout(showPicker, 450)
   }
   const onLeave = (e) => {
     if (e.pointerType !== 'mouse') return
@@ -86,7 +95,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
   return (
     <div className="reaction-wrap" ref={wrapRef} onPointerEnter={onEnter} onPointerLeave={onLeave}>
       {open && (
-        <div className="reaction-picker" role="menu" aria-label="Chọn cảm xúc">
+        <div className={`reaction-picker${below ? ' below' : ''}`} role="menu" aria-label="Chọn cảm xúc">
           {REACTIONS.map((r, i) => (
             <button key={r.e} type="button" role="menuitem" className={`reaction-option${mine === r.e ? ' picked' : ''}`}
               style={{ animationDelay: `${i * 0.03}s` }} onClick={() => choose(r.e)} aria-label={r.label}>
@@ -104,7 +113,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
           {mine ? <Emoji e={mine} play="once" /> : <Emoji e="🤍" play="static" />}
           <span>{mine ? reactionLabel(mine) : 'Thả cảm xúc'}</span>
         </button>
-        <button type="button" className="reaction-more" onClick={() => setOpen((o) => !o)} aria-label="Chọn cảm xúc khác">
+        <button type="button" className="reaction-more" onClick={() => (open ? setOpen(false) : showPicker())} aria-label="Chọn cảm xúc khác">
           <Emoji e="😆" play="hover" />
           <span>+</span>
         </button>

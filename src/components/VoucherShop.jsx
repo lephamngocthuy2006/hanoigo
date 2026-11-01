@@ -4,6 +4,7 @@ import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { fmtDateVN } from '../lib/partner'
+import { todayVN } from '../lib/game'
 import Modal from './Modal'
 import Emoji, { emojify } from './Emoji'
 
@@ -18,12 +19,18 @@ export default function VoucherShop() {
   const [busy, setBusy] = useState(false)
 
   const load = useCallback(async () => {
+    const today = todayVN()
     const [v, m] = await Promise.all([
-      supabase.from('vouchers').select('*, partners(name, emoji, address)').eq('active', true).order('cost_coins'),
+      supabase
+        .from('vouchers')
+        .select('*, partners(name, emoji, address)')
+        .eq('active', true)
+        .or(`valid_until.is.null,valid_until.gte.${today}`)
+        .order('cost_coins'),
       supabase.from('voucher_codes').select('*, vouchers(title, description, valid_until, partners(name, emoji, address))')
         .eq('user_id', user.id).order('created_at', { ascending: false }),
     ])
-    setVouchers(v.error ? [] : v.data)
+    setVouchers(v.error ? [] : (v.data || []).filter((x) => !x.valid_until || x.valid_until >= today))
     setMine(m.data || [])
   }, [user.id])
   useEffect(() => { load() }, [load])
