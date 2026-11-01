@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="a-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c93a52"/><stop offset="0.55" stop-color="#8f2d3a"/><stop offset="1" stop-color="#4a0f19"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.45" stop-color="#f6d36a"/><stop offset="1" stop-color="#d49a22"/></linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <radialGradient id="a-glow" cx="0.5" cy="0.42" r="0.5"><stop offset="0" stop-color="#ffd56b" stop-opacity="0.22"/><stop offset="1" stop-color="#ffd56b" stop-opacity="0"/></radialGradient>
+  </defs>
+    <rect width="64" height="64" rx="16" fill="url(#a-bg)"/>
+    <circle cx="32" cy="28" r="26" fill="url(#a-glow)"/>
+    <path d="M7 55c8-1 14-4 18-8" fill="none" stroke="#f6d36a" stroke-opacity="0.7" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 4.2"/>
+    <ellipse cx="32" cy="53" rx="8" ry="2.2" fill="#2a0a10" opacity="0.35"/>
+    <path d="M32 9c-9.4 0-17 7.3-17 16.4C15 38.2 32 53 32 53s17-14.8 17-27.6C49 16.3 41.4 9 32 9z" fill="url(#gold)" stroke="#fff3c4" stroke-opacity="0.6" stroke-width="0.8"/>
+    <circle cx="32" cy="25.5" r="10.6" fill="#7a2030"/>
+    <g fill="#fff3c4">
+      <path d="M22.8 23.4c2.4.5 4.8-.3 6.6-2.2L32 18.4l2.6 2.8c1.8 1.9 4.2 2.7 6.6 2.2-1.5 1.6-3.6 2.4-5.9 2.4h-6.6c-2.3 0-4.4-.8-5.9-2.4z"/>
+      <rect x="26.6" y="26.4" width="10.8" height="3.4" rx="0.7"/>
+      <rect x="30.5" y="29.8" width="3" height="3.6" rx="0.5"/>
+    </g>
+    <path d="M26 33.4c1.3-.9 2.7-.9 4 0s2.7.9 4 0 2.7-.9 4 0" fill="none" stroke="#fff3c4" stroke-width="1.2" stroke-linecap="round"/>
+    <rect x="1" y="1" width="62" height="30" rx="15" fill="url(#shine)"/>
+    <path d="M50.5 9.5l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" fill="#fff1b8"/>
+</svg>

@@ -35,7 +35,7 @@ export default function AuthPage({ mode }) {
   return (
     <div className="auth-wrap">
       <div className="auth-hero">
-        <Logo size={64} />
+        <Logo size={104} />
         <h1 className="brand-name big">HANOI GO!</h1>
         <p>{tr('Chơi cùng thành phố — khám phá Hà Nội qua từng nhiệm vụ.')}</p>
         <LangSwitch className="auth-lang" />
@@ -45,7 +45,7 @@ export default function AuthPage({ mode }) {
         <label className="field">
           <span>{tr('Tên đăng nhập')}</span>
           <input value={form.username} onChange={set('username')} autoComplete="username" autoCapitalize="none"
-            placeholder={tr('vd: linh_2004')} required minLength={3} maxLength={20} />
+            placeholder={tr('vd: ngocthuy2006')} required minLength={3} maxLength={20} />
           {!isLogin && <small className="muted">{tr('3–20 ký tự: chữ thường không dấu, số, dấu _')}</small>}
         </label>
         {!isLogin && (

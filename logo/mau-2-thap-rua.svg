@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.45" stop-color="#f6d36a"/><stop offset="1" stop-color="#d49a22"/></linearGradient>
+    <radialGradient id="b-bg" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#b53a4d"/><stop offset="1" stop-color="#4a0f19"/></radialGradient>
+    <linearGradient id="b-lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f5f66"/><stop offset="1" stop-color="#0f3238"/></linearGradient>
+    <clipPath id="b-clip"><circle cx="32" cy="32" r="24.5"/></clipPath>
+  </defs>
+    <rect width="64" height="64" rx="16" fill="url(#b-bg)"/>
+    <circle cx="32" cy="32" r="26.5" fill="none" stroke="url(#gold)" stroke-width="2.2"/>
+    <g clip-path="url(#b-clip)">
+      <rect x="0" y="0" width="64" height="64" fill="#7a2030"/>
+      <circle cx="44" cy="20" r="5" fill="#f6d36a" opacity="0.9"/>
+      <rect x="0" y="43" width="64" height="21" fill="url(#b-lake)"/>
+      <g fill="url(#gold)">
+        <path d="M24.5 19.5c2.6.2 5-1.2 7.5-5.5 2.5 4.3 4.9 5.7 7.5 5.5-1 1-2.4 1.6-4 1.6h-7c-1.6 0-3-.6-4-1.6z"/>
+        <rect x="28.2" y="21" width="7.6" height="4.6"/>
+        <rect x="24.5" y="25.4" width="15" height="2" rx="1"/>
+        <rect x="25.8" y="27.4" width="12.4" height="6"/>
+        <rect x="21.5" y="33.2" width="21" height="2.2" rx="1.1"/>
+        <rect x="22.8" y="35.4" width="18.4" height="8"/>
+        <circle cx="32" cy="13.2" r="1.1"/>
+      </g>
+      <g fill="#7a2030">
+        <path d="M31 30.6a1 1 0 0 1 2 0v2.8h-2z"/>
+        <path d="M25.6 38.6a1.4 1.4 0 0 1 2.8 0v4.8h-2.8zM30.6 38.6a1.4 1.4 0 0 1 2.8 0v4.8h-2.8zM35.6 38.6a1.4 1.4 0 0 1 2.8 0v4.8h-2.8z"/>
+      </g>
+      <g fill="none" stroke="#f6d36a" stroke-linecap="round" stroke-width="1.4" opacity="0.75">
+        <path d="M18 48c2.5-1.4 5-1.4 7.5 0s5 1.4 7.5 0"/>
+        <path d="M30 53c2.5-1.4 5-1.4 7.5 0s5 1.4 7.5 0"/>
+        <path d="M14 57.5c2.5-1.4 5-1.4 7.5 0"/>
+      </g>
+    </g>
+</svg>

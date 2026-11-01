@@ -63,6 +63,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 }
 .brand { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; text-align: left; min-width: 0; }
 .brand > span { display: flex; flex-direction: column; min-width: 0; }
+.logo-mark { display: block; flex: none; border-radius: 22%; box-shadow: 0 0 0 1px rgba(143, 45, 58, 0.12), 0 3px 10px rgba(90, 50, 30, 0.14); }
 .brand-name { font-weight: 800; color: var(--brand); font-size: 1.15rem; letter-spacing: 0.01em; white-space: nowrap; }
 .brand-name.big { font-size: 2rem; }
 .brand-sub { font-size: 0.7rem; color: var(--muted); font-style: italic; white-space: nowrap; }

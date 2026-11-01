@@ -68,7 +68,7 @@ export default {
   'Chơi cùng thành phố — khám phá Hà Nội qua từng nhiệm vụ.': 'Play with the city — discover Hanoi one quest at a time.',
   'Chào mừng bạn đến với HANOI GO!': 'Welcome to HANOI GO!',
   'Tên đăng nhập': 'Username',
-  'vd: linh_2004': 'e.g. linh_2004',
+  'vd: ngocthuy2006': 'e.g. ngocthuy2006',
   'Mật khẩu': 'Password',
   'Nhập lại mật khẩu': 'Confirm password',
   'Tên hiển thị': 'Display name',
