@@ -4,13 +4,14 @@ import { supabase } from '../lib/supabase'
 import { CRITERIA, fmtScore, summarize } from '../lib/reviews'
 import Stars from '../components/Stars'
 import Emoji, { emojify } from '../components/Emoji'
+import { tr, localize } from '../lib/i18n'
 
 // Gợi ý hành động cho tiêu chí có điểm thấp nhất
 const ADVICE = {
-  attraction: 'Làm mới nội dung trải nghiệm: thêm câu chuyện, hoạt động tương tác hoặc sự kiện theo mùa tại điểm đến.',
-  information: 'Bổ sung chỉ dẫn: ảnh nhận diện điểm check-in, bản đồ chi tiết, biển chỉ dẫn và thông tin giờ mở cửa, giá vé.',
-  facilities: 'Phối hợp với điểm đến cải thiện tiện ích: vệ sinh, chỗ nghỉ chân, nước uống, thái độ phục vụ.',
-  value: 'Cân đối chi phí – trải nghiệm: thêm ưu đãi, voucher đối tác hoặc rút ngắn các bước không cần thiết.',
+  attraction: tr('Làm mới nội dung trải nghiệm: thêm câu chuyện, hoạt động tương tác hoặc sự kiện theo mùa tại điểm đến.'),
+  information: tr('Bổ sung chỉ dẫn: ảnh nhận diện điểm check-in, bản đồ chi tiết, biển chỉ dẫn và thông tin giờ mở cửa, giá vé.'),
+  facilities: tr('Phối hợp với điểm đến cải thiện tiện ích: vệ sinh, chỗ nghỉ chân, nước uống, thái độ phục vụ.'),
+  value: tr('Cân đối chi phí – trải nghiệm: thêm ưu đãi, voucher đối tác hoặc rút ngắn các bước không cần thiết.'),
 }
 
 export default function InsightsPage() {
@@ -22,9 +23,9 @@ export default function InsightsPage() {
     supabase.rpc('app_stats').then(({ data }) => setStats(data || {}))
     supabase
       .from('reviews')
-      .select('*, profiles(username, display_name, avatar), quests(title, emoji), tours(title, emoji)')
+      .select('*, profiles(username, display_name, avatar), quests(*), tours(*)')
       .order('created_at', { ascending: false })
-      .then(({ data }) => setReviews(data || []))
+      .then(({ data }) => setReviews(localize(data || [])))
   }, [])
 
   if (!stats || !reviews) return <div className="page"><div className="spinner" /></div>
@@ -47,19 +48,19 @@ export default function InsightsPage() {
     .sort((a, b) => b.overall - a.overall || b.count - a.count)
 
   const kpis = [
-    { icon: '👤', value: stats.users, label: 'Người dùng' },
-    { icon: '🏅', value: stats.completions, label: 'Lượt hoàn thành nhiệm vụ' },
-    { icon: '🧭', value: stats.tours_done, label: 'Tour hoàn thành' },
-    { icon: '⭐', value: stats.reviews, label: 'Lượt đánh giá' },
+    { icon: '👤', value: stats.users, label: tr('Người dùng') },
+    { icon: '🏅', value: stats.completions, label: tr('Lượt hoàn thành nhiệm vụ') },
+    { icon: '🧭', value: stats.tours_done, label: tr('Tour hoàn thành') },
+    { icon: '⭐', value: stats.reviews, label: tr('Lượt đánh giá') },
   ]
 
   return (
     <div className="page">
-      <button className="ghost back mobile-only" onClick={() => navigate(-1)}>← Quay lại</button>
+      <button className="ghost back mobile-only" onClick={() => navigate(-1)}>{tr('← Quay lại')}</button>
       <section className="insights-hero">
-        <div className="eyebrow light">Quản trị chất lượng dịch vụ</div>
-        <h1>Thống kê trải nghiệm</h1>
-        <p>Số liệu thực từ người dùng HANOI GO!, cập nhật theo thời gian thực.</p>
+        <div className="eyebrow light">{tr('Quản trị chất lượng dịch vụ')}</div>
+        <h1>{tr('Thống kê trải nghiệm')}</h1>
+        <p>{tr('Số liệu thực từ người dùng HANOI GO!, cập nhật theo thời gian thực.')}</p>
       </section>
 
       <div className="kpi-grid">
@@ -74,13 +75,13 @@ export default function InsightsPage() {
 
       <div className="dash-grid">
       <section className="card wide">
-        <div className="section-head"><h3><Emoji e="📈" play="static" /> Mức độ hài lòng chung</h3><span className="muted small">{s.count} đánh giá</span></div>
-        {s.count === 0 ? <p className="muted small">Chưa có đánh giá nào.</p> : (
+        <div className="section-head"><h3><Emoji e="📈" play="static" />{tr(' Mức độ hài lòng chung')}</h3><span className="muted small">{s.count}{tr(' đánh giá')}</span></div>
+        {s.count === 0 ? <p className="muted small">{tr('Chưa có đánh giá nào.')}</p> : (
           <div className="review-summary">
             <div className="score-big">
               <strong>{fmtScore(s.overall)}</strong>
               <Stars value={s.overall} />
-              <span className="muted small"><Emoji e="👍" play="static" /> {s.recommendPct}% sẵn sàng giới thiệu</span>
+              <span className="muted small"><Emoji e="👍" play="static" /> {s.recommendPct}{tr('% sẵn sàng giới thiệu')}</span>
             </div>
             <div className="criteria-bars">
               {CRITERIA.map((c) => (
@@ -97,23 +98,23 @@ export default function InsightsPage() {
 
       {weakest && (
         <section className="card advice">
-          <h3><Emoji e="💡" play="static" /> Gợi ý cải thiện</h3>
-          <p><b>Điểm mạnh:</b> {emojify(strongest.label)} ({fmtScore(s.criteria[strongest.key])}/5).</p>
-          <p><b>Cần ưu tiên:</b> {emojify(weakest.label)} ({fmtScore(s.criteria[weakest.key])}/5) — {ADVICE[weakest.key]}</p>
-          {s.count < 10 && <p className="muted small">* Số lượng đánh giá còn ít ({s.count}), kết luận mang tính tham khảo.</p>}
+          <h3><Emoji e="💡" play="static" />{tr(' Gợi ý cải thiện')}</h3>
+          <p><b>{tr('Điểm mạnh:')}</b> {emojify(strongest.label)} ({fmtScore(s.criteria[strongest.key])}/5).</p>
+          <p><b>{tr('Cần ưu tiên:')}</b> {emojify(weakest.label)} ({fmtScore(s.criteria[weakest.key])}/5) — {ADVICE[weakest.key]}</p>
+          {s.count < 10 && <p className="muted small">{tr('* Số lượng đánh giá còn ít (')}{s.count}{tr('), kết luận mang tính tham khảo.')}</p>}
         </section>
       )}
 
       {ranking.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3><Emoji e="🏆" play="static" /> Xếp hạng điểm đến & tour</h3></div>
+          <div className="section-head"><h3><Emoji e="🏆" play="static" />{tr(' Xếp hạng điểm đến & tour')}</h3></div>
           {ranking.map((g, i) => (
             <button key={g.link} className="rank-row as-button" onClick={() => navigate(g.link)}>
               <span className="rank-no">{i + 1}</span>
               <span className="rank-avatar"><Emoji e={g.emoji} play="hover" /></span>
               <span className="rank-name">
                 <strong>{g.name}</strong>
-                <span className="muted small">{g.isTour ? 'Tour' : 'Điểm đến'} · {g.count} đánh giá · <Emoji e="👍" play="static" /> {g.recommendPct}%</span>
+                <span className="muted small">{g.isTour ? 'Tour' : tr('Điểm đến')} · {g.count}{tr(' đánh giá · ')}<Emoji e="👍" play="static" /> {g.recommendPct}%</span>
               </span>
               <span className="rank-xp">★ {fmtScore(g.overall)}</span>
             </button>
@@ -123,7 +124,7 @@ export default function InsightsPage() {
 
       {stats.top_quests?.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3><Emoji e="🔥" play="static" /> Nhiệm vụ được tham gia nhiều nhất</h3></div>
+          <div className="section-head"><h3><Emoji e="🔥" play="static" />{tr(' Nhiệm vụ được tham gia nhiều nhất')}</h3></div>
           {stats.top_quests.map((q) => {
             const max = stats.top_quests[0].n
             return (
@@ -139,7 +140,7 @@ export default function InsightsPage() {
 
       {reviews.some((r) => r.comment) && (
         <section className="card wide">
-          <div className="section-head"><h3><Emoji e="💬" play="static" /> Nhận xét gần đây</h3></div>
+          <div className="section-head"><h3><Emoji e="💬" play="static" />{tr(' Nhận xét gần đây')}</h3></div>
           {reviews.filter((r) => r.comment).slice(0, 8).map((r) => (
             <div key={r.id} className="review-item">
               <span className="rank-avatar"><Emoji e={r.profiles?.avatar} play="hover" /></span>

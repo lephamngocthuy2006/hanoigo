@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext'
 import { searchUsers } from '../lib/friends'
 import { levelInfo, liveStreak } from '../lib/game'
 import Emoji from '../components/Emoji'
+import { tr } from '../lib/i18n'
 
 function PersonRow({ person, children, to }) {
   const body = (
@@ -58,21 +59,20 @@ export default function FriendsPage() {
   const sendRequest = (p) =>
     run(p.id, async () => {
       const r = await supabase.rpc('send_friend_request', { p_username: p.username })
-      if (!r.error && r.data?.status === 'accepted') toast(`Bạn và ${p.display_name || p.username} đã là bạn bè! 🎉`, 'success')
-      else if (!r.error) toast('Đã gửi lời mời kết bạn', 'success')
+      if (!r.error && r.data?.status === 'accepted') toast(tr('Bạn và {0} đã là bạn bè! 🎉', p.display_name || p.username), 'success')
+      else if (!r.error) toast(tr('Đã gửi lời mời kết bạn'), 'success')
       return r
     })
 
   const respond = (f, accept) =>
-    run(f.id, () => supabase.rpc('respond_friend_request', { p_id: f.id, p_accept: accept }), accept ? 'Đã trở thành bạn bè 🎉' : null)
+    run(f.id, () => supabase.rpc('respond_friend_request', { p_id: f.id, p_accept: accept }), accept ? tr('Đã trở thành bạn bè 🎉') : null)
 
   const remove = (f, msg) => run(f.id, () => supabase.from('friendships').delete().eq('id', f.id), msg)
 
   if (error) {
     return (
       <div className="page">
-        <div className="card error">
-          Tính năng bạn bè chưa được bật trên máy chủ. Hãy chạy file <code>supabase/002_friends.sql</code> trong Supabase SQL Editor.
+        <div className="card error">{tr('Tính năng bạn bè chưa được bật trên máy chủ. Hãy chạy file ')}<code>supabase/002_friends.sql</code> trong Supabase SQL Editor.
         </div>
       </div>
     )
@@ -81,28 +81,28 @@ export default function FriendsPage() {
   return (
     <div className="page">
       <section className="friends-hero">
-        <div className="eyebrow light">Cộng đồng</div>
-        <h1>Bạn bè</h1>
-        <p>Kết bạn để xem Sổ hành trình, thả tim kỷ niệm và đua top cùng nhau.</p>
+        <div className="eyebrow light">{tr('Cộng đồng')}</div>
+        <h1>{tr('Bạn bè')}</h1>
+        <p>{tr('Kết bạn để xem Sổ hành trình, thả tim kỷ niệm và đua top cùng nhau.')}</p>
       </section>
 
       <div className="two-col friends-cols">
       <div className="col">
       <section className="card">
         <label className="field" style={{ marginBottom: 6 }}>
-          <span>Tìm theo tên đăng nhập</span>
+          <span>{tr('Tìm theo tên đăng nhập')}</span>
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="vd: linh" autoCapitalize="none" />
         </label>
-        {query.trim().length >= 2 && results.length === 0 && <p className="muted small">Không tìm thấy ai.</p>}
+        {query.trim().length >= 2 && results.length === 0 && <p className="muted small">{tr('Không tìm thấy ai.')}</p>}
         {results.map((p) => {
           const rel = relation(p.id)
           return (
             <PersonRow key={p.id} person={p} to={rel === 'friend' ? `/u/${p.username}` : null}>
-              {rel === 'friend' && <span className="tag ok">Bạn bè</span>}
-              {rel === 'sent' && <span className="tag">Đã gửi</span>}
-              {rel === 'incoming' && <span className="tag">Đã mời bạn</span>}
+              {rel === 'friend' && <span className="tag ok">{tr('Bạn bè')}</span>}
+              {rel === 'sent' && <span className="tag">{tr('Đã gửi')}</span>}
+              {rel === 'incoming' && <span className="tag">{tr('Đã mời bạn')}</span>}
               {!rel && (
-                <button className="btn primary small" disabled={busyId === p.id} onClick={() => sendRequest(p)}>＋ Kết bạn</button>
+                <button className="btn primary small" disabled={busyId === p.id} onClick={() => sendRequest(p)}>{tr('＋ Kết bạn')}</button>
               )}
             </PersonRow>
           )
@@ -111,11 +111,11 @@ export default function FriendsPage() {
 
       {incoming.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3><Emoji e="📩" play="static" /> Lời mời kết bạn</h3><span className="badge static">{incoming.length}</span></div>
+          <div className="section-head"><h3><Emoji e="📩" play="static" />{tr(' Lời mời kết bạn')}</h3><span className="badge static">{incoming.length}</span></div>
           {incoming.map((f) => (
             <PersonRow key={f.id} person={f.other}>
-              <button className="btn primary small" disabled={busyId === f.id} onClick={() => respond(f, true)}>Đồng ý</button>
-              <button className="ghost small" disabled={busyId === f.id} onClick={() => respond(f, false)}>Từ chối</button>
+              <button className="btn primary small" disabled={busyId === f.id} onClick={() => respond(f, true)}>{tr('Đồng ý')}</button>
+              <button className="ghost small" disabled={busyId === f.id} onClick={() => respond(f, false)}>{tr('Từ chối')}</button>
             </PersonRow>
           ))}
         </section>
@@ -123,13 +123,13 @@ export default function FriendsPage() {
       </div>
       <div className="col">
       <section className="card">
-        <div className="section-head"><h3><Emoji e="👥" play="static" /> Bạn bè</h3><span className="muted small">{friends.length} người</span></div>
+        <div className="section-head"><h3><Emoji e="👥" play="static" />{tr(' Bạn bè')}</h3><span className="muted small">{friends.length}{tr(' người')}</span></div>
         {!loaded ? <div className="spinner" /> : friends.length === 0 ? (
-          <p className="muted small center">Chưa có bạn bè. Tìm tên đăng nhập của bạn bè ở ô phía trên nhé!</p>
+          <p className="muted small center">{tr('Chưa có bạn bè. Tìm tên đăng nhập của bạn bè ở ô phía trên nhé!')}</p>
         ) : (
           friends.map((f) => (
             <PersonRow key={f.id} person={f.other} to={`/u/${f.other.username}`}>
-              <Link to={`/u/${f.other.username}`} className="ghost small"><Emoji e="📖" play="static" /> Xem Sổ</Link>
+              <Link to={`/u/${f.other.username}`} className="ghost small"><Emoji e="📖" play="static" />{tr(' Xem Sổ')}</Link>
             </PersonRow>
           ))
         )}
@@ -137,10 +137,10 @@ export default function FriendsPage() {
 
       {outgoing.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3><Emoji e="⏳" play="static" /> Đang chờ đồng ý</h3></div>
+          <div className="section-head"><h3><Emoji e="⏳" play="static" />{tr(' Đang chờ đồng ý')}</h3></div>
           {outgoing.map((f) => (
             <PersonRow key={f.id} person={f.other}>
-              <button className="ghost small" disabled={busyId === f.id} onClick={() => remove(f, 'Đã huỷ lời mời')}>Huỷ</button>
+              <button className="ghost small" disabled={busyId === f.id} onClick={() => remove(f, tr('Đã huỷ lời mời'))}>{tr('Huỷ')}</button>
             </PersonRow>
           ))}
         </section>

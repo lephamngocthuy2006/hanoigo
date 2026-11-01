@@ -5,22 +5,23 @@ import Logo from './Logo'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
 import Emoji, { emojify } from './Emoji'
+import { tr } from '../lib/i18n'
 
 const TABS = [
-  { to: '/journal', label: 'Sổ hành trình', icon: '📸' },
-  { to: '/map', label: 'Bản đồ', icon: '🌏' },
-  { to: '/', label: 'Nhiệm vụ', icon: '🎯', end: true },
-  { to: '/events', label: 'Thẻ & Quà', icon: '🎁' },
-  { to: '/me', label: 'Tôi', icon: null },
+  { to: '/journal', label: tr('Sổ hành trình'), icon: '📸' },
+  { to: '/map', label: tr('Bản đồ'), icon: '🌏' },
+  { to: '/', label: tr('Nhiệm vụ'), icon: '🎯', end: true },
+  { to: '/events', label: tr('Thẻ & Quà'), icon: '🎁' },
+  { to: '/me', label: tr('Tôi'), icon: null },
 ]
 
 // Menu bên trái trên máy tính: thứ tự ưu tiên khác điện thoại + thêm các mục phụ
 const SIDE_MAIN = [TABS[2], TABS[1], TABS[0], TABS[3]]
 const SIDE_MORE = [
-  { to: '/tours', label: 'Tour theo chủ đề', icon: '🧭' },
-  { to: '/friends', label: 'Bạn bè', icon: '🤝', badge: true },
-  { to: '/insights', label: 'Thống kê trải nghiệm', icon: '📊' },
-  { to: '/partner', label: 'Cổng đối tác', icon: '🏪' },
+  { to: '/tours', label: tr('Tour theo chủ đề'), icon: '🧭' },
+  { to: '/friends', label: tr('Bạn bè'), icon: '🤝', badge: true },
+  { to: '/insights', label: tr('Thống kê trải nghiệm'), icon: '📊' },
+  { to: '/partner', label: tr('Cổng đối tác'), icon: '🏪' },
 ]
 
 function SideLink({ to, label, icon, end, badge }) {
@@ -50,14 +51,14 @@ export default function Layout() {
           <Logo size={42} />
           <span>
             <span className="brand-name">HANOI GO!</span>
-            <span className="brand-sub">Hà Nội trong tầm tay</span>
+            <span className="brand-sub">{tr('Hà Nội trong tầm tay')}</span>
           </span>
         </button>
         <nav className="side-nav">
           {SIDE_MAIN.map((t) => <SideLink key={t.to} {...t} />)}
-          <div className="side-sep">Khám phá thêm</div>
+          <div className="side-sep">{tr('Khám phá thêm')}</div>
           {SIDE_MORE.map((t) => <SideLink key={t.to} {...t} badge={t.badge ? pending : 0} />)}
-          {profile?.is_admin && <SideLink to="/admin" label="Trang quản trị" icon="🛡️" />}
+          {profile?.is_admin && <SideLink to="/admin" label={tr('Trang quản trị')} icon="🛡️" />}
         </nav>
         <button className="side-profile" onClick={() => navigate('/me')}>
           <span className="side-avatar"><Emoji e={profile?.avatar || '🐢'} play="hover" /></span>
@@ -76,18 +77,18 @@ export default function Layout() {
           <Logo size={36} />
           <span>
             <span className="brand-name">HANOI GO!</span>
-            <span className="brand-sub">Hà Nội trong tầm tay</span>
+            <span className="brand-sub">{tr('Hà Nội trong tầm tay')}</span>
           </span>
         </button>
         <div className="topbar-right">
-          <span className={`pill${liveStreak(profile) ? '' : ' dim'}`} title="Chuỗi ngày hoạt động">
+          <span className={`pill${liveStreak(profile) ? '' : ' dim'}`} title={tr('Chuỗi ngày hoạt động')}>
             <Emoji e="🔥" play={liveStreak(profile) ? 'loop' : 'static'} /> {liveStreak(profile)}
           </span>
           <span className="pill" title="Hanoi Coins"><Emoji e="🪙" play="hover" /> {profile?.coins ?? '—'}</span>
-          <button className="icon-btn" onClick={() => navigate('/friends')} aria-label={`Bạn bè${pending ? `, ${pending} lời mời mới` : ''}`}>
+          <button className="icon-btn" onClick={() => navigate('/friends')} aria-label={tr('Bạn bè{0}', pending ? tr(', {0} lời mời mới', pending) : '')}>
             <Emoji e="🤝" play={pending > 0 ? 'loop' : 'hover'} />{pending > 0 && <span className="badge">{pending}</span>}
           </button>
-          <button className="avatar-btn" onClick={() => navigate('/me')} aria-label="Hồ sơ">
+          <button className="avatar-btn" onClick={() => navigate('/me')} aria-label={tr('Hồ sơ')}>
             <Emoji e={profile?.avatar || '🐢'} play="hover" />
           </button>
         </div>

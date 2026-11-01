@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { supabase, usernameToEmail, USERNAME_RE } from '../lib/supabase'
+import { tr } from '../lib/i18n'
 
 const AuthContext = createContext(null)
 
@@ -32,8 +33,8 @@ export function AuthProvider({ children }) {
 
   const signUp = async ({ username, password, displayName }) => {
     const u = username.trim().toLowerCase()
-    if (!USERNAME_RE.test(u)) throw new Error('Tên đăng nhập 3–20 ký tự, chỉ gồm chữ thường không dấu, số và dấu _')
-    if (password.length < 6) throw new Error('Mật khẩu cần ít nhất 6 ký tự')
+    if (!USERNAME_RE.test(u)) throw new Error(tr('Tên đăng nhập 3–20 ký tự, chỉ gồm chữ thường không dấu, số và dấu _'))
+    if (password.length < 6) throw new Error(tr('Mật khẩu cần ít nhất 6 ký tự'))
     const { data, error } = await supabase.auth.signUp({
       email: usernameToEmail(u),
       password,
@@ -41,7 +42,7 @@ export function AuthProvider({ children }) {
     })
     if (error) throw error
     // Supabase trả về user "giả" (không có identities) nếu email đã tồn tại
-    if (data.user && data.user.identities?.length === 0) throw new Error('Tên đăng nhập này đã có người dùng')
+    if (data.user && data.user.identities?.length === 0) throw new Error(tr('Tên đăng nhập này đã có người dùng'))
     if (!data.session) throw new Error('Email not confirmed')
   }
 

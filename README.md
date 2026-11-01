@@ -43,6 +43,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    6. [`supabase/006_super_admin.sql`](supabase/006_super_admin.sql) — quản trị tối cao, phân quyền trong app
    7. [`supabase/007_reactions.sql`](supabase/007_reactions.sql) — thả cảm xúc kiểu Facebook
    8. [`supabase/008_delete_user.sql`](supabase/008_delete_user.sql) — quyền xoá tài khoản cho Tối cao & dọn dữ liệu test
+   9. [`supabase/009_english.sql`](supabase/009_english.sql) — nội dung tiếng Anh cho nhiệm vụ, câu đố, thẻ, tour
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -122,3 +123,10 @@ update public.profiles set is_demo = true where username = 'ten_dang_nhap';
 ## Ghi công
 
 Biểu tượng động: [Noto Animated Emoji](https://googlefonts.github.io/noto-emoji-animation/) của Google (CC BY 4.0). Bản đồ: OpenFreeMap & © OpenStreetMap.
+
+## Song ngữ Việt – Anh
+
+Chọn ngôn ngữ ở trang Đăng nhập hoặc **Tôi → Ngôn ngữ · Language** (mặc định Tiếng Việt, app nhớ lựa chọn trên từng máy).
+
+- Chữ trên giao diện: chuỗi tiếng Việt trong code được bọc bằng `tr('…')`; bản dịch nằm trong [`src/lib/en.js`](src/lib/en.js). Chuỗi nào chưa có bản dịch sẽ tự hiện tiếng Việt.
+- Nội dung trong database: các cột `*_en` (chạy `009_english.sql`). Nhiệm vụ đối tác tự tạo không có bản tiếng Anh nên hiện tiếng Việt.

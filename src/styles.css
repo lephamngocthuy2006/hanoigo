@@ -782,3 +782,9 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   40%, 60% { transform: translate3d(7px, -3px, 0) rotate(0.6deg); }
 }
 @media (prefers-reduced-motion: reduce) { body.table-slam #root { animation: none; } }
+
+/* ---------- Ngôn ngữ ---------- */
+.lang-switch { min-width: 220px; }
+.auth-lang { margin: 14px auto 0; max-width: 260px; }
+.lang-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.lang-card > span { font-weight: 700; }

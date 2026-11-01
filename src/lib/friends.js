@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { tr } from './i18n'
 
 const PROFILE_COLS = 'id, username, display_name, avatar, xp, streak, last_active_date, best_streak'
 
@@ -60,16 +61,16 @@ export async function searchUsers(query, excludeId) {
 export const ENABLE_FUN_REACTIONS = true
 
 export const REACTIONS = [
-  { e: '👍', label: 'Thích' },
-  { e: '❤️', label: 'Yêu thích' },
-  { e: '🥰', label: 'Thương thương' },
+  { e: '👍', label: tr('Thích') },
+  { e: '❤️', label: tr('Yêu thích') },
+  { e: '🥰', label: tr('Thương thương') },
   { e: '😆', label: 'Haha' },
   { e: '😮', label: 'Wow' },
-  { e: '😢', label: 'Buồn' },
-  { e: '😡', label: 'Phẫn nộ' },
-  ...(ENABLE_FUN_REACTIONS ? [{ e: '🤬', label: 'Đập bàn!', shake: true }] : []),
+  { e: '😢', label: tr('Buồn') },
+  { e: '😡', label: tr('Phẫn nộ') },
+  ...(ENABLE_FUN_REACTIONS ? [{ e: '🤬', label: tr('Đập bàn!'), shake: true }] : []),
 ]
-export const reactionLabel = (e) => REACTIONS.find((r) => r.e === e)?.label || (e === '🤬' ? 'Đập bàn!' : 'Thả cảm xúc')
+export const reactionLabel = (e) => REACTIONS.find((r) => r.e === e)?.label || (e === '🤬' ? tr('Đập bàn!') : tr('Thả cảm xúc'))
 
 // Cảm xúc của các trang nhật ký: { entryId: { count, mine, top: [emoji…], people: [{ name, reaction }] } }
 export async function loadLikes(entryIds, userId) {

@@ -4,6 +4,7 @@ import { CRITERIA, fmtScore, loadReviews, summarize } from '../lib/reviews'
 import ReviewForm from './ReviewForm'
 import Stars from './Stars'
 import Emoji, { emojify } from './Emoji'
+import { tr } from '../lib/i18n'
 
 // Khối đánh giá đặt trong trang nhiệm vụ / tour
 export default function ReviewSummary({ target, title, canReview, openSignal = 0 }) {
@@ -28,8 +29,8 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
   return (
     <section className="card">
       <div className="section-head">
-        <h3><Emoji e="⭐" play="static" /> Đánh giá trải nghiệm</h3>
-        <span className="muted small">{s.count} lượt</span>
+        <h3><Emoji e="⭐" play="static" />{tr(' Đánh giá trải nghiệm')}</h3>
+        <span className="muted small">{s.count}{tr(' lượt')}</span>
       </div>
 
       {s.count > 0 ? (
@@ -37,7 +38,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
           <div className="score-big">
             <strong>{fmtScore(s.overall)}</strong>
             <Stars value={s.overall} />
-            <span className="muted small"><Emoji e="👍" play="static" /> {s.recommendPct}% giới thiệu</span>
+            <span className="muted small"><Emoji e="👍" play="static" /> {s.recommendPct}{tr('% giới thiệu')}</span>
           </div>
           <div className="criteria-bars">
             {CRITERIA.map((c) => (
@@ -50,7 +51,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
           </div>
         </div>
       ) : (
-        <p className="muted small">Chưa có đánh giá nào. {canReview ? 'Hãy là người đầu tiên!' : 'Hoàn thành để đánh giá nhé.'}</p>
+        <p className="muted small">{tr('Chưa có đánh giá nào. ')}{canReview ? tr('Hãy là người đầu tiên!') : tr('Hoàn thành để đánh giá nhé.')}</p>
       )}
 
       {(showAll ? comments : comments.slice(0, 3)).map((r) => (
@@ -62,17 +63,17 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
               <Stars value={r.overall} size="0.8rem" />
             </div>
             <p>{r.comment}</p>
-            {r.partner_reply && <div className="partner-reply"><b><Emoji e="🏪" play="static" /> Phản hồi từ đối tác:</b> {r.partner_reply}</div>}
+            {r.partner_reply && <div className="partner-reply"><b><Emoji e="🏪" play="static" />{tr(' Phản hồi từ đối tác:')}</b> {r.partner_reply}</div>}
           </div>
         </div>
       ))}
       {comments.length > 3 && !showAll && (
-        <button className="ghost small" onClick={() => setShowAll(true)}>Xem tất cả {comments.length} nhận xét</button>
+        <button className="ghost small" onClick={() => setShowAll(true)}>{tr('Xem tất cả ')}{comments.length}{tr(' nhận xét')}</button>
       )}
 
       {canReview && (
         <button className="btn block" style={{ marginTop: 10 }} onClick={() => setOpen(true)}>
-          {emojify(mine ? '✏️ Sửa đánh giá của bạn' : '⭐ Viết đánh giá · +20 🪙')}
+          {emojify(mine ? tr('✏️ Sửa đánh giá của bạn') : tr('⭐ Viết đánh giá · +20 🪙'))}
         </button>
       )}
       <ReviewForm open={open} onClose={() => setOpen(false)} target={target} title={title} existing={mine}

@@ -8,6 +8,7 @@ import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import { useToast } from '../context/ToastContext'
 import Emoji, { emojify } from '../components/Emoji'
+import { tr } from '../lib/i18n'
 
 const HANOI = [21.0313, 105.8467]
 
@@ -65,12 +66,12 @@ export default function MapPage() {
     <div className="map-layout">
       <aside className="map-list">
         <div className="map-list-head">
-          <h2><Emoji e="🌏" play="loop" /> Bản đồ khám phá</h2>
-          <p className="muted small">{loading ? 'Đang tải…' : `${located.length} địa điểm`}{pos && ' · sắp xếp theo khoảng cách'}</p>
+          <h2><Emoji e="🌏" play="loop" />{tr(' Bản đồ khám phá')}</h2>
+          <p className="muted small">{loading ? tr('Đang tải…') : tr('{0} địa điểm', located.length)}{pos && tr(' · sắp xếp theo khoảng cách')}</p>
           <div className="chips">
-            <button className={`chip${!onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(false)}>Tất cả</button>
-            <button className={`chip${onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(true)}>Chưa làm</button>
-            <button className="chip" onClick={locate}>{emojify('📍 Gần tôi')}</button>
+            <button className={`chip${!onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(false)}>{tr('Tất cả')}</button>
+            <button className={`chip${onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(true)}>{tr('Chưa làm')}</button>
+            <button className="chip" onClick={locate}>{emojify(tr('📍 Gần tôi'))}</button>
           </div>
         </div>
         <div className="map-list-items">
@@ -83,7 +84,7 @@ export default function MapPage() {
                 <span className="quest-kind">{emojify(KIND[q.kind].label)}{q.area && ` · ${q.area}`}</span>
                 <span className="quest-title">{q.title}</span>
                 <span className="quest-reward">
-                  {isDone(q) ? '✓ Đã hoàn thành' : <><Emoji e="⭐" play="static" /> +{q.xp_reward} XP</>}
+                  {isDone(q) ? tr('✓ Đã hoàn thành') : <><Emoji e="⭐" play="static" /> +{q.xp_reward} XP</>}
                   {d != null && ` · ${formatDistance(d)}`}
                 </span>
               </span>
@@ -105,7 +106,7 @@ export default function MapPage() {
                   <strong>{q.title}</strong>
                   <div className="muted small">{q.place_name}</div>
                   <div className="small"><Emoji e="⭐" play="static" /> +{q.xp_reward} · <Emoji e="🪙" play="static" /> +{q.coin_reward}</div>
-                  <Link to={`/quest/${q.id}`} className="btn primary small">{isDone(q) ? 'Xem lại' : 'Làm nhiệm vụ'}</Link>
+                  <Link to={`/quest/${q.id}`} className="btn primary small">{isDone(q) ? tr('Xem lại') : tr('Làm nhiệm vụ')}</Link>
                 </div>
               </Popup>
             </Marker>
@@ -115,10 +116,10 @@ export default function MapPage() {
           <FocusQuest quest={selected} markers={markers} />
         </MapContainer>
         <div className="map-overlay top">
-          <div className="map-title"><Emoji e="🗺️" play="static" /> Bản đồ khám phá {loading ? '' : `· ${located.length} địa điểm`}</div>
-          <button className={`chip${onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(!onlyTodo)}>Chưa làm</button>
+          <div className="map-title"><Emoji e="🗺️" play="static" />{tr(' Bản đồ khám phá ')}{loading ? '' : tr('· {0} địa điểm', located.length)}</div>
+          <button className={`chip${onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(!onlyTodo)}>{tr('Chưa làm')}</button>
         </div>
-        <button className="map-locate" onClick={locate} aria-label="Vị trí của tôi">◎</button>
+        <button className="map-locate" onClick={locate} aria-label={tr('Vị trí của tôi')}>◎</button>
       </div>
     </div>
   )

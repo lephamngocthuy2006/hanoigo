@@ -9,13 +9,14 @@ import QuestRow from '../components/QuestRow'
 import TourCard from '../components/TourCard'
 import { tourProgress, useTours } from '../lib/tours'
 import Emoji, { emojify } from '../components/Emoji'
+import { tr } from '../lib/i18n'
 
 const FILTERS = [
-  { id: 'all', label: 'Tất cả' },
-  { id: 'photo', label: '📸 Chụp ảnh' },
+  { id: 'all', label: tr('Tất cả') },
+  { id: 'photo', label: tr('📸 Chụp ảnh') },
   { id: 'checkin', label: '📍 Check-in' },
-  { id: 'quiz', label: '❓ Đố vui' },
-  { id: 'todo', label: 'Chưa làm' },
+  { id: 'quiz', label: tr('❓ Đố vui') },
+  { id: 'todo', label: tr('Chưa làm') },
 ]
 
 export default function QuestsPage() {
@@ -55,8 +56,8 @@ export default function QuestsPage() {
   if (loading) return <div className="page"><div className="spinner" /></div>
   if (error) return (
     <div className="page">
-      <div className="card error">Không tải được nhiệm vụ: {error.message}. Bạn đã chạy file <code>supabase/schema.sql</code> chưa?</div>
-      <button className="btn" onClick={reload}>Thử lại</button>
+      <div className="card error">{tr('Không tải được nhiệm vụ: ')}{error.message}{tr('. Bạn đã chạy file ')}<code>supabase/schema.sql</code>{tr(' chưa?')}</div>
+      <button className="btn" onClick={reload}>{tr('Thử lại')}</button>
     </div>
   )
 
@@ -67,24 +68,24 @@ export default function QuestsPage() {
     <div className="page">
       <section className="hello">
         <div>
-          <div className="eyebrow">Xin chào</div>
+          <div className="eyebrow">{tr('Xin chào')}</div>
           <h1>{profile?.display_name || profile?.username} {emojify(profile?.avatar)}</h1>
         </div>
-        <div className="progress-chip">{completedCount}/{total} nhiệm vụ</div>
+        <div className="progress-chip">{completedCount}/{total}{tr(' nhiệm vụ')}</div>
       </section>
 
       {featured && (
         <Link to={`/quest/${featured.id}`} className="hero-quest">
           <div className="hero-emoji"><Emoji e={featured.emoji} play="loop" /></div>
           <div className="hero-body">
-            <div className="eyebrow light">{emojify(KIND[featured.kind].label)} gợi ý</div>
+            <div className="eyebrow light">{emojify(KIND[featured.kind].label)}{tr(' gợi ý')}</div>
             <h2>{featured.title}</h2>
             <p>{featured.description}</p>
             <div className="hero-rewards">
               <span><Emoji e="⭐" play="static" /> +{featured.xp_reward} XP</span>
               <span><Emoji e="🪙" play="static" /> +{featured.coin_reward}</span>
             </div>
-            <span className="btn gold">{emojify(featured.kind === 'photo' ? '📷 Chụp ngay' : '📍 Check-in ngay')}</span>
+            <span className="btn gold">{emojify(featured.kind === 'photo' ? tr('📷 Chụp ngay') : tr('📍 Check-in ngay'))}</span>
           </div>
         </Link>
       )}
@@ -92,8 +93,8 @@ export default function QuestsPage() {
       {tours.length > 0 && (
         <section>
           <div className="section-head">
-            <h3><Emoji e="🧭" play="static" /> Tour theo chủ đề</h3>
-            <Link to="/tours" className="ghost small">Xem tất cả</Link>
+            <h3><Emoji e="🧭" play="static" />{tr(' Tour theo chủ đề')}</h3>
+            <Link to="/tours" className="ghost small">{tr('Xem tất cả')}</Link>
           </div>
           <div className="tour-scroller">
             {tours.map((t) => (
@@ -109,16 +110,16 @@ export default function QuestsPage() {
       <section className={`streak-banner${doneToday ? ' lit' : ''}`}>
         <span className="streak-fire"><Emoji e="🔥" play="loop" /></span>
         <div>
-          <strong>{doneToday ? `Chuỗi ${streak} ngày — tuyệt vời!` : streak > 0 ? `Giữ chuỗi ${streak} ngày nhé!` : 'Thắp sáng streak của bạn hôm nay!'}</strong>
-          <p className="muted">{doneToday ? 'Bạn đã hoàn thành nhiệm vụ hôm nay. Mai gặp lại!' : 'Hoàn thành một nhiệm vụ hôm nay để duy trì chuỗi khám phá.'}</p>
+          <strong>{doneToday ? tr('Chuỗi {0} ngày — tuyệt vời!', streak) : streak > 0 ? tr('Giữ chuỗi {0} ngày nhé!', streak) : tr('Thắp sáng streak của bạn hôm nay!')}</strong>
+          <p className="muted">{doneToday ? tr('Bạn đã hoàn thành nhiệm vụ hôm nay. Mai gặp lại!') : tr('Hoàn thành một nhiệm vụ hôm nay để duy trì chuỗi khám phá.')}</p>
         </div>
       </section>
 
       {daily.length > 0 && (
         <section className="card">
           <div className="section-head">
-            <h3><Emoji e="🌤️" play="static" /> Nhiệm vụ hôm nay</h3>
-            <span className="muted small">Làm mới mỗi ngày</span>
+            <h3><Emoji e="🌤️" play="static" />{tr(' Nhiệm vụ hôm nay')}</h3>
+            <span className="muted small">{tr('Làm mới mỗi ngày')}</span>
           </div>
           {daily.map((q) => <QuestRow key={q.id} quest={q} done={isDone(q)} />)}
         </section>
@@ -128,15 +129,15 @@ export default function QuestsPage() {
       <div className="col">
       <section className="card">
         <div className="section-head">
-          <h3><Emoji e="🧭" play="static" /> Tất cả nhiệm vụ</h3>
-          <button className="ghost small" onClick={locate} disabled={locating}>{emojify(locating ? 'Đang định vị…' : pos ? '📍 Cập nhật' : '📍 Gần tôi')}</button>
+          <h3><Emoji e="🧭" play="static" />{tr(' Tất cả nhiệm vụ')}</h3>
+          <button className="ghost small" onClick={locate} disabled={locating}>{emojify(locating ? tr('Đang định vị…') : pos ? tr('📍 Cập nhật') : tr('📍 Gần tôi'))}</button>
         </div>
         <div className="chips">
           {FILTERS.map((f) => (
             <button key={f.id} className={`chip${filter === f.id ? ' active' : ''}`} onClick={() => setFilter(f.id)}>{emojify(f.label)}</button>
           ))}
         </div>
-        {list.length === 0 && <p className="muted center">Không có nhiệm vụ nào ở mục này <Emoji e="🎉" play="static" /></p>}
+        {list.length === 0 && <p className="muted center">{tr('Không có nhiệm vụ nào ở mục này ')}<Emoji e="🎉" play="static" /></p>}
         <div className="quest-grid">
           {list.map(({ q, d }) => <QuestRow key={q.id} quest={q} done={isDone(q)} distance={d} />)}
         </div>

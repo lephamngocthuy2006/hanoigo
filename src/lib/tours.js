@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from '../context/AuthContext'
+import { localize } from './i18n'
 
 // Tour + điểm dừng (đã sắp thứ tự) + tour nào mình đã nhận thưởng
 export function useTours() {
@@ -12,12 +13,12 @@ export function useTours() {
 
   const load = useCallback(async () => {
     const [t, c] = await Promise.all([
-      supabase.from('tours').select('*, tour_stops(quest_id, position, note)').order('sort_order'),
+      supabase.from('tours').select('*, tour_stops(*)').order('sort_order'),
       supabase.from('tour_completions').select('tour_id').eq('user_id', user.id),
     ])
     if (t.error) setError(t.error)
     else {
-      setTours(t.data.map((tour) => ({ ...tour, stops: [...tour.tour_stops].sort((a, b) => a.position - b.position) })))
+      setTours(localize(t.data).map((tour) => ({ ...tour, stops: [...tour.tour_stops].sort((a, b) => a.position - b.position) })))
       setClaimed(new Set((c.data || []).map((x) => x.tour_id)))
     }
     setLoading(false)

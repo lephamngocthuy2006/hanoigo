@@ -10,6 +10,7 @@ import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import ReactionBar from '../components/ReactionBar'
 import Modal from '../components/Modal'
 import Emoji, { emojify } from '../components/Emoji'
+import { tr } from '../lib/i18n'
 
 export default function FriendProfile() {
   const { username } = useParams()
@@ -45,11 +46,11 @@ export default function FriendProfile() {
   useEffect(() => { load() }, [load, friendship?.id])
 
   if (person === undefined) return <div className="page"><div className="spinner" /></div>
-  if (!person) return <div className="page"><p className="muted">Không tìm thấy người dùng @{username}.</p></div>
+  if (!person) return <div className="page"><p className="muted">{tr('Không tìm thấy người dùng @')}{username}.</p></div>
   if (person.id === user.id) return <Navigate to="/journal" replace />
 
   const unfriend = async () => {
-    if (!confirm(`Huỷ kết bạn với ${person.display_name || person.username}?`)) return
+    if (!confirm(tr('Huỷ kết bạn với {0}?', person.display_name || person.username))) return
     const { error } = await supabase.from('friendships').delete().eq('id', friendship.id)
     if (error) return toast(friendlyError(error), 'error')
     reloadFriends()
@@ -61,16 +62,16 @@ export default function FriendProfile() {
 
   return (
     <div className="page">
-      <button className="ghost back" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/friends', { replace: true }))}>← Quay lại</button>
+      <button className="ghost back" onClick={() => (window.history.state?.idx > 0 ? navigate(-1) : navigate('/friends', { replace: true }))}>{tr('← Quay lại')}</button>
 
       <section className="journal-cover">
         <div className="cover-avatar"><Emoji e={person.avatar} play="loop" /></div>
-        <div className="eyebrow light">Sổ hành trình</div>
-        <h1>Hà Nội của {person.display_name || person.username}</h1>
+        <div className="eyebrow light">{tr('Sổ hành trình')}</div>
+        <h1>{tr('Hà Nội của ')}{person.display_name || person.username}</h1>
         <p className="cover-sub">@{person.username} · Lv {lv.level} {levelTitle(lv.level)}</p>
         {person.bio && <p className="cover-bio">“{person.bio}”</p>}
         <div className="cover-stats">
-          <div><strong>{entries.length}</strong><span>Kỷ niệm</span></div>
+          <div><strong>{entries.length}</strong><span>{tr('Kỷ niệm')}</span></div>
           <div><strong><Emoji e="⭐" play="once" /> {person.xp}</strong><span>XP</span></div>
           <div><strong><Emoji e="🔥" play="once" /> {liveStreak(person)}</strong><span>Streak</span></div>
         </div>
@@ -78,26 +79,26 @@ export default function FriendProfile() {
 
       {!friendship ? (
         <div className="card center">
-          <p>Hai bạn chưa là bạn bè, nên chưa xem được Sổ hành trình của @{person.username}.</p>
-          <Link to="/friends" className="btn primary">Đến trang Bạn bè</Link>
+          <p>{tr('Hai bạn chưa là bạn bè, nên chưa xem được Sổ hành trình của @')}{person.username}.</p>
+          <Link to="/friends" className="btn primary">{tr('Đến trang Bạn bè')}</Link>
         </div>
       ) : entries.length === 0 ? (
         <div className="card empty">
           <div className="empty-emoji"><Emoji e="📖" play="loop" /></div>
-          <p>{person.display_name || person.username} chưa chia sẻ kỷ niệm nào.</p>
+          <p>{person.display_name || person.username}{tr(' chưa chia sẻ kỷ niệm nào.')}</p>
         </div>
       ) : (
         <JournalGrid entries={entries} urls={urls} likes={likes} onOpen={setViewing} />
       )}
 
-      {friendship && <button className="ghost small danger-text" style={{ alignSelf: 'center' }} onClick={unfriend}>Huỷ kết bạn</button>}
+      {friendship && <button className="ghost small danger-text" style={{ alignSelf: 'center' }} onClick={unfriend}>{tr('Huỷ kết bạn')}</button>}
 
       <Modal open={!!viewing} onClose={() => setViewing(null)}>
         {viewing && (
           <div className="entry-view">
             {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
-            <h3>{viewing.title || 'Không tiêu đề'}</h3>
-            <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && ' · 🏅 Nhiệm vụ')}</div>
+            <h3>{viewing.title || tr('Không tiêu đề')}</h3>
+            <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && tr(' · 🏅 Nhiệm vụ'))}</div>
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
             <div className="row">
               <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} onChange={setLike(viewing.id)} />

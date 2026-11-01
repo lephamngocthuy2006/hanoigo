@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { todayVN } from './game'
 import { useAuth } from '../context/AuthContext'
+import { localize } from './i18n'
 
 // Danh sách nhiệm vụ + trạng thái hoàn thành của người dùng hiện tại
 export function useQuests() {
@@ -27,7 +28,7 @@ export function useQuests() {
         map[quest_id].ever = true
         if (completed_on === today) map[quest_id].today = true
       })
-      setQuests(q.data)
+      setQuests(localize(q.data))
       setDone(map)
     }
     setLoading(false)

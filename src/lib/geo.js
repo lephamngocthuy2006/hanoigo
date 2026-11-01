@@ -1,3 +1,4 @@
+import { tr } from './i18n'
 export function distanceM(a, b) {
   const R = 6371000
   const rad = (d) => (d * Math.PI) / 180
@@ -14,14 +15,14 @@ export function formatDistance(m) {
 
 export function getPosition({ timeout = 15000 } = {}) {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error('Thiết bị không hỗ trợ định vị'))
+    if (!navigator.geolocation) return reject(new Error(tr('Thiết bị không hỗ trợ định vị')))
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
       (err) => {
         const map = {
-          1: 'Bạn chưa cho phép truy cập vị trí. Hãy bật quyền vị trí cho trình duyệt.',
-          2: 'Không xác định được vị trí. Thử ra chỗ thoáng hơn nhé.',
-          3: 'Lấy vị trí quá lâu, thử lại nhé.',
+          1: tr('Bạn chưa cho phép truy cập vị trí. Hãy bật quyền vị trí cho trình duyệt.'),
+          2: tr('Không xác định được vị trí. Thử ra chỗ thoáng hơn nhé.'),
+          3: tr('Lấy vị trí quá lâu, thử lại nhé.'),
         }
         reject(new Error(map[err.code] || err.message))
       },

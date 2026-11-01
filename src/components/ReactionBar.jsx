@@ -3,6 +3,7 @@ import { REACTIONS, reactionLabel, setReaction } from '../lib/friends'
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
 import Emoji from './Emoji'
+import { tr } from '../lib/i18n'
 
 // Tính lại thống kê cảm xúc sau khi mình đổi (cập nhật giao diện ngay, không chờ server)
 function applyChange(like, next) {
@@ -95,7 +96,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
   return (
     <div className="reaction-wrap" ref={wrapRef} onPointerEnter={onEnter} onPointerLeave={onLeave}>
       {open && (
-        <div className={`reaction-picker${below ? ' below' : ''}`} role="menu" aria-label="Chọn cảm xúc">
+        <div className={`reaction-picker${below ? ' below' : ''}`} role="menu" aria-label={tr('Chọn cảm xúc')}>
           {REACTIONS.map((r, i) => (
             <button key={r.e} type="button" role="menuitem" className={`reaction-option${mine === r.e ? ' picked' : ''}`}
               style={{ animationDelay: `${i * 0.03}s` }} onClick={() => choose(r.e)} aria-label={r.label}>
@@ -111,9 +112,9 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
           onPointerDown={onPointerDown} onPointerUp={cancelPress} onPointerLeave={cancelPress} onContextMenu={(e) => e.preventDefault()}
           onClick={onClick} aria-pressed={!!mine}>
           {mine ? <Emoji e={mine} play="once" /> : <Emoji e="🤍" play="static" />}
-          <span>{mine ? reactionLabel(mine) : 'Thả cảm xúc'}</span>
+          <span>{mine ? reactionLabel(mine) : tr('Thả cảm xúc')}</span>
         </button>
-        <button type="button" className="reaction-more" onClick={() => (open ? setOpen(false) : showPicker())} aria-label="Chọn cảm xúc khác">
+        <button type="button" className="reaction-more" onClick={() => (open ? setOpen(false) : showPicker())} aria-label={tr('Chọn cảm xúc khác')}>
           <Emoji e="😆" play="hover" />
           <span>+</span>
         </button>

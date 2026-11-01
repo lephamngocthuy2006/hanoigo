@@ -1,10 +1,11 @@
 import { supabase } from './supabase'
+import { tr } from './i18n'
 
 export const CRITERIA = [
-  { key: 'attraction', label: 'Mức độ hấp dẫn', hint: 'Cảnh quan, giá trị văn hóa – lịch sử' },
-  { key: 'information', label: 'Hướng dẫn & thông tin', hint: 'Dễ tìm đường, thông tin rõ ràng' },
-  { key: 'facilities', label: 'Dịch vụ & tiện ích', hint: 'Vệ sinh, chỗ nghỉ, an toàn, thái độ phục vụ' },
-  { key: 'value', label: 'Xứng đáng thời gian & chi phí', hint: 'Trải nghiệm so với công sức bỏ ra' },
+  { key: 'attraction', label: tr('Mức độ hấp dẫn'), hint: tr('Cảnh quan, giá trị văn hóa – lịch sử') },
+  { key: 'information', label: tr('Hướng dẫn & thông tin'), hint: tr('Dễ tìm đường, thông tin rõ ràng') },
+  { key: 'facilities', label: tr('Dịch vụ & tiện ích'), hint: tr('Vệ sinh, chỗ nghỉ, an toàn, thái độ phục vụ') },
+  { key: 'value', label: tr('Xứng đáng thời gian & chi phí'), hint: tr('Trải nghiệm so với công sức bỏ ra') },
 ]
 
 export async function loadReviews(filter) {

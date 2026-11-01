@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from './supabase'
+import { tr, locale } from './i18n'
 
 export const CATEGORIES = {
-  food: { label: 'Ẩm thực', emoji: '🍜' },
-  cafe: { label: 'Cà phê', emoji: '☕' },
-  attraction: { label: 'Điểm tham quan', emoji: '🏛️' },
-  stay: { label: 'Lưu trú', emoji: '🏨' },
-  shopping: { label: 'Mua sắm', emoji: '🛍️' },
-  other: { label: 'Khác', emoji: '🏪' },
+  food: { label: tr('Ẩm thực'), emoji: '🍜' },
+  cafe: { label: tr('Cà phê'), emoji: '☕' },
+  attraction: { label: tr('Điểm tham quan'), emoji: '🏛️' },
+  stay: { label: tr('Lưu trú'), emoji: '🏨' },
+  shopping: { label: tr('Mua sắm'), emoji: '🛍️' },
+  other: { label: tr('Khác'), emoji: '🏪' },
 }
 
 // Hồ sơ đối tác của tài khoản hiện tại (null nếu chưa đăng ký)
@@ -23,4 +24,4 @@ export function useMyPartner(userId) {
   return { partner, error, reload }
 }
 
-export const fmtDateVN = (d) => (d ? new Date(d).toLocaleDateString('vi-VN') : '')
+export const fmtDateVN = (d) => (d ? new Date(d).toLocaleDateString(locale) : '')

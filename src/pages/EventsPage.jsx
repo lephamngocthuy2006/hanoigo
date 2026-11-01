@@ -7,6 +7,7 @@ import { RARITY, levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import VoucherShop from '../components/VoucherShop'
 import Emoji, { emojify } from '../components/Emoji'
+import { tr, localize } from '../lib/i18n'
 
 const PACK_COST = 100
 
@@ -16,14 +17,14 @@ export default function EventsPage() {
   return (
     <div className="page">
       <section className="event-banner">
-        <div className="eyebrow light">Sự kiện</div>
-        <h1>Săn thẻ Thủ đô</h1>
-        <p>Làm nhiệm vụ nhận Hanoi Coins, mở gói thẻ và sưu tầm đủ bộ Hà Nội!</p>
+        <div className="eyebrow light">{tr('Sự kiện')}</div>
+        <h1>{tr('Săn thẻ Thủ đô')}</h1>
+        <p>{tr('Làm nhiệm vụ nhận Hanoi Coins, mở gói thẻ và sưu tầm đủ bộ Hà Nội!')}</p>
       </section>
       <div className="segmented">
-        <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}><Emoji e="🎴" play="static" /> Thẻ</button>
-        <button className={tab === 'shop' ? 'active' : ''} onClick={() => setTab('shop')}><Emoji e="🎁" play="static" /> Đổi quà</button>
-        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}><Emoji e="🏆" play="static" /> Hạng</button>
+        <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}><Emoji e="🎴" play="static" />{tr(' Thẻ')}</button>
+        <button className={tab === 'shop' ? 'active' : ''} onClick={() => setTab('shop')}><Emoji e="🎁" play="static" />{tr(' Đổi quà')}</button>
+        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}><Emoji e="🏆" play="static" />{tr(' Hạng')}</button>
       </div>
       {tab === 'cards' && <Collection />}
       {tab === 'shop' && <VoucherShop />}
@@ -46,7 +47,7 @@ function Collection() {
       supabase.from('cards').select('*').order('sort_order'),
       supabase.from('user_cards').select('card_id, count').eq('user_id', user.id),
     ])
-    if (c.data) setCards(c.data)
+    if (c.data) setCards(localize(c.data))
     if (u.data) setOwned(Object.fromEntries(u.data.map((x) => [x.card_id, x.count])))
   }, [user.id])
 
@@ -58,7 +59,7 @@ function Collection() {
     setOpening(false)
     if (error) return toast(friendlyError(error), 'error')
     setProfile({ ...profile, coins: data.coins })
-    setResult(data.cards)
+    setResult(data.cards.map((x) => ({ ...x, ...cards.find((c) => c.id === x.id) })))
     load()
   }
 
@@ -69,19 +70,19 @@ function Collection() {
       <section className="card pack-card">
         <div className="pack-art"><Emoji e="🎁" play="loop" /></div>
         <div className="pack-body">
-          <h3>Gói thẻ Hà Nội</h3>
-          <p className="muted small">3 thẻ ngẫu nhiên · có cơ hội ra thẻ Huyền thoại</p>
+          <h3>{tr('Gói thẻ Hà Nội')}</h3>
+          <p className="muted small">{tr('3 thẻ ngẫu nhiên · có cơ hội ra thẻ Huyền thoại')}</p>
           <button className="btn gold" onClick={openPack} disabled={opening || (profile?.coins ?? 0) < PACK_COST}>
-            {emojify(opening ? 'Đang mở…' : `Mở gói · 🪙 ${PACK_COST}`)}
+            {emojify(opening ? tr('Đang mở…') : tr('Mở gói · 🪙 {0}', PACK_COST))}
           </button>
-          {(profile?.coins ?? 0) < PACK_COST && <p className="muted small">Làm thêm nhiệm vụ để có đủ coins nhé!</p>}
+          {(profile?.coins ?? 0) < PACK_COST && <p className="muted small">{tr('Làm thêm nhiệm vụ để có đủ coins nhé!')}</p>}
         </div>
       </section>
 
       <section className="card">
         <div className="section-head">
-          <h3>Bộ sưu tập</h3>
-          <span className="muted small">{ownedCount}/{cards.length} thẻ</span>
+          <h3>{tr('Bộ sưu tập')}</h3>
+          <span className="muted small">{ownedCount}/{cards.length}{tr(' thẻ')}</span>
         </div>
         <div className="progress"><div style={{ width: `${cards.length ? (ownedCount / cards.length) * 100 : 0}%` }} /></div>
         <div className="card-grid">
@@ -96,7 +97,7 @@ function Collection() {
         </div>
       </section>
 
-      <Modal open={!!result} onClose={() => setResult(null)} title="Bạn nhận được">
+      <Modal open={!!result} onClose={() => setResult(null)} title={tr('Bạn nhận được')}>
         <div className="pack-result">
           {result?.map((c, i) => (
             <div key={i} className="game-card reveal" style={{ '--rar': RARITY[c.rarity].color, animationDelay: `${i * 0.15}s` }}>
@@ -106,7 +107,7 @@ function Collection() {
             </div>
           ))}
         </div>
-        <button className="btn primary block" onClick={() => setResult(null)}>Tuyệt!</button>
+        <button className="btn primary block" onClick={() => setResult(null)}>{tr('Tuyệt!')}</button>
       </Modal>
 
       <Modal open={!!selected} onClose={() => setSelected(null)}>
@@ -116,7 +117,7 @@ function Collection() {
             <h2>{selected.name}</h2>
             <div className="rarity" style={{ color: RARITY[selected.rarity].color }}>{emojify(RARITY[selected.rarity].label)}</div>
             <p>{selected.description}</p>
-            <p className="muted small">Bạn có {owned[selected.id]} thẻ này</p>
+            <p className="muted small">{tr('Bạn có ')}{owned[selected.id]}{tr(' thẻ này')}</p>
           </div>
         )}
       </Modal>
@@ -144,8 +145,8 @@ function Leaderboard() {
   return (
     <section className="card">
       <div className="chips">
-        <button className={`chip${scope === 'all' ? ' active' : ''}`} onClick={() => setScope('all')}><Emoji e="🌏" play="static" /> Tất cả</button>
-        <button className={`chip${scope === 'friends' ? ' active' : ''}`} onClick={() => setScope('friends')}><Emoji e="👥" play="static" /> Bạn bè</button>
+        <button className={`chip${scope === 'all' ? ' active' : ''}`} onClick={() => setScope('all')}><Emoji e="🌏" play="static" />{tr(' Tất cả')}</button>
+        <button className={`chip${scope === 'friends' ? ' active' : ''}`} onClick={() => setScope('friends')}><Emoji e="👥" play="static" />{tr(' Bạn bè')}</button>
       </div>
       {!rows ? <div className="spinner" /> : rows.map((r, i) => (
         <Link key={r.id} to={isFriend(r.id) ? `/u/${r.username}` : r.id === user.id ? '/me' : '#'}
@@ -154,14 +155,14 @@ function Leaderboard() {
           <span className="rank-no">{i < 3 ? <Emoji e={['🥇', '🥈', '🥉'][i]} play="loop" /> : i + 1}</span>
           <span className="rank-avatar"><Emoji e={r.avatar} play="hover" /></span>
           <span className="rank-name">
-            <strong>{r.display_name || r.username}</strong>{r.is_demo && <span className="tag new" title="Tài khoản demo: check-in được ở bất kỳ đâu">Demo</span>}
+            <strong>{r.display_name || r.username}</strong>{r.is_demo && <span className="tag new" title={tr('Tài khoản demo: check-in được ở bất kỳ đâu')}>Demo</span>}
             <span className="muted small">@{r.username} · Lv {levelInfo(r.xp).level}</span>
           </span>
           <span className="rank-xp">{r.xp} XP</span>
         </Link>
       ))}
       {rows && scope === 'friends' && friendIds.length === 0 && (
-        <p className="muted small center">Kết bạn để đua top cùng nhau! <Link to="/friends">Tìm bạn</Link></p>
+        <p className="muted small center">{tr('Kết bạn để đua top cùng nhau! ')}<Link to="/friends">{tr('Tìm bạn')}</Link></p>
       )}
     </section>
   )

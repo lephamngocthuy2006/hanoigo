@@ -7,6 +7,7 @@ import { fmtDateVN } from '../lib/partner'
 import { todayVN } from '../lib/game'
 import Modal from './Modal'
 import Emoji, { emojify } from './Emoji'
+import { tr } from '../lib/i18n'
 
 // Đổi Hanoi Coins lấy voucher của đối tác + ví voucher của tôi
 export default function VoucherShop() {
@@ -43,7 +44,7 @@ export default function VoucherShop() {
     setProfile({ ...profile, coins: data.coins })
     setConfirm(null)
     await load()
-    toast('Đổi ưu đãi thành công! 🎉', 'success')
+    toast(tr('Đổi ưu đãi thành công! 🎉'), 'success')
   }
 
   if (!vouchers) return <div className="spinner" />
@@ -54,14 +55,14 @@ export default function VoucherShop() {
     <>
       {unused.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3><Emoji e="👛" play="static" /> Ví voucher của tôi</h3><span className="muted small">{unused.length} mã chưa dùng</span></div>
+          <div className="section-head"><h3><Emoji e="👛" play="static" />{tr(' Ví voucher của tôi')}</h3><span className="muted small">{unused.length}{tr(' mã chưa dùng')}</span></div>
           {unused.map((c) => (
             <button key={c.id} className="voucher-card as-button mine" onClick={() => setShowing(c)}>
               <div className="voucher-left"><Emoji e={c.vouchers?.partners?.emoji} play="once" /></div>
               <div className="voucher-body">
                 <strong>{c.vouchers?.title}</strong>
                 <span className="muted small">{c.vouchers?.partners?.name}</span>
-                <span className="small code-chip">Mã: {c.code} · Chạm để xem QR</span>
+                <span className="small code-chip">{tr('Mã: ')}{c.code}{tr(' · Chạm để xem QR')}</span>
               </div>
             </button>
           ))}
@@ -69,9 +70,9 @@ export default function VoucherShop() {
       )}
 
       <section className="card">
-        <div className="section-head"><h3><Emoji e="🎁" play="static" /> Đổi quà từ đối tác</h3><span className="muted small"><Emoji e="🪙" play="static" /> {profile?.coins ?? 0}</span></div>
+        <div className="section-head"><h3><Emoji e="🎁" play="static" />{tr(' Đổi quà từ đối tác')}</h3><span className="muted small"><Emoji e="🪙" play="static" /> {profile?.coins ?? 0}</span></div>
         {vouchers.length === 0 ? (
-          <p className="muted small">Chưa có ưu đãi nào. Các quán, điểm tham quan đối tác sẽ sớm phát hành ưu đãi!</p>
+          <p className="muted small">{tr('Chưa có ưu đãi nào. Các quán, điểm tham quan đối tác sẽ sớm phát hành ưu đãi!')}</p>
         ) : vouchers.map((v) => {
           const soldOut = v.stock != null && v.stock <= 0
           const enough = (profile?.coins ?? 0) >= v.cost_coins
@@ -82,10 +83,10 @@ export default function VoucherShop() {
                 <strong>{v.title}</strong>
                 <span className="muted small">{v.partners?.name}{v.partners?.address && ` · ${v.partners.address}`}</span>
                 {v.description && <span className="small">{v.description}</span>}
-                <span className="muted small">{v.stock == null ? '' : `Còn ${v.stock} lượt · `}{v.valid_until ? `HSD ${fmtDateVN(v.valid_until)}` : ''}</span>
+                <span className="muted small">{v.stock == null ? '' : tr('Còn {0} lượt · ', v.stock)}{v.valid_until ? tr('HSD {0}', fmtDateVN(v.valid_until)) : ''}</span>
               </div>
               <button className="btn gold small" disabled={soldOut || !enough} onClick={() => setConfirm(v)}>
-                {emojify(soldOut ? 'Hết' : `🪙 ${v.cost_coins}`)}
+                {emojify(soldOut ? tr('Hết') : `🪙 ${v.cost_coins}`)}
               </button>
             </div>
           )
@@ -94,25 +95,25 @@ export default function VoucherShop() {
 
       {used.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3><Emoji e="🧾" play="static" /> Đã sử dụng</h3></div>
+          <div className="section-head"><h3><Emoji e="🧾" play="static" />{tr(' Đã sử dụng')}</h3></div>
           {used.map((c) => (
             <div key={c.id} className="voucher-card used">
               <div className="voucher-left"><Emoji e="✓" play="once" /></div>
               <div className="voucher-body">
                 <strong>{c.vouchers?.title}</strong>
-                <span className="muted small">{c.vouchers?.partners?.name} · dùng ngày {fmtDateVN(c.used_at)}</span>
+                <span className="muted small">{c.vouchers?.partners?.name}{tr(' · dùng ngày ')}{fmtDateVN(c.used_at)}</span>
               </div>
             </div>
           ))}
         </section>
       )}
 
-      <Modal open={!!confirm} onClose={() => setConfirm(null)} title="Xác nhận đổi ưu đãi">
+      <Modal open={!!confirm} onClose={() => setConfirm(null)} title={tr('Xác nhận đổi ưu đãi')}>
         {confirm && (
           <>
-            <p><b>{confirm.title}</b> tại {confirm.partners?.name}</p>
-            <p className="muted small">Bạn sẽ dùng <b><Emoji e="🪙" play="static" /> {confirm.cost_coins}</b> Hanoi Coins (còn lại {(profile?.coins ?? 0) - confirm.cost_coins}).</p>
-            <button className="btn primary block" disabled={busy} onClick={redeem}>{busy ? 'Đang đổi…' : 'Đổi ngay'}</button>
+            <p><b>{confirm.title}</b>{tr(' tại ')}{confirm.partners?.name}</p>
+            <p className="muted small">{tr('Bạn sẽ dùng ')}<b><Emoji e="🪙" play="static" /> {confirm.cost_coins}</b>{tr(' Hanoi Coins (còn lại ')}{(profile?.coins ?? 0) - confirm.cost_coins}).</p>
+            <button className="btn primary block" disabled={busy} onClick={redeem}>{busy ? tr('Đang đổi…') : tr('Đổi ngay')}</button>
           </>
         )}
       </Modal>
@@ -133,9 +134,9 @@ function VoucherQR({ code }) {
     <div className="celebrate">
       <div className="eyebrow">{emojify(code.vouchers?.partners?.emoji)} {code.vouchers?.partners?.name}</div>
       <h2>{code.vouchers?.title}</h2>
-      {src && <img className="qr" src={src} alt={`Mã QR ${code.code}`} />}
+      {src && <img className="qr" src={src} alt={tr('Mã QR {0}', code.code)} />}
       <div className="big-code">{code.code}</div>
-      <p className="muted small">Đưa mã này cho nhân viên để xác nhận ưu đãi.</p>
+      <p className="muted small">{tr('Đưa mã này cho nhân viên để xác nhận ưu đãi.')}</p>
       {code.vouchers?.description && <p className="small">{code.vouchers.description}</p>}
     </div>
   )

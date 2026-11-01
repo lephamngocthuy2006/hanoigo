@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { tr } from './i18n'
 
 // Thu nhỏ ảnh (tối đa 1600px, JPEG) trước khi tải lên cho nhẹ
 export async function compressImage(file, maxSize = 1600, quality = 0.82) {
@@ -11,7 +12,7 @@ export async function compressImage(file, maxSize = 1600, quality = 0.82) {
     const img = await new Promise((resolve, reject) => {
       const i = new Image()
       i.onload = () => resolve(i)
-      i.onerror = () => reject(new Error('Không đọc được ảnh'))
+      i.onerror = () => reject(new Error(tr('Không đọc được ảnh')))
       i.src = URL.createObjectURL(file)
     })
     width = img.naturalWidth

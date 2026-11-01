@@ -1,3 +1,4 @@
+import { tr } from './i18n'
 // Cấp độ: mỗi level cần nhiều XP hơn level trước một chút
 export function levelInfo(xp = 0) {
   let level = 1
@@ -12,11 +13,11 @@ export function levelInfo(xp = 0) {
 }
 
 export function levelTitle(level) {
-  if (level >= 20) return 'Huyền thoại Thăng Long'
-  if (level >= 12) return 'Explorer Hà Nội'
-  if (level >= 7) return 'Lữ khách phố cổ'
-  if (level >= 3) return 'Người dạo phố'
-  return 'Tân binh'
+  if (level >= 20) return tr('Huyền thoại Thăng Long')
+  if (level >= 12) return tr('Explorer Hà Nội')
+  if (level >= 7) return tr('Lữ khách phố cổ')
+  if (level >= 3) return tr('Người dạo phố')
+  return tr('Tân binh')
 }
 
 export function todayVN() {
@@ -33,16 +34,16 @@ export function liveStreak(profile) {
 }
 
 export const RARITY = {
-  common: { label: 'Thường', color: '#8a8f98' },
-  rare: { label: 'Hiếm', color: '#3b82c4' },
-  epic: { label: 'Sử thi', color: '#8b4fc9' },
-  legendary: { label: 'Huyền thoại', color: '#d49a1f' },
+  common: { label: tr('Thường'), color: '#8a8f98' },
+  rare: { label: tr('Hiếm'), color: '#3b82c4' },
+  epic: { label: tr('Sử thi'), color: '#8b4fc9' },
+  legendary: { label: tr('Huyền thoại'), color: '#d49a1f' },
 }
 
 export const KIND = {
   photo: { label: 'Photo Quest', icon: '📸' },
   checkin: { label: 'Check-in', icon: '📍' },
-  quiz: { label: 'Đố vui', icon: '❓' },
+  quiz: { label: tr('Đố vui'), icon: '❓' },
 }
 
 export const AVATARS = ['🐢', '🦊', '🐱', '🐶', '🐼', '🐰', '🐸', '🦁', '🐧', '🦄', '🌸', '🍜', '☕', '🎓', '🏯', '🌼']

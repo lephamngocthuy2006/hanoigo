@@ -9,6 +9,7 @@ import ReactionBar from '../components/ReactionBar'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import Emoji, { emojify } from '../components/Emoji'
+import { tr } from '../lib/i18n'
 
 export default function JournalPage() {
   const { user, profile } = useAuth()
@@ -35,7 +36,7 @@ export default function JournalPage() {
   useEffect(() => { load() }, [load])
 
   const remove = async (entry) => {
-    if (!confirm('Xoá trang nhật ký này?')) return
+    if (!confirm(tr('Xoá trang nhật ký này?'))) return
     const { error } = await supabase.from('journal_entries').delete().eq('id', entry.id)
     if (error) return toast(friendlyError(error), 'error')
     // ảnh của nhiệm vụ vẫn giữ trong lịch sử hoàn thành, chỉ xoá ảnh tự thêm
@@ -51,24 +52,24 @@ export default function JournalPage() {
     <div className="page">
       <section className="journal-cover">
         <div className="eyebrow light">My Hanoi Journal</div>
-        <h1>Sổ hành trình</h1>
-        <p className="cover-sub">Hà Nội của {profile?.display_name || profile?.username}</p>
+        <h1>{tr('Sổ hành trình')}</h1>
+        <p className="cover-sub">{tr('Hà Nội của ')}{profile?.display_name || profile?.username}</p>
         <div className="cover-stats">
-          <div><strong>{entries.length}</strong><span>Kỷ niệm</span></div>
-          <div><strong>{photos}</strong><span>Bức ảnh</span></div>
-          <div><strong>{places}</strong><span>Địa điểm</span></div>
+          <div><strong>{entries.length}</strong><span>{tr('Kỷ niệm')}</span></div>
+          <div><strong>{photos}</strong><span>{tr('Bức ảnh')}</span></div>
+          <div><strong>{places}</strong><span>{tr('Địa điểm')}</span></div>
         </div>
       </section>
 
       <div className="row tight">
-        <button className="btn primary grow" onClick={() => setEditing({})}>＋ Thêm kỷ niệm</button>
-        <Link to="/friends" className="btn"><Emoji e="👥" play="static" /> Bạn bè</Link>
+        <button className="btn primary grow" onClick={() => setEditing({})}>{tr('＋ Thêm kỷ niệm')}</button>
+        <Link to="/friends" className="btn"><Emoji e="👥" play="static" />{tr(' Bạn bè')}</Link>
       </div>
 
       {loading ? <div className="spinner" /> : entries.length === 0 ? (
         <div className="card empty">
           <div className="empty-emoji"><Emoji e="📖" play="loop" /></div>
-          <p>Sổ hành trình còn trống. Hoàn thành một <strong>Photo Quest</strong> hoặc thêm kỷ niệm đầu tiên nhé!</p>
+          <p>{tr('Sổ hành trình còn trống. Hoàn thành một ')}<strong>Photo Quest</strong>{tr(' hoặc thêm kỷ niệm đầu tiên nhé!')}</p>
         </div>
       ) : (
         <JournalGrid entries={entries} urls={urls} likes={likes} onOpen={setViewing} />
@@ -78,17 +79,17 @@ export default function JournalPage() {
         {viewing && (
           <div className="entry-view">
             {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
-            <h3>{viewing.title || 'Không tiêu đề'}</h3>
-            <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && ' · 🏅 Nhiệm vụ')}</div>
+            <h3>{viewing.title || tr('Không tiêu đề')}</h3>
+            <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && tr(' · 🏅 Nhiệm vụ'))}</div>
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
             <p className="muted small">
-              {emojify(viewing.is_private ? '🔒 Chỉ mình bạn xem được' : '👥 Bạn bè xem được')}
+              {emojify(viewing.is_private ? tr('🔒 Chỉ mình bạn xem được') : tr('👥 Bạn bè xem được'))}
             </p>
             <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} showPeople
               onChange={(like) => setLikes((m) => ({ ...m, [viewing.id]: like }))} />
             <div className="row">
-              <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>Sửa</button>
-              <button className="btn danger" onClick={() => remove(viewing)}>Xoá</button>
+              <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>{tr('Sửa')}</button>
+              <button className="btn danger" onClick={() => remove(viewing)}>{tr('Xoá')}</button>
             </div>
           </div>
         )}
@@ -128,7 +129,7 @@ function EntryEditor({ entry, onClose, onSaved }) {
       if (error) throw error
       if (newPath && !isNew && entry.photo_path && !entry.quest_id) deletePhoto(entry.photo_path)
       newPath = null
-      toast('Đã lưu vào Sổ hành trình 📖', 'success')
+      toast(tr('Đã lưu vào Sổ hành trình 📖'), 'success')
       onSaved()
     } catch (err) {
       toast(friendlyError(err), 'error')
@@ -139,20 +140,20 @@ function EntryEditor({ entry, onClose, onSaved }) {
   }
 
   return (
-    <Modal open={!!entry} onClose={onClose} title={isNew ? 'Thêm kỷ niệm' : 'Sửa kỷ niệm'}>
+    <Modal open={!!entry} onClose={onClose} title={isNew ? tr('Thêm kỷ niệm') : tr('Sửa kỷ niệm')}>
       <form onSubmit={save}>
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => setFile(e.target.files?.[0] || null)} />
         <button type="button" className="photo-drop small" onClick={() => fileRef.current.click()}>
-          <span><Emoji e="📷" play="static" /></span>{file ? file.name : entry?.photo_path ? 'Đổi ảnh khác' : 'Thêm ảnh (tuỳ chọn)'}
+          <span><Emoji e="📷" play="static" /></span>{file ? file.name : entry?.photo_path ? tr('Đổi ảnh khác') : tr('Thêm ảnh (tuỳ chọn)')}
         </button>
-        <label className="field"><span>Tiêu đề</span><input value={form.title} onChange={set('title')} maxLength={80} required /></label>
-        <label className="field"><span>Địa điểm</span><input value={form.place_name} onChange={set('place_name')} maxLength={80} placeholder="vd: Hồ Tây" /></label>
-        <label className="field"><span>Ghi chú</span><textarea rows={4} value={form.note} onChange={set('note')} maxLength={1000} /></label>
+        <label className="field"><span>{tr('Tiêu đề')}</span><input value={form.title} onChange={set('title')} maxLength={80} required /></label>
+        <label className="field"><span>{tr('Địa điểm')}</span><input value={form.place_name} onChange={set('place_name')} maxLength={80} placeholder={tr('vd: Hồ Tây')} /></label>
+        <label className="field"><span>{tr('Ghi chú')}</span><textarea rows={4} value={form.note} onChange={set('note')} maxLength={1000} /></label>
         <label className="switch-row">
           <input type="checkbox" checked={form.is_private} onChange={(e) => setForm({ ...form, is_private: e.target.checked })} />
-          <span><Emoji e="🔒" play="static" /> Chỉ mình tôi <small className="muted">(bạn bè sẽ không thấy trang này)</small></span>
+          <span><Emoji e="🔒" play="static" />{tr(' Chỉ mình tôi ')}<small className="muted">{tr('(bạn bè sẽ không thấy trang này)')}</small></span>
         </label>
-        <button className="btn primary block" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu'}</button>
+        <button className="btn primary block" disabled={busy}>{busy ? tr('Đang lưu…') : tr('Lưu')}</button>
       </form>
     </Modal>
   )
