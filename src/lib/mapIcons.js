@@ -10,6 +10,3 @@ export function pinIcon(emoji, variant = '') {
   })
 }
 
-// Nền bản đồ OpenStreetMap (miễn phí, không cần key; không dùng subdomain a/b/c đã bị bỏ)
-export const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-export const TILE_ATTR = '&copy; OpenStreetMap'

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { MapContainer, Marker, TileLayer, Circle } from 'react-leaflet'
+import { MapContainer, Marker, Circle } from 'react-leaflet'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -8,7 +8,8 @@ import { useQuests } from '../lib/data'
 import { KIND } from '../lib/game'
 import { distanceM, formatDistance, getPosition } from '../lib/geo'
 import { deletePhoto, uploadPhoto } from '../lib/photos'
-import { pinIcon, TILE_ATTR, TILE_URL } from '../lib/mapIcons'
+import { pinIcon } from '../lib/mapIcons'
+import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 
 // key theo id để mỗi nhiệm vụ có state riêng (ảnh, đáp án, popup thưởng…)
@@ -125,7 +126,7 @@ function QuestDetailInner({ id }) {
       {quest.lat != null && (
         <div className="mini-map">
           <MapContainer center={[quest.lat, quest.lng]} zoom={16} scrollWheelZoom={false} style={{ height: '100%' }}>
-            <TileLayer attribution={TILE_ATTR} url={TILE_URL} />
+            <BaseMap />
             <Marker position={[quest.lat, quest.lng]} icon={pinIcon(quest.emoji)} />
             {needsLocation && <Circle center={[quest.lat, quest.lng]} radius={quest.radius_m} pathOptions={{ color: '#8f2d3a' }} />}
             {pos && <Marker position={[pos.lat, pos.lng]} icon={pinIcon('🧍', 'me')} />}

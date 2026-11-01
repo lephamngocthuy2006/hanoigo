@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, Marker, Popup, useMap } from 'react-leaflet'
 import { useQuests } from '../lib/data'
 import { KIND } from '../lib/game'
 import { getPosition } from '../lib/geo'
-import { pinIcon, TILE_ATTR, TILE_URL } from '../lib/mapIcons'
+import { pinIcon } from '../lib/mapIcons'
+import BaseMap from '../components/BaseMap'
 import { useToast } from '../context/ToastContext'
 
 const HANOI = [21.0313, 105.8467]
@@ -36,7 +37,7 @@ export default function MapPage() {
   return (
     <div className="map-page">
       <MapContainer center={HANOI} zoom={14} style={{ height: '100%' }} zoomControl={false}>
-        <TileLayer attribution={TILE_ATTR} url={TILE_URL} />
+        <BaseMap />
         {located.map((q) => (
           <Marker key={q.id} position={[q.lat, q.lng]} icon={pinIcon(isDone(q) ? '✅' : q.emoji, isDone(q) ? 'done' : '')}>
             <Popup>
