@@ -785,6 +785,9 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 
 /* ---------- Ngôn ngữ ---------- */
 .lang-switch { min-width: 220px; }
+.lang-switch button.active { box-shadow: 0 1px 3px rgba(90, 50, 30, 0.15); }
+.navlabel { white-space: nowrap; }
+@media (max-width: 480px) { .lang-card .lang-switch { width: 100%; } }
 .auth-lang { margin: 14px auto 0; max-width: 260px; }
 .lang-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .lang-card > span { font-weight: 700; }

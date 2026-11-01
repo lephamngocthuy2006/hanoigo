@@ -51,7 +51,7 @@ export default {
   'Sổ hành trình': 'Journal',
   'Bản đồ': 'Map',
   'Nhiệm vụ': 'Quests',
-  'Thẻ & Quà': 'Cards & Rewards',
+  'Thẻ & Quà': 'Rewards',
   'Tôi': 'Me',
   'Tour theo chủ đề': 'Themed tours',
   'Bạn bè': 'Friends',
