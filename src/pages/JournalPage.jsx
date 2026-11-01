@@ -3,15 +3,17 @@ import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { deletePhoto, signedUrls, uploadPhoto } from '../lib/photos'
+import { Link } from 'react-router-dom'
+import { loadLikes } from '../lib/friends'
 import Modal from '../components/Modal'
-
-const fmtDate = (s) => new Date(s).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+import JournalGrid, { fmtDate } from '../components/JournalGrid'
 
 export default function JournalPage() {
   const { user, profile } = useAuth()
   const toast = useToast()
   const [entries, setEntries] = useState([])
   const [urls, setUrls] = useState({})
+  const [likes, setLikes] = useState({})
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null) // {} = mới, entry = sửa
   const [viewing, setViewing] = useState(null)
@@ -21,7 +23,9 @@ export default function JournalPage() {
     if (error) toast(friendlyError(error), 'error')
     else {
       setEntries(data)
-      setUrls(await signedUrls(data.map((e) => e.photo_path)))
+      const [u, l] = await Promise.all([signedUrls(data.map((e) => e.photo_path)), loadLikes(data.map((e) => e.id), user.id)])
+      setUrls(u)
+      setLikes(l)
     }
     setLoading(false)
   }, [user.id, toast])
@@ -54,7 +58,10 @@ export default function JournalPage() {
         </div>
       </section>
 
-      <button className="btn primary block" onClick={() => setEditing({})}>＋ Thêm kỷ niệm</button>
+      <div className="row tight">
+        <button className="btn primary grow" onClick={() => setEditing({})}>＋ Thêm kỷ niệm</button>
+        <Link to="/friends" className="btn">👥 Bạn bè</Link>
+      </div>
 
       {loading ? <div className="spinner" /> : entries.length === 0 ? (
         <div className="card empty">
@@ -62,17 +69,7 @@ export default function JournalPage() {
           <p>Sổ hành trình còn trống. Hoàn thành một <strong>Photo Quest</strong> hoặc thêm kỷ niệm đầu tiên nhé!</p>
         </div>
       ) : (
-        <div className="journal-grid">
-          {entries.map((e) => (
-            <button key={e.id} className="journal-item" onClick={() => setViewing(e)}>
-              {e.photo_path ? <img src={urls[e.photo_path]} alt={e.title} loading="lazy" /> : <div className="journal-noimg">✍️</div>}
-              <div className="journal-meta">
-                <strong>{e.title || 'Không tiêu đề'}</strong>
-                <span>{fmtDate(e.created_at)}{e.place_name && ` · ${e.place_name}`}</span>
-              </div>
-            </button>
-          ))}
-        </div>
+        <JournalGrid entries={entries} urls={urls} likes={likes} onOpen={setViewing} />
       )}
 
       <Modal open={!!viewing} onClose={() => setViewing(null)}>
@@ -82,6 +79,10 @@ export default function JournalPage() {
             <h3>{viewing.title || 'Không tiêu đề'}</h3>
             <div className="muted small">{fmtDate(viewing.created_at)}{viewing.place_name && ` · 📍 ${viewing.place_name}`}{viewing.quest_id && ' · 🏅 Nhiệm vụ'}</div>
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
+            <p className="muted small">
+              {viewing.is_private ? '🔒 Chỉ mình bạn xem được' : '👥 Bạn bè xem được'}
+              {likes[viewing.id]?.count > 0 && ` · ❤️ ${likes[viewing.id].names.join(', ')}`}
+            </p>
             <div className="row">
               <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>Sửa</button>
               <button className="btn danger" onClick={() => remove(viewing)}>Xoá</button>
@@ -99,13 +100,13 @@ function EntryEditor({ entry, onClose, onSaved }) {
   const { user } = useAuth()
   const toast = useToast()
   const fileRef = useRef(null)
-  const [form, setForm] = useState({ title: '', note: '', place_name: '' })
+  const [form, setForm] = useState({ title: '', note: '', place_name: '', is_private: false })
   const [file, setFile] = useState(null)
   const [busy, setBusy] = useState(false)
   const isNew = entry && !entry.id
 
   useEffect(() => {
-    if (entry) setForm({ title: entry.title || '', note: entry.note || '', place_name: entry.place_name || '' })
+    if (entry) setForm({ title: entry.title || '', note: entry.note || '', place_name: entry.place_name || '', is_private: entry.is_private || false })
     setFile(null)
   }, [entry])
 
@@ -144,6 +145,10 @@ function EntryEditor({ entry, onClose, onSaved }) {
         <label className="field"><span>Tiêu đề</span><input value={form.title} onChange={set('title')} maxLength={80} required /></label>
         <label className="field"><span>Địa điểm</span><input value={form.place_name} onChange={set('place_name')} maxLength={80} placeholder="vd: Hồ Tây" /></label>
         <label className="field"><span>Ghi chú</span><textarea rows={4} value={form.note} onChange={set('note')} maxLength={1000} /></label>
+        <label className="switch-row">
+          <input type="checkbox" checked={form.is_private} onChange={(e) => setForm({ ...form, is_private: e.target.checked })} />
+          <span>🔒 Chỉ mình tôi <small className="muted">(bạn bè sẽ không thấy trang này)</small></span>
+        </label>
         <button className="btn primary block" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu'}</button>
       </form>
     </Modal>

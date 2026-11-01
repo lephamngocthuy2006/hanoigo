@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -11,6 +12,8 @@ export default function MePage() {
   const [stats, setStats] = useState(null)
   const [editOpen, setEditOpen] = useState(false)
   const [pwOpen, setPwOpen] = useState(false)
+  const navigate = useNavigate()
+  const { friends, incoming } = useOutletContext()
 
   useEffect(() => {
     const count = (table, extra = (q) => q) =>
@@ -55,6 +58,9 @@ export default function MePage() {
       </div>
 
       <section className="card menu">
+        <button onClick={() => navigate('/friends')}>
+          👥 Bạn bè ({friends.length}){incoming.length > 0 && <span className="badge static">{incoming.length} lời mời</span>}
+        </button>
         <button onClick={() => setPwOpen(true)}>🔒 Đổi mật khẩu</button>
         <button className="danger-text" onClick={signOut}>↪ Đăng xuất</button>
       </section>

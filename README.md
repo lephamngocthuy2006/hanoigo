@@ -15,8 +15,9 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
 | Nhiệm vụ | Nhiệm vụ gợi ý, nhiệm vụ hằng ngày, streak 🔥, lọc theo loại, sắp xếp theo khoảng cách |
 | Chi tiết nhiệm vụ | Chụp ảnh bằng camera điện thoại (tự nén ảnh), check-in GPS có kiểm tra bán kính, câu đố, bản đồ nhỏ + chỉ đường |
 | Bản đồ | Toàn bộ địa điểm nhiệm vụ trên bản đồ thật, vị trí của bạn |
-| Sổ hành trình | Ảnh từ nhiệm vụ tự vào sổ; thêm / sửa / xoá kỷ niệm riêng |
-| Thẻ & Quà | Mở gói thẻ bằng Hanoi Coins, bộ sưu tập 15 thẻ, bảng xếp hạng XP |
+| Sổ hành trình | Ảnh từ nhiệm vụ tự vào sổ; thêm / sửa / xoá kỷ niệm; 🔒 "Chỉ mình tôi" để ẩn với bạn bè |
+| Thẻ & Quà | Mở gói thẻ bằng Hanoi Coins, bộ sưu tập 15 thẻ, bảng xếp hạng XP (tất cả / bạn bè) |
+| Bạn bè | Tìm theo tên đăng nhập, gửi / đồng ý lời mời, xem Sổ hành trình của bạn, thả tim ❤️ |
 | Tôi | Level, XP, coins, streak, thống kê, đổi avatar / tên / giới thiệu |
 
 **Bảo mật:** XP, coins, streak và đáp án câu đố đều được xử lý trên server (hàm SQL), người dùng không tự sửa được.
@@ -29,7 +30,9 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
 ### 1. Tạo project Supabase
 
 1. Vào <https://supabase.com>, đăng nhập và bấm **New project** (chọn region **Singapore** cho nhanh).
-2. Vào **SQL Editor → New query**, dán toàn bộ nội dung file [`supabase/schema.sql`](supabase/schema.sql) rồi bấm **Run**.
+2. Vào **SQL Editor → New query**, lần lượt dán và **Run** từng file theo thứ tự:
+   1. [`supabase/schema.sql`](supabase/schema.sql) — bảng chính, nhiệm vụ, thẻ
+   2. [`supabase/002_friends.sql`](supabase/002_friends.sql) — bạn bè, thả tim, chế độ riêng tư
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.

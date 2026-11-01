@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link, useOutletContext } from 'react-router-dom'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -119,18 +120,31 @@ function Collection() {
 
 function Leaderboard() {
   const { user } = useAuth()
+  const { friends } = useOutletContext()
+  const [scope, setScope] = useState('all')
   const [rows, setRows] = useState(null)
+  const friendIds = friends.map((f) => f.other?.id).filter(Boolean)
+  const friendKey = friendIds.join(',')
 
   useEffect(() => {
-    supabase.from('profiles').select('id, username, display_name, avatar, xp').order('xp', { ascending: false }).limit(30)
-      .then(({ data }) => setRows(data || []))
-  }, [])
+    setRows(null)
+    let q = supabase.from('profiles').select('id, username, display_name, avatar, xp').order('xp', { ascending: false }).limit(30)
+    if (scope === 'friends') q = q.in('id', [user.id, ...friendKey.split(',').filter(Boolean)])
+    q.then(({ data }) => setRows(data || []))
+  }, [scope, friendKey, user.id])
 
-  if (!rows) return <div className="spinner" />
+  const isFriend = (id) => friendIds.includes(id)
+
   return (
     <section className="card">
-      {rows.map((r, i) => (
-        <div key={r.id} className={`rank-row${r.id === user.id ? ' me' : ''}`}>
+      <div className="chips">
+        <button className={`chip${scope === 'all' ? ' active' : ''}`} onClick={() => setScope('all')}>🌏 Tất cả</button>
+        <button className={`chip${scope === 'friends' ? ' active' : ''}`} onClick={() => setScope('friends')}>👥 Bạn bè</button>
+      </div>
+      {!rows ? <div className="spinner" /> : rows.map((r, i) => (
+        <Link key={r.id} to={isFriend(r.id) ? `/u/${r.username}` : r.id === user.id ? '/me' : '#'}
+          onClick={(e) => !isFriend(r.id) && r.id !== user.id && e.preventDefault()}
+          className={`rank-row${r.id === user.id ? ' me' : ''}`}>
           <span className="rank-no">{['🥇', '🥈', '🥉'][i] || i + 1}</span>
           <span className="rank-avatar">{r.avatar}</span>
           <span className="rank-name">
@@ -138,8 +152,11 @@ function Leaderboard() {
             <span className="muted small">@{r.username} · Lv {levelInfo(r.xp).level}</span>
           </span>
           <span className="rank-xp">{r.xp} XP</span>
-        </div>
+        </Link>
       ))}
+      {rows && scope === 'friends' && friendIds.length === 0 && (
+        <p className="muted small center">Kết bạn để đua top cùng nhau! <Link to="/friends">Tìm bạn</Link></p>
+      )}
     </section>
   )
 }

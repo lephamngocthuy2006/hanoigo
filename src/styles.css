@@ -63,7 +63,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 }
 .brand { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; text-align: left; min-width: 0; }
 .brand > span { display: flex; flex-direction: column; min-width: 0; }
-.brand-name { font-weight: 800; color: var(--brand); font-size: 1.15rem; letter-spacing: 0.01em; }
+.brand-name { font-weight: 800; color: var(--brand); font-size: 1.15rem; letter-spacing: 0.01em; white-space: nowrap; }
 .brand-name.big { font-size: 2rem; }
 .brand-sub { font-size: 0.7rem; color: var(--muted); font-style: italic; white-space: nowrap; }
 .topbar-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
@@ -314,7 +314,41 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .avatar-grid button { aspect-ratio: 1; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card); font-size: 1.3rem; padding: 0; }
 .avatar-grid button.active { border-color: var(--brand); background: var(--brand-soft); }
 
-@media (max-width: 360px) {
+@media (max-width: 400px) {
+  .topbar { padding: 0 10px; }
+  .topbar-right { gap: 4px; }
+  .brand { gap: 8px; }
   .brand-sub { display: none; }
+}
+@media (max-width: 360px) {
   .pill { padding: 3px 7px; font-size: 0.74rem; }
 }
+
+/* ---------- Friends ---------- */
+.icon-btn { position: relative; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); font-size: 1.05rem; display: grid; place-items: center; padding: 0; }
+.badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--danger); color: #fff; font-size: 0.68rem; font-weight: 800; display: grid; place-items: center; border: 2px solid var(--paper); }
+.badge.static { position: static; display: inline-grid; border: 0; margin-left: 6px; height: 20px; }
+.friends-hero { border-radius: 22px; padding: 20px; color: #fff; background: linear-gradient(135deg, #3f7f8c, #2b4f6e); }
+.friends-hero h1 { margin: 4px 0; }
+.friends-hero p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+.person-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line); }
+.person-row:first-of-type { border-top: 0; }
+.person-link { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-decoration: none; color: inherit; }
+.person-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.person-actions .ghost { text-decoration: none; }
+.tag { font-size: 0.72rem; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: var(--line); color: var(--muted); }
+.tag.ok { background: #e3f4ea; color: #1e6b47; }
+.rank-row { text-decoration: none; color: inherit; }
+.row.tight { margin-top: 0; flex-wrap: nowrap; }
+.row.tight .btn { white-space: nowrap; }
+.grow { flex: 1; }
+.journal-item { position: relative; }
+.journal-lock, .journal-likes { position: absolute; top: 8px; background: rgba(255, 255, 255, 0.92); border-radius: 999px; padding: 2px 8px; font-size: 0.72rem; font-weight: 700; }
+.journal-lock { left: 8px; }
+.journal-likes { right: 8px; }
+.cover-avatar { font-size: 2.4rem; width: 72px; height: 72px; margin: 0 auto 8px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.16); border: 2px solid var(--gold); }
+.cover-bio { margin: -8px 0 14px; font-size: 0.88rem; opacity: 0.9; }
+.like-btn { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: 9px 18px; font-weight: 700; }
+.like-btn.liked { border-color: #f3b4bd; background: #fdecef; color: var(--brand); }
+.switch-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.9rem; font-weight: 600; }
+.switch-row input { width: 20px; height: 20px; accent-color: var(--brand); }

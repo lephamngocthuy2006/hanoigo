@@ -9,6 +9,8 @@ import JournalPage from './pages/JournalPage'
 import EventsPage from './pages/EventsPage'
 import MePage from './pages/MePage'
 import Splash from './components/Splash'
+import FriendsPage from './pages/FriendsPage'
+import FriendProfile from './pages/FriendProfile'
 
 export default function App() {
   const { session, loading } = useAuth()
@@ -31,6 +33,8 @@ export default function App() {
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/me" element={<MePage />} />
+        <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/u/:username" element={<FriendProfile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
