@@ -11,6 +11,9 @@ import MePage from './pages/MePage'
 import Splash from './components/Splash'
 import FriendsPage from './pages/FriendsPage'
 import FriendProfile from './pages/FriendProfile'
+import ToursPage from './pages/ToursPage'
+import TourDetail from './pages/TourDetail'
+import InsightsPage from './pages/InsightsPage'
 
 export default function App() {
   const { session, loading } = useAuth()
@@ -34,6 +37,9 @@ export default function App() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/me" element={<MePage />} />
         <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/tours" element={<ToursPage />} />
+        <Route path="/tour/:id" element={<TourDetail />} />
+        <Route path="/insights" element={<InsightsPage />} />
         <Route path="/u/:username" element={<FriendProfile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

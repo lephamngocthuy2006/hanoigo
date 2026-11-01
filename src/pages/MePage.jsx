@@ -34,6 +34,7 @@ export default function MePage() {
         <div className="profile-avatar">{profile.avatar}</div>
         <h1>{profile.display_name || profile.username}</h1>
         <div className="muted">@{profile.username}</div>
+        {profile.is_demo && <span className="tag ok" title="Check-in được ở bất kỳ đâu khi thuyết trình">🎤 Chế độ demo</span>}
         {profile.bio && <p className="bio">{profile.bio}</p>}
         <button className="ghost small" onClick={() => setEditOpen(true)}>✏️ Chỉnh sửa hồ sơ</button>
       </section>
@@ -61,6 +62,8 @@ export default function MePage() {
         <button onClick={() => navigate('/friends')}>
           👥 Bạn bè ({friends.length}){incoming.length > 0 && <span className="badge static">{incoming.length} lời mời</span>}
         </button>
+        <button onClick={() => navigate('/tours')}>🧭 Tour theo chủ đề</button>
+        <button onClick={() => navigate('/insights')}>📊 Thống kê chất lượng trải nghiệm</button>
         <button onClick={() => setPwOpen(true)}>🔒 Đổi mật khẩu</button>
         <button className="danger-text" onClick={signOut}>↪ Đăng xuất</button>
       </section>

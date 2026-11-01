@@ -6,6 +6,8 @@ import { KIND, liveStreak } from '../lib/game'
 import { distanceM, getPosition } from '../lib/geo'
 import { useToast } from '../context/ToastContext'
 import QuestRow from '../components/QuestRow'
+import TourCard from '../components/TourCard'
+import { tourProgress, useTours } from '../lib/tours'
 
 const FILTERS = [
   { id: 'all', label: 'Tất cả' },
@@ -19,6 +21,7 @@ export default function QuestsPage() {
   const { profile } = useAuth()
   const toast = useToast()
   const { quests, isDone, loading, error, reload } = useQuests()
+  const { tours, claimed } = useTours()
   const [filter, setFilter] = useState('all')
   const [pos, setPos] = useState(null)
   const [locating, setLocating] = useState(false)
@@ -83,6 +86,21 @@ export default function QuestsPage() {
             <span className="btn gold">{featured.kind === 'photo' ? '📷 Chụp ngay' : '📍 Check-in ngay'}</span>
           </div>
         </Link>
+      )}
+
+      {tours.length > 0 && (
+        <section>
+          <div className="section-head">
+            <h3>🧭 Tour theo chủ đề</h3>
+            <Link to="/tours" className="ghost small">Xem tất cả</Link>
+          </div>
+          <div className="tour-scroller">
+            {tours.map((t) => (
+              <TourCard key={t.id} tour={t} claimed={claimed.has(t.id)}
+                progress={tourProgress(t, (id) => { const q = quests.find((x) => x.id === id); return q ? isDone(q) : false })} />
+            ))}
+          </div>
+        </section>
       )}
 
       <section className={`streak-banner${doneToday ? ' lit' : ''}`}>

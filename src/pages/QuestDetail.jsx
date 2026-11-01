@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { MapContainer, Marker, Circle } from 'react-leaflet'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -11,6 +11,8 @@ import { deletePhoto, uploadPhoto } from '../lib/photos'
 import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
+import ReviewSummary from '../components/ReviewSummary'
+import { useTours } from '../lib/tours'
 
 // key theo id để mỗi nhiệm vụ có state riêng (ảnh, đáp án, popup thưởng…)
 export default function QuestDetail() {
@@ -20,7 +22,9 @@ export default function QuestDetail() {
 
 function QuestDetailInner({ id }) {
   const navigate = useNavigate()
-  const { user, refreshProfile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
+  const { tours } = useTours()
+  const [reviewSignal, setReviewSignal] = useState(0)
   const toast = useToast()
   const { quests, isDone, loading, reload } = useQuests()
   const quest = quests.find((q) => String(q.id) === id)
@@ -40,6 +44,7 @@ function QuestDetailInner({ id }) {
   if (!quest) return <div className="page"><p className="muted">Không tìm thấy nhiệm vụ.</p></div>
 
   const done = isDone(quest)
+  const inTours = tours.filter((t) => t.stops.some((s) => s.quest_id === quest.id))
   const needsLocation = quest.kind === 'checkin' || quest.require_location
   const dist = pos && quest.lat != null ? distanceM(pos, quest) : null
 
@@ -68,8 +73,9 @@ function QuestDetailInner({ id }) {
     try {
       let p = pos
       if (needsLocation && !p) {
-        p = await locate()
-        if (!p) return
+        // tài khoản demo vẫn thử lấy vị trí nhưng không bắt buộc
+        p = profile?.is_demo ? await getPosition().catch(() => null) : await locate()
+        if (!p && !profile?.is_demo) return
       }
       if (quest.kind === 'photo') {
         if (!file) return toast('Hãy chụp hoặc chọn một bức ảnh trước nhé', 'error')
@@ -122,6 +128,27 @@ function QuestDetailInner({ id }) {
       </div>
 
       {quest.tip && <div className="tip">💡 {quest.tip}</div>}
+
+      {inTours.length > 0 && (
+        <div className="chips">
+          {inTours.map((t) => (
+            <Link key={t.id} to={`/tour/${t.id}`} className="chip tour-link" style={{ '--tour': t.color }}>{t.emoji} Thuộc tour: {t.title}</Link>
+          ))}
+        </div>
+      )}
+
+      {(quest.opening_hours || quest.ticket_info || quest.story || quest.etiquette) && (
+        <section className="card place-info">
+          <h3>🏛️ Thông tin điểm đến</h3>
+          <div className="info-grid compact">
+            {quest.opening_hours && <div><span>🕗 Giờ mở cửa</span><strong>{quest.opening_hours}</strong></div>}
+            {quest.ticket_info && <div><span>🎫 Vé tham quan</span><strong>{quest.ticket_info}</strong></div>}
+          </div>
+          {quest.story && <div className="story"><b>📜 Câu chuyện</b><p>{quest.story}</p></div>}
+          {quest.etiquette && <div className="etiquette"><b>🙏 Lưu ý văn hoá</b><p>{quest.etiquette}</p></div>}
+          <p className="muted small">Thông tin mang tính tham khảo, có thể thay đổi theo thời điểm.</p>
+        </section>
+      )}
 
       {quest.lat != null && (
         <div className="mini-map">
@@ -192,6 +219,10 @@ function QuestDetailInner({ id }) {
         </section>
       )}
 
+      {quest.kind !== 'quiz' && (
+        <ReviewSummary target={{ questId: quest.id }} title={quest.title} canReview={done} openSignal={reviewSignal} />
+      )}
+
       <Modal open={!!reward} onClose={() => navigate('/')}>
         <div className="celebrate">
           <div className="celebrate-emoji">🎉</div>
@@ -204,6 +235,9 @@ function QuestDetailInner({ id }) {
           </div>
           <div className="row">
             {quest.kind === 'photo' && <button className="btn" onClick={() => navigate('/journal')}>Xem Sổ hành trình</button>}
+            {quest.kind !== 'quiz' && (
+              <button className="btn gold" onClick={() => { setReward(null); setReviewSignal((n) => n + 1) }}>⭐ Đánh giá +20 🪙</button>
+            )}
             <button className="btn primary" onClick={() => navigate('/')}>Nhiệm vụ khác</button>
           </div>
         </div>

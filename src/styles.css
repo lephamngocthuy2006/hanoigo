@@ -352,3 +352,108 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .like-btn.liked { border-color: #f3b4bd; background: #fdecef; color: var(--brand); }
 .switch-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.9rem; font-weight: 600; }
 .switch-row input { width: 20px; height: 20px; accent-color: var(--brand); }
+
+/* ---------- Tours ---------- */
+.tour-scroller { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 2px 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; }
+.tour-card {
+  --tour: var(--brand);
+  flex: 0 0 78%; scroll-snap-align: start; display: flex; flex-direction: column; gap: 6px;
+  padding: 16px; border-radius: 20px; color: #fff; text-decoration: none; position: relative; overflow: hidden;
+  background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.18), transparent 45%), linear-gradient(150deg, var(--tour), color-mix(in srgb, var(--tour) 60%, #1a1010));
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--tour) 35%, transparent);
+}
+.tour-card.wide { flex: none; }
+.tour-card h3 { font-size: 1.2rem; }
+.tour-card p { margin: 0; opacity: 0.88; font-size: 0.85rem; }
+.tour-card-top { display: flex; justify-content: space-between; align-items: center; }
+.tour-emoji { font-size: 1.8rem; width: 48px; height: 48px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.16); border-radius: 14px; }
+.tour-chip { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); }
+.tour-chip.done { background: var(--gold); color: var(--ink); }
+.tour-meta { display: flex; gap: 12px; font-size: 0.78rem; font-weight: 600; opacity: 0.95; }
+.tour-progress { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.25); overflow: hidden; margin-top: 4px; }
+.tour-progress > div { height: 100%; background: var(--gold); border-radius: inherit; }
+.tour-progress-text { font-size: 0.72rem; opacity: 0.85; }
+.tours-hero, .insights-hero { border-radius: 22px; padding: 20px; color: #fff; background: linear-gradient(135deg, #2f7d6d, #1f4a5a); }
+.insights-hero { background: linear-gradient(135deg, #3b5b8f, #2a2f5e); }
+.tours-hero h1, .insights-hero h1 { margin: 4px 0; }
+.tours-hero p, .insights-hero p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+.tour-hero {
+  --tour: var(--brand);
+  border-radius: 24px; padding: 22px 20px; color: #fff; display: flex; flex-direction: column; gap: 6px;
+  background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.2), transparent 50%), linear-gradient(150deg, var(--tour), color-mix(in srgb, var(--tour) 55%, #140c0c));
+}
+.tour-hero-emoji { font-size: 2.6rem; }
+.tour-hero h1 { font-size: 1.7rem; }
+.tour-sub { margin: 0 0 6px; font-style: italic; opacity: 0.9; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.info-grid > div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.info-grid span { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+.info-grid strong { font-size: 0.86rem; }
+.info-grid .span2 { grid-column: span 2; }
+.info-grid.compact { margin: 10px 0; }
+.info-grid.compact > div { background: var(--paper); }
+.mini-map.tall { height: 280px; }
+.map-pin.num { background: var(--ink); }
+.map-pin.num span { color: #fff; font-weight: 800; font-size: 0.95rem; }
+.timeline { list-style: none; margin: 0 0 12px; padding: 0; }
+.timeline li { position: relative; }
+.leg { font-size: 0.74rem; color: var(--muted); padding: 4px 0 4px 52px; border-left: 2px dashed var(--line); margin-left: 19px; }
+.stop { display: flex; align-items: center; gap: 12px; padding: 8px 0; text-decoration: none; color: inherit; }
+.stop-dot { width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 2px solid var(--line); font-size: 1.1rem; }
+.timeline li.done .stop-dot { background: var(--ok); border-color: var(--ok); color: #fff; font-weight: 800; }
+.timeline li.next .stop-dot { border-color: var(--gold-dark); box-shadow: 0 0 0 4px #fff3cf; }
+.stop-body { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 1px; }
+.timeline li.done strong { color: var(--muted); }
+.chip.tour-link { text-decoration: none; color: #fff; background: var(--tour); border-color: var(--tour); }
+.place-info h3 { margin-bottom: 2px; }
+.story p, .etiquette p { margin: 4px 0 10px; font-size: 0.9rem; }
+.etiquette { background: #fff6e5; border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; }
+.etiquette p { margin-bottom: 0; }
+
+/* ---------- Reviews ---------- */
+.stars { position: relative; display: inline-block; line-height: 1; letter-spacing: 1px; }
+.stars-bg { color: var(--line); }
+.stars-fg { position: absolute; left: 0; top: 0; overflow: hidden; white-space: nowrap; color: #f2b01e; }
+.stars-input { display: inline-flex; gap: 2px; }
+.stars-input button { background: none; border: 0; padding: 0 1px; color: var(--line); line-height: 1; transition: transform 0.1s; }
+.stars-input button.on { color: #f2b01e; }
+.stars-input button:active { transform: scale(1.2); }
+.review-form .review-overall { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.criterion { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.criterion > div { display: flex; flex-direction: column; min-width: 0; }
+.criterion strong { font-size: 0.88rem; }
+.review-form .field { margin-top: 12px; }
+.seg-mini { display: inline-flex; background: var(--line); border-radius: 10px; padding: 3px; gap: 3px; flex-shrink: 0; }
+.seg-mini button { border: 0; background: none; padding: 6px 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; }
+.seg-mini button.active { background: var(--card); color: var(--brand); box-shadow: var(--shadow); }
+.review-summary { display: flex; gap: 16px; align-items: center; margin-bottom: 8px; }
+.score-big { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 96px; }
+.score-big strong { font-size: 2.4rem; line-height: 1; color: var(--ink); }
+.criteria-bars { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.crit-bar { display: grid; grid-template-columns: 1fr 70px 28px; align-items: center; gap: 8px; font-size: 0.74rem; }
+.crit-bar.wide { grid-template-columns: 1.4fr 1fr 28px; padding: 5px 0; font-size: 0.82rem; }
+.crit-bar span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.crit-bar .bar { height: 7px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.crit-bar .bar > div { height: 100%; background: #f2b01e; border-radius: inherit; }
+.crit-bar.wide .bar > div { background: var(--brand); }
+.crit-bar.weak span, .crit-bar.weak b { color: var(--danger); }
+.crit-bar.weak .bar > div { background: var(--danger); }
+.crit-bar b { text-align: right; }
+.review-item { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.review-item p { margin: 2px 0 0; font-size: 0.88rem; }
+.review-head { display: flex; align-items: center; gap: 8px; }
+@media (max-width: 380px) {
+  .review-summary { flex-direction: column; align-items: stretch; }
+}
+
+/* ---------- Insights ---------- */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kpi { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 2px; box-shadow: var(--shadow); }
+.kpi-icon { font-size: 1.2rem; }
+.kpi strong { font-size: 1.6rem; line-height: 1.1; }
+.kpi span:last-child { font-size: 0.74rem; color: var(--muted); }
+.advice { background: #fffaf0; border-color: #f2dfb2; }
+.advice p { margin: 6px 0; font-size: 0.9rem; }
+.rank-row.as-button { width: 100%; background: none; border: 0; border-top: 1px solid var(--line); text-align: left; font: inherit; }
+.rank-row.as-button:first-of-type { border-top: 0; }
+.criteria-bars .crit-bar span { white-space: normal; line-height: 1.25; }

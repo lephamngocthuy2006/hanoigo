@@ -17,6 +17,8 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
 | Bản đồ | Toàn bộ địa điểm nhiệm vụ trên bản đồ thật, vị trí của bạn |
 | Sổ hành trình | Ảnh từ nhiệm vụ tự vào sổ; thêm / sửa / xoá kỷ niệm; 🔒 "Chỉ mình tôi" để ẩn với bạn bè |
 | Thẻ & Quà | Mở gói thẻ bằng Hanoi Coins, bộ sưu tập 15 thẻ, bảng xếp hạng XP (tất cả / bạn bè) |
+| Tour theo chủ đề | 3 tuyến tham quan: lộ trình trên bản đồ, thời lượng, chi phí, thời gian đi bộ giữa các điểm, thưởng hoàn thành |
+| Đánh giá & Thống kê | Chấm điểm 4 tiêu chí chất lượng dịch vụ + mức sẵn sàng giới thiệu; trang thống kê tự gợi ý điểm cần cải thiện |
 | Bạn bè | Tìm theo tên đăng nhập, gửi / đồng ý lời mời, xem Sổ hành trình của bạn, thả tim ❤️ |
 | Tôi | Level, XP, coins, streak, thống kê, đổi avatar / tên / giới thiệu |
 
@@ -33,6 +35,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
 2. Vào **SQL Editor → New query**, lần lượt dán và **Run** từng file theo thứ tự:
    1. [`supabase/schema.sql`](supabase/schema.sql) — bảng chính, nhiệm vụ, thẻ
    2. [`supabase/002_friends.sql`](supabase/002_friends.sql) — bạn bè, thả tim, chế độ riêng tư
+   3. [`supabase/003_tours_reviews.sql`](supabase/003_tours_reviews.sql) — tour theo chủ đề, thông tin điểm đến, đánh giá, thống kê, chế độ demo
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -78,6 +81,14 @@ Mở <http://localhost:5173>.
   - Câu đố: điền `quiz_question`, `quiz_options` (vd `["A","B","C","D"]`) và thêm đáp án vào bảng `quest_answers` (`correct_index` bắt đầu từ 0)
 - **Thêm thẻ:** bảng `cards` (`rarity`: common / rare / epic / legendary).
 - **Màu sắc:** biến CSS ở đầu file `src/styles.css`.
+
+## Chế độ demo (thuyết trình)
+
+Tài khoản demo check-in GPS được ở bất kỳ đâu. Bật trong SQL Editor:
+
+```sql
+update public.profiles set is_demo = true where username = 'ten_dang_nhap';
+```
 
 ## Lưu ý
 
