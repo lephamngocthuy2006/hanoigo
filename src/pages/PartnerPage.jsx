@@ -78,6 +78,7 @@ export default function PartnerPage() {
           <p>{partner.status === 'pending'
             ? 'Hồ sơ đối tác đang chờ quản trị viên duyệt. Bạn sẽ dùng được cổng đối tác ngay khi được duyệt.'
             : 'Hồ sơ đối tác chưa được duyệt. Hãy cập nhật thông tin và liên hệ quản trị viên.'}</p>
+          {partner.admin_note && <div className="admin-note">🛡️ <b>Ghi chú từ quản trị viên:</b> {partner.admin_note}</div>}
           <div className="row">
             <button className="btn" onClick={() => setEditOpen(true)}>✏️ Sửa hồ sơ</button>
             <button className="btn primary" onClick={reload}>↻ Kiểm tra lại</button>

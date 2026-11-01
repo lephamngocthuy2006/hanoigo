@@ -39,6 +39,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    2. [`supabase/002_friends.sql`](supabase/002_friends.sql) — bạn bè, thả tim, chế độ riêng tư
    3. [`supabase/003_tours_reviews.sql`](supabase/003_tours_reviews.sql) — tour theo chủ đề, thông tin điểm đến, đánh giá, thống kê, chế độ demo
    4. [`supabase/004_partners.sql`](supabase/004_partners.sql) — cổng đối tác, voucher, phản hồi đánh giá
+   5. [`supabase/005_admin.sql`](supabase/005_admin.sql) — trang quản trị
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -85,13 +86,19 @@ Mở <http://localhost:5173>.
 - **Thêm thẻ:** bảng `cards` (`rarity`: common / rare / epic / legendary).
 - **Màu sắc:** biến CSS ở đầu file `src/styles.css`.
 
-## Duyệt đối tác
+## Trang quản trị
 
-Doanh nghiệp đăng ký trong app (Tôi → Cổng đối tác). Quản trị viên duyệt ở Supabase → **Table Editor → partners**, đổi `status` thành `approved` (hoặc dùng lệnh SQL cuối file `004_partners.sql`).
+Cấp quyền admin cho tài khoản của bạn (chỉ cần 1 lần):
+
+```sql
+update public.profiles set is_admin = true where username = 'ten_dang_nhap';
+```
+
+Sau đó vào **Tôi → 🛡️ Trang quản trị** để: duyệt / từ chối / thu hồi đối tác (kèm lời nhắn), bật tắt chế độ demo cho người dùng, xoá đánh giá vi phạm.
 
 ## Chế độ demo (thuyết trình)
 
-Tài khoản demo check-in GPS được ở bất kỳ đâu. Bật trong SQL Editor:
+Tài khoản demo check-in GPS được ở bất kỳ đâu. Bật trong Trang quản trị → Người dùng, hoặc bằng SQL:
 
 ```sql
 update public.profiles set is_demo = true where username = 'ten_dang_nhap';

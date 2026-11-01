@@ -509,3 +509,18 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .partner-card > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .partner-card p { margin: 2px 0; }
 .partner-reply { margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: #fff3e2; font-size: 0.84rem; }
+
+/* ---------- Admin ---------- */
+.admin-hero { border-radius: 22px; padding: 20px; color: #fff; background: linear-gradient(135deg, #2b2f3a, #4a3550); }
+.admin-hero h1 { margin: 4px 0; }
+.admin-hero p { margin: 0; opacity: 0.88; font-size: 0.9rem; }
+.admin-partner { display: flex; flex-direction: column; gap: 8px; }
+.admin-partner p { margin: 0; }
+.admin-partner-head { display: flex; align-items: center; gap: 10px; }
+.admin-dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 0.84rem; }
+.admin-dl dt { color: var(--muted); font-weight: 600; }
+.admin-dl dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.tag.bad { background: #fdeceb; color: var(--danger); }
+.admin-note { background: #f3f0fa; border-radius: 12px; padding: 10px 12px; font-size: 0.88rem; text-align: left; margin: 8px 0; }
+.search-input { width: 100%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); font-size: 1rem; }
+.segmented .badge.static { margin-left: 4px; }

@@ -15,6 +15,7 @@ import ToursPage from './pages/ToursPage'
 import TourDetail from './pages/TourDetail'
 import InsightsPage from './pages/InsightsPage'
 import PartnerPage from './pages/PartnerPage'
+import AdminPage from './pages/AdminPage'
 
 export default function App() {
   const { session, loading } = useAuth()
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/tour/:id" element={<TourDetail />} />
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/partner" element={<PartnerPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/u/:username" element={<FriendProfile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

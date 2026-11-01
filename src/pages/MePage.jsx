@@ -65,6 +65,7 @@ export default function MePage() {
         <button onClick={() => navigate('/tours')}>🧭 Tour theo chủ đề</button>
         <button onClick={() => navigate('/insights')}>📊 Thống kê chất lượng trải nghiệm</button>
         <button onClick={() => navigate('/partner')}>🏪 Cổng đối tác (dành cho doanh nghiệp)</button>
+        {profile.is_admin && <button onClick={() => navigate('/admin')}>🛡️ Trang quản trị</button>}
         <button onClick={() => setPwOpen(true)}>🔒 Đổi mật khẩu</button>
         <button className="danger-text" onClick={signOut}>↪ Đăng xuất</button>
       </section>
