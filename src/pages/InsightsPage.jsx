@@ -72,7 +72,8 @@ export default function InsightsPage() {
         ))}
       </div>
 
-      <section className="card">
+      <div className="dash-grid">
+      <section className="card wide">
         <div className="section-head"><h3><Emoji e="📈" play="static" /> Mức độ hài lòng chung</h3><span className="muted small">{s.count} đánh giá</span></div>
         {s.count === 0 ? <p className="muted small">Chưa có đánh giá nào.</p> : (
           <div className="review-summary">
@@ -137,7 +138,7 @@ export default function InsightsPage() {
       )}
 
       {reviews.some((r) => r.comment) && (
-        <section className="card">
+        <section className="card wide">
           <div className="section-head"><h3><Emoji e="💬" play="static" /> Nhận xét gần đây</h3></div>
           {reviews.filter((r) => r.comment).slice(0, 8).map((r) => (
             <div key={r.id} className="review-item">
@@ -154,6 +155,7 @@ export default function InsightsPage() {
           ))}
         </section>
       )}
+      </div>
     </div>
   )
 }

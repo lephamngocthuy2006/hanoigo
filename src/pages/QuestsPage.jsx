@@ -104,6 +104,8 @@ export default function QuestsPage() {
         </section>
       )}
 
+      <div className="two-col quests-cols">
+      <div className="col side sticky">
       <section className={`streak-banner${doneToday ? ' lit' : ''}`}>
         <span className="streak-fire"><Emoji e="🔥" play="loop" /></span>
         <div>
@@ -121,7 +123,9 @@ export default function QuestsPage() {
           {daily.map((q) => <QuestRow key={q.id} quest={q} done={isDone(q)} />)}
         </section>
       )}
+      </div>
 
+      <div className="col">
       <section className="card">
         <div className="section-head">
           <h3><Emoji e="🧭" play="static" /> Tất cả nhiệm vụ</h3>
@@ -133,8 +137,12 @@ export default function QuestsPage() {
           ))}
         </div>
         {list.length === 0 && <p className="muted center">Không có nhiệm vụ nào ở mục này <Emoji e="🎉" play="static" /></p>}
-        {list.map(({ q, d }) => <QuestRow key={q.id} quest={q} done={isDone(q)} distance={d} />)}
+        <div className="quest-grid">
+          {list.map(({ q, d }) => <QuestRow key={q.id} quest={q} done={isDone(q)} distance={d} />)}
+        </div>
       </section>
+      </div>
+      </div>
     </div>
   )
 }

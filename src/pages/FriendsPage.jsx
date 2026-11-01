@@ -86,6 +86,8 @@ export default function FriendsPage() {
         <p>Kết bạn để xem Sổ hành trình, thả tim kỷ niệm và đua top cùng nhau.</p>
       </section>
 
+      <div className="two-col friends-cols">
+      <div className="col">
       <section className="card">
         <label className="field" style={{ marginBottom: 6 }}>
           <span>Tìm theo tên đăng nhập</span>
@@ -118,7 +120,8 @@ export default function FriendsPage() {
           ))}
         </section>
       )}
-
+      </div>
+      <div className="col">
       <section className="card">
         <div className="section-head"><h3><Emoji e="👥" play="static" /> Bạn bè</h3><span className="muted small">{friends.length} người</span></div>
         {!loaded ? <div className="spinner" /> : friends.length === 0 ? (
@@ -142,6 +145,8 @@ export default function FriendsPage() {
           ))}
         </section>
       )}
+      </div>
+      </div>
     </div>
   )
 }

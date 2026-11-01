@@ -83,20 +83,9 @@ export default function TourDetail() {
         <div className="span2"><span><Emoji e="👥" play="static" /> Phù hợp với</span><strong>{tour.audience}</strong></div>
       </div>
 
+      <div className="two-col detail-cols">
+      <div className="col">
       <p>{tour.description}</p>
-
-      {bounds && (
-        <div className="mini-map tall">
-          <MapContainer bounds={bounds} boundsOptions={{ padding: [36, 36] }} scrollWheelZoom={false} style={{ height: '100%' }}>
-            <BaseMap />
-            <Polyline positions={route} pathOptions={{ color: tour.color, weight: 4, dashArray: '8 8' }} />
-            {located.map((s) => {
-              mapNo += 1
-              return <Marker key={s.quest_id} position={[s.quest.lat, s.quest.lng]} icon={pinIcon(isDone(s.quest) ? '✓' : String(mapNo), isDone(s.quest) ? 'done' : 'num')} />
-            })}
-          </MapContainer>
-        </div>
-      )}
 
       <section className="card">
         <div className="section-head"><h3><Emoji e="🗺️" play="static" /> Lộ trình</h3><span className="muted small">{stops.length} điểm dừng</span></div>
@@ -133,8 +122,24 @@ export default function TourDetail() {
           </Link>
         )}
       </section>
+      </div>
+      <div className="col sticky">
+      {bounds && (
+        <div className="mini-map tall">
+          <MapContainer bounds={bounds} boundsOptions={{ padding: [36, 36] }} scrollWheelZoom={false} style={{ height: '100%' }}>
+            <BaseMap />
+            <Polyline positions={route} pathOptions={{ color: tour.color, weight: 4, dashArray: '8 8' }} />
+            {located.map((s) => {
+              mapNo += 1
+              return <Marker key={s.quest_id} position={[s.quest.lat, s.quest.lng]} icon={pinIcon(isDone(s.quest) ? '✓' : String(mapNo), isDone(s.quest) ? 'done' : 'num')} />
+            })}
+          </MapContainer>
+        </div>
+      )}
 
       <ReviewSummary target={{ tourId: tour.id }} title={tour.title} canReview={isClaimed} openSignal={reviewSignal} />
+      </div>
+      </div>
 
       <Modal open={!!reward} onClose={() => setReward(null)}>
         <div className="celebrate">

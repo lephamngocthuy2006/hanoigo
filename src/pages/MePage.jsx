@@ -31,6 +31,8 @@ export default function MePage() {
 
   return (
     <div className="page">
+      <div className="two-col me-cols">
+      <div className="col">
       <section className="profile-hero">
         <div className="profile-avatar"><Emoji e={profile.avatar} play="loop" /></div>
         <h1>{profile.display_name || profile.username}</h1>
@@ -49,7 +51,8 @@ export default function MePage() {
           <div className="muted small">{lv.current} / {lv.need} XP · còn {lv.need - lv.current} XP lên level</div>
         </div>
       </section>
-
+      </div>
+      <div className="col">
       <div className="stat-grid">
         <div className="stat"><strong><Emoji e="🪙" play="once" /> {profile.coins}</strong><span>Hanoi Coins</span></div>
         <div className="stat"><strong><Emoji e="⭐" play="once" /> {profile.xp}</strong><span>Tổng XP</span></div>
@@ -71,6 +74,8 @@ export default function MePage() {
         <button className="danger-text" onClick={signOut}>↪ Đăng xuất</button>
       </section>
       <p className="muted small center">Tham gia từ {new Date(profile.created_at).toLocaleDateString('vi-VN')}</p>
+      </div>
+      </div>
 
       <EditProfile open={editOpen} onClose={() => setEditOpen(false)} profile={profile}
         onSaved={() => { setEditOpen(false); refreshProfile(); toast('Đã cập nhật hồ sơ', 'success') }} />

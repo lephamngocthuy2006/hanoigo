@@ -111,6 +111,8 @@ function QuestDetailInner({ id }) {
     <div className="page">
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
 
+      <div className="two-col detail-cols">
+      <div className="col">
       <div className="detail-head">
         <span className="detail-emoji"><Emoji e={quest.emoji} play="loop" /></span>
         <div>
@@ -162,19 +164,6 @@ function QuestDetailInner({ id }) {
           {quest.etiquette && <div className="etiquette"><b><Emoji e="🙏" play="static" /> Lưu ý văn hoá</b><p>{quest.etiquette}</p></div>}
           <p className="muted small">Thông tin mang tính tham khảo, có thể thay đổi theo thời điểm.</p>
         </section>
-      )}
-
-      {quest.lat != null && (
-        <div className="mini-map">
-          <MapContainer center={[quest.lat, quest.lng]} zoom={16} scrollWheelZoom={false} style={{ height: '100%' }}>
-            <BaseMap />
-            <Marker position={[quest.lat, quest.lng]} icon={pinIcon(quest.emoji)} />
-            {needsLocation && <Circle center={[quest.lat, quest.lng]} radius={quest.radius_m} pathOptions={{ color: '#8f2d3a' }} />}
-            {pos && <Marker position={[pos.lat, pos.lng]} icon={pinIcon('🧍', 'me')} />}
-          </MapContainer>
-          <a className="map-link" target="_blank" rel="noreferrer"
-            href={`https://www.google.com/maps/dir/?api=1&destination=${quest.lat},${quest.lng}`}>Chỉ đường ↗</a>
-        </div>
       )}
 
       {done ? (
@@ -232,10 +221,26 @@ function QuestDetailInner({ id }) {
           </button>
         </section>
       )}
+      </div>
+      <div className="col sticky">
+      {quest.lat != null && (
+        <div className="mini-map">
+          <MapContainer center={[quest.lat, quest.lng]} zoom={16} scrollWheelZoom={false} style={{ height: '100%' }}>
+            <BaseMap />
+            <Marker position={[quest.lat, quest.lng]} icon={pinIcon(quest.emoji)} />
+            {needsLocation && <Circle center={[quest.lat, quest.lng]} radius={quest.radius_m} pathOptions={{ color: '#8f2d3a' }} />}
+            {pos && <Marker position={[pos.lat, pos.lng]} icon={pinIcon('🧍', 'me')} />}
+          </MapContainer>
+          <a className="map-link" target="_blank" rel="noreferrer"
+            href={`https://www.google.com/maps/dir/?api=1&destination=${quest.lat},${quest.lng}`}>Chỉ đường ↗</a>
+        </div>
+      )}
 
       {quest.kind !== 'quiz' && (
         <ReviewSummary target={{ questId: quest.id }} title={quest.title} canReview={done} openSignal={reviewSignal} />
       )}
+      </div>
+      </div>
 
       <Modal open={!!reward} onClose={() => navigate('/')}>
         <div className="celebrate">

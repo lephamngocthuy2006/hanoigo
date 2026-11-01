@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
-import { liveStreak } from '../lib/game'
+import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
 import Emoji, { emojify } from './Emoji'
 
@@ -13,13 +13,63 @@ const TABS = [
   { to: '/me', label: 'Tôi', icon: null },
 ]
 
+// Menu bên trái trên máy tính: thứ tự ưu tiên khác điện thoại + thêm các mục phụ
+const SIDE_MAIN = [TABS[2], TABS[1], TABS[0], TABS[3]]
+const SIDE_MORE = [
+  { to: '/tours', label: 'Tour theo chủ đề', icon: '🧭' },
+  { to: '/friends', label: 'Bạn bè', icon: '🤝', badge: true },
+  { to: '/insights', label: 'Thống kê trải nghiệm', icon: '📊' },
+  { to: '/partner', label: 'Cổng đối tác', icon: '🏪' },
+]
+
+function SideLink({ to, label, icon, end, badge }) {
+  return (
+    <NavLink to={to} end={end} className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
+      {({ isActive }) => (
+        <>
+          <Emoji e={icon} play={isActive ? 'loop' : 'hover'} />
+          <span>{label}</span>
+          {badge > 0 && <span className="badge static">{badge}</span>}
+        </>
+      )}
+    </NavLink>
+  )
+}
+
 export default function Layout() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
   const friendships = useFriendships(user.id)
   const pending = friendships.incoming.length
+  const lv = levelInfo(profile?.xp || 0)
   return (
     <div className="app">
+      <aside className="sidebar">
+        <button className="brand" onClick={() => navigate('/')}>
+          <Logo size={42} />
+          <span>
+            <span className="brand-name">HANOI GO!</span>
+            <span className="brand-sub">Hà Nội trong tầm tay</span>
+          </span>
+        </button>
+        <nav className="side-nav">
+          {SIDE_MAIN.map((t) => <SideLink key={t.to} {...t} />)}
+          <div className="side-sep">Khám phá thêm</div>
+          {SIDE_MORE.map((t) => <SideLink key={t.to} {...t} badge={t.badge ? pending : 0} />)}
+          {profile?.is_admin && <SideLink to="/admin" label="Trang quản trị" icon="🛡️" />}
+        </nav>
+        <button className="side-profile" onClick={() => navigate('/me')}>
+          <span className="side-avatar"><Emoji e={profile?.avatar || '🐢'} play="hover" /></span>
+          <span className="side-profile-body">
+            <strong>{profile?.display_name || profile?.username}</strong>
+            <span className="muted small">Lv {lv.level} · {levelTitle(lv.level)}</span>
+            <span className="side-stats">
+              <span><Emoji e="🔥" play={liveStreak(profile) ? 'loop' : 'static'} /> {liveStreak(profile)}</span>
+              <span><Emoji e="🪙" play="hover" /> {profile?.coins ?? '—'}</span>
+            </span>
+          </span>
+        </button>
+      </aside>
       <header className="topbar">
         <button className="brand" onClick={() => navigate('/')}>
           <Logo size={36} />

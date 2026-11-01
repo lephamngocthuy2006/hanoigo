@@ -159,7 +159,8 @@ function Overview({ quests, reviews, goTo }) {
         <div className="kpi"><span className="kpi-icon"><Emoji e="⭐" play="once" /></span><strong>{fmtScore(s.overall)}</strong><span>Điểm đánh giá ({s.count} lượt)</span></div>
       </div>
 
-      <section className="card">
+      <div className="dash-grid">
+      <section className="card wide">
         <div className="section-head"><h3><Emoji e="📈" play="static" /> Lượt tham gia 7 ngày qua</h3><span className="muted small">{week} lượt</span></div>
         <div className="bar-chart">
           {stats.daily.map((d) => (
@@ -196,6 +197,7 @@ function Overview({ quests, reviews, goTo }) {
           </div>
         ))}
       </section>
+      </div>
     </>
   )
 }
@@ -364,7 +366,7 @@ function VouchersTab() {
           <div className="empty-emoji"><Emoji e="🎟️" play="loop" /></div>
           <p>Ưu đãi giúp chuyển khách khám phá thành khách hàng: giảm giá đồ uống, quà tặng, vé tham quan…</p>
         </div>
-      ) : vouchers.map((v) => (
+      ) : <div className="voucher-list">{vouchers.map((v) => (
         <button key={v.id} className="voucher-card as-button" onClick={() => open(v)}>
           <div className="voucher-left"><Emoji e="🎟️" play="once" /></div>
           <div className="voucher-body">
@@ -373,7 +375,7 @@ function VouchersTab() {
             <span className="small">Đã đổi {countOf(v.id)} · Đã dùng {countOf(v.id, 'used')} · {emojify(v.active ? '🟢 Đang mở' : '⚪ Đã tắt')}</span>
           </div>
         </button>
-      ))}
+      ))}</div>}
 
       <Modal open={!!editing} onClose={() => setEditing(null)} title={editing?.id ? 'Sửa ưu đãi' : 'Tạo ưu đãi'}>
         {editing && (
@@ -427,9 +429,9 @@ function FeedbackTab({ reviews, reload }) {
         <button className={`chip${filter === 'done' ? ' active' : ''}`} onClick={() => setFilter('done')}>Đã xử lý</button>
         <button className={`chip${filter === 'all' ? ' active' : ''}`} onClick={() => setFilter('all')}>Tất cả</button>
       </div>
-      {list.length === 0 ? <p className="muted small center">Không có phản hồi nào ở mục này.</p> : list.map((r) => (
-        <FeedbackCard key={r.id} review={r} onSaved={reload} />
-      ))}
+      {list.length === 0 ? <p className="muted small center">Không có phản hồi nào ở mục này.</p> : (
+        <div className="feedback-list">{list.map((r) => <FeedbackCard key={r.id} review={r} onSaved={reload} />)}</div>
+      )}
     </>
   )
 }

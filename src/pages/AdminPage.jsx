@@ -95,7 +95,7 @@ function PartnersTab({ onPendingCount }) {
       </div>
 
       {list.length === 0 && <p className="muted small center">Không có hồ sơ nào ở mục này.</p>}
-      {list.map((p) => (
+      <div className="admin-partner-list">{list.map((p) => (
         <section key={p.id} className="card admin-partner">
           <div className="admin-partner-head">
             <span className="partner-emoji small"><Emoji e={p.emoji} play="loop" /></span>
@@ -121,7 +121,7 @@ function PartnersTab({ onPendingCount }) {
             {p.status !== 'rejected' && <button className="btn danger small" onClick={() => open(p, 'rejected')}>{p.status === 'approved' ? 'Thu hồi' : '✕ Từ chối'}</button>}
           </div>
         </section>
-      ))}
+      ))}</div>
 
       <Modal open={!!deciding} onClose={() => setDeciding(null)}
         title={deciding?.status === 'approved' ? 'Duyệt đối tác' : deciding?.partner.status === 'approved' ? 'Thu hồi quyền đối tác' : 'Từ chối hồ sơ'}>

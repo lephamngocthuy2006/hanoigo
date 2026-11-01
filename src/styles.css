@@ -569,3 +569,162 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .segmented button { white-space: nowrap; font-size: 0.88rem; padding: 9px 4px; }
 .map-pin img { width: 22px; height: 22px; display: block; }
 .map-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; font-size: 0.82rem; }
+
+/* =====================================================================
+   DESKTOP / TABLET
+   ===================================================================== */
+.sidebar { display: none; }
+
+/* Máy tính bảng: nới cột nội dung */
+@media (min-width: 700px) and (max-width: 1023px) {
+  .app { max-width: 720px; }
+  .bottomnav { max-width: 720px; }
+  .page { padding: 20px 24px; }
+  .journal-grid { grid-template-columns: repeat(3, 1fr); }
+  .tour-card { flex-basis: 46%; }
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  body { background: var(--bg); }
+  .app {
+    max-width: none; margin: 0; min-height: 100dvh; box-shadow: none; background: var(--bg);
+    display: grid; grid-template-columns: 264px minmax(0, 1fr);
+  }
+  .topbar, .bottomnav { display: none; }
+  .content { padding-bottom: 0; min-width: 0; }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    display: flex; flex-direction: column; gap: 18px;
+    position: sticky; top: 0; height: 100dvh; padding: 22px 16px;
+    background: var(--paper); border-right: 1px solid var(--line); overflow-y: auto;
+  }
+  .sidebar .brand { padding: 0 8px 6px; }
+  .side-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .side-link {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px;
+    text-decoration: none; color: var(--ink); font-weight: 600; font-size: 0.95rem; transition: background 0.15s;
+  }
+  .side-link .emo { width: 1.6em !important; height: 1.6em !important; }
+  .side-link:hover { background: var(--card); }
+  .side-link.active { background: var(--brand); color: #fff; box-shadow: 0 6px 16px rgba(143, 45, 58, 0.25); }
+  .side-link .badge.static { margin-left: auto; }
+  .side-sep { margin: 14px 12px 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .side-profile {
+    display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 16px; text-align: left;
+    background: var(--card); border: 1px solid var(--line); font: inherit; color: inherit; box-shadow: var(--shadow);
+  }
+  .side-avatar { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--gold); display: grid; place-items: center; font-size: 1.6rem; flex-shrink: 0; line-height: 0; }
+  .side-profile-body { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+  .side-profile-body strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .side-stats { display: flex; gap: 12px; font-size: 0.82rem; font-weight: 700; margin-top: 2px; }
+  .side-stats > span { display: inline-flex; align-items: center; gap: 3px; }
+
+  /* ---- Nội dung chung ---- */
+  .page { max-width: 1180px; margin: 0 auto; padding: 32px 40px 48px; gap: 18px; }
+  .page.narrow { max-width: 760px; }
+  h1 { font-size: 1.9rem; }
+  .card { padding: 20px; }
+  .modal { max-width: 560px; border-radius: 24px; }
+  .modal-backdrop { align-items: center; }
+  .toasts { top: 24px; }
+  .back { display: none; }
+
+  /* lưới tiện dụng */
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .kpi { padding: 18px; }
+  .kpi strong { font-size: 2rem; }
+  .info-grid { grid-template-columns: repeat(4, 1fr); }
+  .info-grid .span2 { grid-column: span 2; }
+  .journal-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+  .stat-grid { grid-template-columns: repeat(6, 1fr); }
+  .tour-scroller { margin: 0; padding: 4px 0 8px; display: grid; grid-template-columns: repeat(3, 1fr); overflow: visible; }
+  .tour-card { flex: none; }
+  .hello h1 { font-size: 2rem; }
+  .hero-quest { padding: 28px; gap: 24px; }
+  .hero-emoji { width: 110px; height: 110px; font-size: 4rem; border-radius: 26px; }
+  .hero-body h2 { font-size: 1.6rem; }
+
+  /* bố cục 2 cột dùng lại ở nhiều trang */
+  .two-col { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  .two-col > .col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .two-col > .col.sticky { position: sticky; top: 24px; }
+  .dash-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+  .dash-grid > .wide { grid-column: 1 / -1; }
+}
+
+@media (min-width: 1400px) {
+  .app { grid-template-columns: 288px minmax(0, 1fr); }
+  .journal-grid { grid-template-columns: repeat(5, 1fr); }
+}
+/* 2 cột: trên điện thoại xếp dọc như cũ */
+.two-col, .two-col > .col, .dash-grid { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.quest-grid .quest-row:first-child { border-top: 0; }
+@media (min-width: 1024px) {
+  .two-col { display: grid; }
+  .dash-grid { display: grid; }
+  .quests-cols { grid-template-columns: minmax(0, 1fr) 340px; }
+  .quests-cols > .col.side { order: 2; }
+  .quest-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
+  .quest-grid .quest-row:nth-child(2) { border-top: 0; }
+}
+/* ---- Bản đồ chia đôi trên máy tính ---- */
+.map-list { display: none; }
+@media (min-width: 1024px) {
+  .map-layout { display: grid; grid-template-columns: 380px minmax(0, 1fr); height: 100dvh; }
+  .map-list { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--line); background: var(--paper); }
+  .map-list-head { padding: 24px 20px 12px; border-bottom: 1px solid var(--line); }
+  .map-list-head h2 { display: flex; align-items: center; gap: 8px; font-size: 1.4rem; }
+  .map-list-head p { margin: 4px 0 10px; }
+  .map-list-items { overflow-y: auto; padding: 8px 12px 20px; display: flex; flex-direction: column; gap: 4px; }
+  .map-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; border: 1.5px solid transparent; background: none; text-align: left; font: inherit; color: inherit; transition: background 0.15s, border-color 0.15s; }
+  .map-item:hover { background: var(--card); }
+  .map-item.active { background: var(--card); border-color: var(--brand); box-shadow: var(--shadow); }
+  .map-item.flash { animation: flash 1.2s ease-out; }
+  .map-item.done .quest-title { color: var(--muted); }
+  .map-page { height: 100dvh; }
+  .map-page .map-overlay.top { display: none; }
+}
+@keyframes flash { 0%, 40% { background: #fff3cf; border-color: var(--gold-dark); } }
+/* ---- Dashboard: đối tác, quản trị, thống kê ---- */
+.feedback-list, .admin-partner-list { display: flex; flex-direction: column; gap: 14px; }
+@media (min-width: 1024px) {
+  .partner-hero, .admin-hero, .insights-hero, .tours-hero, .friends-hero, .event-banner { padding: 28px 32px; }
+  .partner-hero.compact { align-items: center; }
+  .tabs-scroll .chip { padding: 9px 16px; font-size: 0.9rem; }
+  .bar-chart { height: 220px; gap: 16px; }
+  .bar-fill { max-width: 56px; }
+  .feedback-list, .admin-partner-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+  .voucher-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+  .kpi-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .criteria-bars .crit-bar { grid-template-columns: 1fr 140px 32px; font-size: 0.86rem; }
+  .review-summary { gap: 32px; }
+  .score-big strong { font-size: 3.2rem; }
+}
+@media (min-width: 1024px) {
+  .detail-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); }
+  .detail-cols .mini-map { height: 340px; }
+  .detail-cols .mini-map.tall { height: 420px; }
+  .detail-head h1 { font-size: 2.1rem; }
+  .detail-emoji { width: 96px; height: 96px; font-size: 3.4rem; }
+  .tour-hero { padding: 32px 36px; }
+  .tour-hero h1 { font-size: 2.4rem; }
+  .photo-preview img { max-height: 460px; }
+}
+@media (min-width: 1024px) {
+  .me-cols { grid-template-columns: 360px minmax(0, 1fr); }
+  .me-cols .profile-hero { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 20px; box-shadow: var(--shadow); }
+  .me-cols .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .friends-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .event-banner + .segmented { max-width: 520px; }
+  .pack-card { padding: 24px; }
+
+  /* Màn đăng nhập: chia đôi màn hình */
+  .auth-wrap { max-width: 1040px; flex-direction: row; align-items: center; gap: 64px; padding: 48px; }
+  .auth-hero { flex: 1; align-items: flex-start; text-align: left; gap: 12px; }
+  .auth-hero p { font-size: 1.15rem; max-width: 420px; }
+  .brand-name.big { font-size: 3.2rem; }
+  .auth-card { flex: 0 0 420px; padding: 28px; }
+}
