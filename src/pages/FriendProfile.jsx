@@ -9,7 +9,7 @@ import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import LikeButton from '../components/LikeButton'
 import Modal from '../components/Modal'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 export default function FriendProfile() {
   const { username } = useParams()
@@ -97,7 +97,7 @@ export default function FriendProfile() {
           <div className="entry-view">
             {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
             <h3>{viewing.title || 'Không tiêu đề'}</h3>
-            <div className="muted small">{fmtDate(viewing.created_at)}{viewing.place_name && ` · 📍 ${viewing.place_name}`}{viewing.quest_id && ' · 🏅 Nhiệm vụ'}</div>
+            <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && ' · 🏅 Nhiệm vụ')}</div>
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
             <div className="row">
               <LikeButton entryId={viewing.id} userId={user.id} like={likes[viewing.id]} onChange={setLike(viewing.id)} />

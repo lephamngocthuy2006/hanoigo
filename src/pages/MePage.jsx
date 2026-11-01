@@ -35,9 +35,9 @@ export default function MePage() {
         <div className="profile-avatar"><Emoji e={profile.avatar} play="loop" /></div>
         <h1>{profile.display_name || profile.username}</h1>
         <div className="muted">@{profile.username}</div>
-        {profile.is_demo && <span className="tag ok" title="Check-in được ở bất kỳ đâu khi thuyết trình">🎤 Chế độ demo</span>}
+        {profile.is_demo && <span className="tag ok" title="Check-in được ở bất kỳ đâu khi thuyết trình"><Emoji e="🎤" play="static" /> Chế độ demo</span>}
         {profile.bio && <p className="bio">{profile.bio}</p>}
-        <button className="ghost small" onClick={() => setEditOpen(true)}>✏️ Chỉnh sửa hồ sơ</button>
+        <button className="ghost small" onClick={() => setEditOpen(true)}><Emoji e="✏️" play="static" /> Chỉnh sửa hồ sơ</button>
       </section>
 
       <section className="card level-card">
@@ -61,13 +61,13 @@ export default function MePage() {
 
       <section className="card menu">
         <button onClick={() => navigate('/friends')}>
-          👥 Bạn bè ({friends.length}){incoming.length > 0 && <span className="badge static">{incoming.length} lời mời</span>}
+          <Emoji e="👥" play="static" /> Bạn bè ({friends.length}){incoming.length > 0 && <span className="badge static">{incoming.length} lời mời</span>}
         </button>
-        <button onClick={() => navigate('/tours')}>🧭 Tour theo chủ đề</button>
-        <button onClick={() => navigate('/insights')}>📊 Thống kê chất lượng trải nghiệm</button>
-        <button onClick={() => navigate('/partner')}>🏪 Cổng đối tác (dành cho doanh nghiệp)</button>
-        {profile.is_admin && <button onClick={() => navigate('/admin')}>🛡️ Trang quản trị</button>}
-        <button onClick={() => setPwOpen(true)}>🔒 Đổi mật khẩu</button>
+        <button onClick={() => navigate('/tours')}><Emoji e="🧭" play="static" /> Tour theo chủ đề</button>
+        <button onClick={() => navigate('/insights')}><Emoji e="📊" play="static" /> Thống kê chất lượng trải nghiệm</button>
+        <button onClick={() => navigate('/partner')}><Emoji e="🏪" play="static" /> Cổng đối tác (dành cho doanh nghiệp)</button>
+        {profile.is_admin && <button onClick={() => navigate('/admin')}><Emoji e="🛡️" play="static" /> Trang quản trị</button>}
+        <button onClick={() => setPwOpen(true)}><Emoji e="🔒" play="static" /> Đổi mật khẩu</button>
         <button className="danger-text" onClick={signOut}>↪ Đăng xuất</button>
       </section>
       <p className="muted small center">Tham gia từ {new Date(profile.created_at).toLocaleDateString('vi-VN')}</p>

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useState } from 'react'
+import { emojify } from '../components/Emoji'
 
 const ToastContext = createContext(() => {})
 
@@ -14,7 +15,7 @@ export function ToastProvider({ children }) {
       {children}
       <div className="toasts" role="status" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type}`}>{t.text}</div>
+          <div key={t.id} className={`toast toast-${t.type}`}>{emojify(t.text)}</div>
         ))}
       </div>
     </ToastContext.Provider>

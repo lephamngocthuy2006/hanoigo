@@ -114,3 +114,27 @@ export default function Emoji({ e, size = '1.2em', play = 'loop', label, classNa
     </span>
   )
 }
+
+// Ký tự ExtPict nhưng dùng làm ký hiệu giao diện (mũi tên, sao chấm điểm…) → giữ dạng chữ
+const KEEP_AS_TEXT = new Set(['↗', '↪', '↻', '←', '→', '★', '☆', '©', '®', '™', '↔', '↕'])
+const EMOJI_RE = /\p{Extended_Pictographic}️?(?:‍\p{Extended_Pictographic}️?)*/gu
+
+/**
+ * Chuyển chuỗi có emoji thành mảng [chữ, <Emoji/>, chữ…] để emoji trong câu
+ * cũng dùng bộ Noto đồng bộ. Giá trị không phải chuỗi được trả lại nguyên vẹn.
+ */
+export function emojify(value, play = 'static') {
+  if (typeof value !== 'string' || !EMOJI_RE.test(value)) return value
+  EMOJI_RE.lastIndex = 0
+  const out = []
+  let last = 0
+  for (const m of value.matchAll(EMOJI_RE)) {
+    if (KEEP_AS_TEXT.has(m[0])) continue
+    if (m.index > last) out.push(value.slice(last, m.index))
+    out.push(<Emoji key={m.index} e={m[0]} play={play} className="inline" />)
+    last = m.index + m[0].length
+  }
+  if (last === 0) return value
+  if (last < value.length) out.push(value.slice(last))
+  return out
+}

@@ -8,7 +8,7 @@ import { useToast } from '../context/ToastContext'
 import QuestRow from '../components/QuestRow'
 import TourCard from '../components/TourCard'
 import { tourProgress, useTours } from '../lib/tours'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 const FILTERS = [
   { id: 'all', label: 'Tất cả' },
@@ -68,7 +68,7 @@ export default function QuestsPage() {
       <section className="hello">
         <div>
           <div className="eyebrow">Xin chào</div>
-          <h1>{profile?.display_name || profile?.username} {profile?.avatar}</h1>
+          <h1>{profile?.display_name || profile?.username} {emojify(profile?.avatar)}</h1>
         </div>
         <div className="progress-chip">{completedCount}/{total} nhiệm vụ</div>
       </section>
@@ -77,14 +77,14 @@ export default function QuestsPage() {
         <Link to={`/quest/${featured.id}`} className="hero-quest">
           <div className="hero-emoji"><Emoji e={featured.emoji} play="loop" /></div>
           <div className="hero-body">
-            <div className="eyebrow light">{KIND[featured.kind].label} gợi ý</div>
+            <div className="eyebrow light">{emojify(KIND[featured.kind].label)} gợi ý</div>
             <h2>{featured.title}</h2>
             <p>{featured.description}</p>
             <div className="hero-rewards">
-              <span>⭐ +{featured.xp_reward} XP</span>
-              <span>🪙 +{featured.coin_reward}</span>
+              <span><Emoji e="⭐" play="static" /> +{featured.xp_reward} XP</span>
+              <span><Emoji e="🪙" play="static" /> +{featured.coin_reward}</span>
             </div>
-            <span className="btn gold">{featured.kind === 'photo' ? '📷 Chụp ngay' : '📍 Check-in ngay'}</span>
+            <span className="btn gold">{emojify(featured.kind === 'photo' ? '📷 Chụp ngay' : '📍 Check-in ngay')}</span>
           </div>
         </Link>
       )}
@@ -92,7 +92,7 @@ export default function QuestsPage() {
       {tours.length > 0 && (
         <section>
           <div className="section-head">
-            <h3>🧭 Tour theo chủ đề</h3>
+            <h3><Emoji e="🧭" play="static" /> Tour theo chủ đề</h3>
             <Link to="/tours" className="ghost small">Xem tất cả</Link>
           </div>
           <div className="tour-scroller">
@@ -115,7 +115,7 @@ export default function QuestsPage() {
       {daily.length > 0 && (
         <section className="card">
           <div className="section-head">
-            <h3>🌤️ Nhiệm vụ hôm nay</h3>
+            <h3><Emoji e="🌤️" play="static" /> Nhiệm vụ hôm nay</h3>
             <span className="muted small">Làm mới mỗi ngày</span>
           </div>
           {daily.map((q) => <QuestRow key={q.id} quest={q} done={isDone(q)} />)}
@@ -124,15 +124,15 @@ export default function QuestsPage() {
 
       <section className="card">
         <div className="section-head">
-          <h3>🧭 Tất cả nhiệm vụ</h3>
-          <button className="ghost small" onClick={locate} disabled={locating}>{locating ? 'Đang định vị…' : pos ? '📍 Cập nhật' : '📍 Gần tôi'}</button>
+          <h3><Emoji e="🧭" play="static" /> Tất cả nhiệm vụ</h3>
+          <button className="ghost small" onClick={locate} disabled={locating}>{emojify(locating ? 'Đang định vị…' : pos ? '📍 Cập nhật' : '📍 Gần tôi')}</button>
         </div>
         <div className="chips">
           {FILTERS.map((f) => (
-            <button key={f.id} className={`chip${filter === f.id ? ' active' : ''}`} onClick={() => setFilter(f.id)}>{f.label}</button>
+            <button key={f.id} className={`chip${filter === f.id ? ' active' : ''}`} onClick={() => setFilter(f.id)}>{emojify(f.label)}</button>
           ))}
         </div>
-        {list.length === 0 && <p className="muted center">Không có nhiệm vụ nào ở mục này 🎉</p>}
+        {list.length === 0 && <p className="muted center">Không có nhiệm vụ nào ở mục này <Emoji e="🎉" play="static" /></p>}
         {list.map(({ q, d }) => <QuestRow key={q.id} quest={q} done={isDone(q)} distance={d} />)}
       </section>
     </div>

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import Modal from './Modal'
 import Stars from './Stars'
+import Emoji, { emojify } from './Emoji'
 
 const EMPTY = { overall: 0, attraction: 0, information: 0, facilities: 0, value: 0, recommend: true, comment: '' }
 const OVERALL_TEXT = ['', 'Rất tệ', 'Chưa tốt', 'Bình thường', 'Tốt', 'Tuyệt vời!']
@@ -56,7 +57,7 @@ export default function ReviewForm({ open, onClose, target, title, existing, onS
         {CRITERIA.map((c) => (
           <div key={c.key} className="criterion">
             <div>
-              <strong>{c.label}</strong>
+              <strong>{emojify(c.label)}</strong>
               <span className="muted small">{c.hint}</span>
             </div>
             <Stars value={form[c.key]} onChange={set(c.key)} size="1.35rem" label={c.label} />
@@ -65,8 +66,8 @@ export default function ReviewForm({ open, onClose, target, title, existing, onS
         <div className="criterion">
           <strong>Bạn có giới thiệu nơi này cho bạn bè?</strong>
           <span className="seg-mini">
-            <button type="button" className={form.recommend ? 'active' : ''} onClick={() => set('recommend')(true)}>👍 Có</button>
-            <button type="button" className={!form.recommend ? 'active' : ''} onClick={() => set('recommend')(false)}>👎 Không</button>
+            <button type="button" className={form.recommend ? 'active' : ''} onClick={() => set('recommend')(true)}><Emoji e="👍" play="static" /> Có</button>
+            <button type="button" className={!form.recommend ? 'active' : ''} onClick={() => set('recommend')(false)}><Emoji e="👎" play="static" /> Không</button>
           </span>
         </div>
         <label className="field">
@@ -75,7 +76,7 @@ export default function ReviewForm({ open, onClose, target, title, existing, onS
             placeholder="Điều bạn thích, điều cần cải thiện…" />
         </label>
         <button className="btn primary block" disabled={busy || !complete}>
-          {busy ? 'Đang gửi…' : existing ? 'Cập nhật đánh giá' : 'Gửi đánh giá · +20 🪙'}
+          {emojify(busy ? 'Đang gửi…' : existing ? 'Cập nhật đánh giá' : 'Gửi đánh giá · +20 🪙')}
         </button>
       </form>
     </Modal>

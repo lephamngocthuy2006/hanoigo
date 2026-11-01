@@ -13,7 +13,7 @@ function PersonRow({ person, children, to }) {
       <span className="rank-avatar"><Emoji e={person.avatar} play="hover" /></span>
       <span className="rank-name">
         <strong>{person.display_name || person.username}</strong>
-        <span className="muted small">@{person.username} · Lv {levelInfo(person.xp).level} · 🔥 {liveStreak(person)}</span>
+        <span className="muted small">@{person.username} · Lv {levelInfo(person.xp).level} · <Emoji e="🔥" play="static" /> {liveStreak(person)}</span>
       </span>
     </>
   )
@@ -109,7 +109,7 @@ export default function FriendsPage() {
 
       {incoming.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3>📩 Lời mời kết bạn</h3><span className="badge static">{incoming.length}</span></div>
+          <div className="section-head"><h3><Emoji e="📩" play="static" /> Lời mời kết bạn</h3><span className="badge static">{incoming.length}</span></div>
           {incoming.map((f) => (
             <PersonRow key={f.id} person={f.other}>
               <button className="btn primary small" disabled={busyId === f.id} onClick={() => respond(f, true)}>Đồng ý</button>
@@ -120,13 +120,13 @@ export default function FriendsPage() {
       )}
 
       <section className="card">
-        <div className="section-head"><h3>👥 Bạn bè</h3><span className="muted small">{friends.length} người</span></div>
+        <div className="section-head"><h3><Emoji e="👥" play="static" /> Bạn bè</h3><span className="muted small">{friends.length} người</span></div>
         {!loaded ? <div className="spinner" /> : friends.length === 0 ? (
           <p className="muted small center">Chưa có bạn bè. Tìm tên đăng nhập của bạn bè ở ô phía trên nhé!</p>
         ) : (
           friends.map((f) => (
             <PersonRow key={f.id} person={f.other} to={`/u/${f.other.username}`}>
-              <Link to={`/u/${f.other.username}`} className="ghost small">📖 Xem Sổ</Link>
+              <Link to={`/u/${f.other.username}`} className="ghost small"><Emoji e="📖" play="static" /> Xem Sổ</Link>
             </PersonRow>
           ))
         )}
@@ -134,7 +134,7 @@ export default function FriendsPage() {
 
       {outgoing.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3>⏳ Đang chờ đồng ý</h3></div>
+          <div className="section-head"><h3><Emoji e="⏳" play="static" /> Đang chờ đồng ý</h3></div>
           {outgoing.map((f) => (
             <PersonRow key={f.id} person={f.other}>
               <button className="ghost small" disabled={busyId === f.id} onClick={() => remove(f, 'Đã huỷ lời mời')}>Huỷ</button>

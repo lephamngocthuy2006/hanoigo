@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { CRITERIA, fmtScore, loadReviews, summarize } from '../lib/reviews'
 import ReviewForm from './ReviewForm'
 import Stars from './Stars'
-import Emoji from './Emoji'
+import Emoji, { emojify } from './Emoji'
 
 // Khối đánh giá đặt trong trang nhiệm vụ / tour
 export default function ReviewSummary({ target, title, canReview, openSignal = 0 }) {
@@ -28,7 +28,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
   return (
     <section className="card">
       <div className="section-head">
-        <h3>⭐ Đánh giá trải nghiệm</h3>
+        <h3><Emoji e="⭐" play="static" /> Đánh giá trải nghiệm</h3>
         <span className="muted small">{s.count} lượt</span>
       </div>
 
@@ -37,12 +37,12 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
           <div className="score-big">
             <strong>{fmtScore(s.overall)}</strong>
             <Stars value={s.overall} />
-            <span className="muted small">👍 {s.recommendPct}% giới thiệu</span>
+            <span className="muted small"><Emoji e="👍" play="static" /> {s.recommendPct}% giới thiệu</span>
           </div>
           <div className="criteria-bars">
             {CRITERIA.map((c) => (
               <div key={c.key} className="crit-bar">
-                <span>{c.label}</span>
+                <span>{emojify(c.label)}</span>
                 <div className="bar"><div style={{ width: `${(s.criteria[c.key] / 5) * 100}%` }} /></div>
                 <b>{fmtScore(s.criteria[c.key])}</b>
               </div>
@@ -62,7 +62,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
               <Stars value={r.overall} size="0.8rem" />
             </div>
             <p>{r.comment}</p>
-            {r.partner_reply && <div className="partner-reply"><b>🏪 Phản hồi từ đối tác:</b> {r.partner_reply}</div>}
+            {r.partner_reply && <div className="partner-reply"><b><Emoji e="🏪" play="static" /> Phản hồi từ đối tác:</b> {r.partner_reply}</div>}
           </div>
         </div>
       ))}
@@ -72,7 +72,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
 
       {canReview && (
         <button className="btn block" style={{ marginTop: 10 }} onClick={() => setOpen(true)}>
-          {mine ? '✏️ Sửa đánh giá của bạn' : '⭐ Viết đánh giá · +20 🪙'}
+          {emojify(mine ? '✏️ Sửa đánh giá của bạn' : '⭐ Viết đánh giá · +20 🪙')}
         </button>
       )}
       <ReviewForm open={open} onClose={() => setOpen(false)} target={target} title={title} existing={mine}

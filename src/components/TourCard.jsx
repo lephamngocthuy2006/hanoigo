@@ -11,8 +11,8 @@ export default function TourCard({ tour, progress, claimed, wide }) {
       <h3>{tour.title}</h3>
       <p>{tour.subtitle}</p>
       <div className="tour-meta">
-        <span>⏱ {tour.duration}</span>
-        <span>🎁 +{tour.bonus_xp} XP</span>
+        <span><Emoji e="⏱" play="static" /> {tour.duration}</span>
+        <span><Emoji e="🎁" play="static" /> +{tour.bonus_xp} XP</span>
       </div>
       <div className="tour-progress"><div style={{ width: `${progress.pct}%` }} /></div>
       <span className="tour-progress-text">{progress.done}/{progress.total} điểm</span>

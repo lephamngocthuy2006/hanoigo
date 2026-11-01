@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { fmtDateVN } from '../lib/partner'
 import Modal from './Modal'
-import Emoji from './Emoji'
+import Emoji, { emojify } from './Emoji'
 
 // Đổi Hanoi Coins lấy voucher của đối tác + ví voucher của tôi
 export default function VoucherShop() {
@@ -47,7 +47,7 @@ export default function VoucherShop() {
     <>
       {unused.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3>👛 Ví voucher của tôi</h3><span className="muted small">{unused.length} mã chưa dùng</span></div>
+          <div className="section-head"><h3><Emoji e="👛" play="static" /> Ví voucher của tôi</h3><span className="muted small">{unused.length} mã chưa dùng</span></div>
           {unused.map((c) => (
             <button key={c.id} className="voucher-card as-button mine" onClick={() => setShowing(c)}>
               <div className="voucher-left"><Emoji e={c.vouchers?.partners?.emoji} play="once" /></div>
@@ -62,7 +62,7 @@ export default function VoucherShop() {
       )}
 
       <section className="card">
-        <div className="section-head"><h3>🎁 Đổi quà từ đối tác</h3><span className="muted small">🪙 {profile?.coins ?? 0}</span></div>
+        <div className="section-head"><h3><Emoji e="🎁" play="static" /> Đổi quà từ đối tác</h3><span className="muted small"><Emoji e="🪙" play="static" /> {profile?.coins ?? 0}</span></div>
         {vouchers.length === 0 ? (
           <p className="muted small">Chưa có ưu đãi nào. Các quán, điểm tham quan đối tác sẽ sớm phát hành ưu đãi!</p>
         ) : vouchers.map((v) => {
@@ -78,7 +78,7 @@ export default function VoucherShop() {
                 <span className="muted small">{v.stock == null ? '' : `Còn ${v.stock} lượt · `}{v.valid_until ? `HSD ${fmtDateVN(v.valid_until)}` : ''}</span>
               </div>
               <button className="btn gold small" disabled={soldOut || !enough} onClick={() => setConfirm(v)}>
-                {soldOut ? 'Hết' : `🪙 ${v.cost_coins}`}
+                {emojify(soldOut ? 'Hết' : `🪙 ${v.cost_coins}`)}
               </button>
             </div>
           )
@@ -87,7 +87,7 @@ export default function VoucherShop() {
 
       {used.length > 0 && (
         <section className="card">
-          <div className="section-head"><h3>🧾 Đã sử dụng</h3></div>
+          <div className="section-head"><h3><Emoji e="🧾" play="static" /> Đã sử dụng</h3></div>
           {used.map((c) => (
             <div key={c.id} className="voucher-card used">
               <div className="voucher-left"><Emoji e="✓" play="once" /></div>
@@ -104,7 +104,7 @@ export default function VoucherShop() {
         {confirm && (
           <>
             <p><b>{confirm.title}</b> tại {confirm.partners?.name}</p>
-            <p className="muted small">Bạn sẽ dùng <b>🪙 {confirm.cost_coins}</b> Hanoi Coins (còn lại {(profile?.coins ?? 0) - confirm.cost_coins}).</p>
+            <p className="muted small">Bạn sẽ dùng <b><Emoji e="🪙" play="static" /> {confirm.cost_coins}</b> Hanoi Coins (còn lại {(profile?.coins ?? 0) - confirm.cost_coins}).</p>
             <button className="btn primary block" disabled={busy} onClick={redeem}>{busy ? 'Đang đổi…' : 'Đổi ngay'}</button>
           </>
         )}
@@ -124,7 +124,7 @@ function VoucherQR({ code }) {
   }, [code.code])
   return (
     <div className="celebrate">
-      <div className="eyebrow">{code.vouchers?.partners?.emoji} {code.vouchers?.partners?.name}</div>
+      <div className="eyebrow">{emojify(code.vouchers?.partners?.emoji)} {code.vouchers?.partners?.name}</div>
       <h2>{code.vouchers?.title}</h2>
       {src && <img className="qr" src={src} alt={`Mã QR ${code.code}`} />}
       <div className="big-code">{code.code}</div>

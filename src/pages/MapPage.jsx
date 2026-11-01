@@ -7,6 +7,7 @@ import { getPosition } from '../lib/geo'
 import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import { useToast } from '../context/ToastContext'
+import Emoji, { emojify } from '../components/Emoji'
 
 const HANOI = [21.0313, 105.8467]
 
@@ -42,10 +43,10 @@ export default function MapPage() {
           <Marker key={q.id} position={[q.lat, q.lng]} icon={pinIcon(isDone(q) ? '✅' : q.emoji, isDone(q) ? 'done' : '')}>
             <Popup>
               <div className="popup">
-                <div className="eyebrow">{KIND[q.kind].label}</div>
+                <div className="eyebrow">{emojify(KIND[q.kind].label)}</div>
                 <strong>{q.title}</strong>
                 <div className="muted small">{q.place_name}</div>
-                <div className="small">⭐ +{q.xp_reward} · 🪙 +{q.coin_reward}</div>
+                <div className="small"><Emoji e="⭐" play="static" /> +{q.xp_reward} · <Emoji e="🪙" play="static" /> +{q.coin_reward}</div>
                 <Link to={`/quest/${q.id}`} className="btn primary small">{isDone(q) ? 'Xem lại' : 'Làm nhiệm vụ'}</Link>
               </div>
             </Popup>
@@ -55,7 +56,7 @@ export default function MapPage() {
         <FlyTo pos={pos} />
       </MapContainer>
       <div className="map-overlay top">
-        <div className="map-title">🗺️ Bản đồ khám phá {loading ? '' : `· ${located.length} địa điểm`}</div>
+        <div className="map-title"><Emoji e="🗺️" play="static" /> Bản đồ khám phá {loading ? '' : `· ${located.length} địa điểm`}</div>
         <button className={`chip${onlyTodo ? ' active' : ''}`} onClick={() => setOnlyTodo(!onlyTodo)}>Chưa làm</button>
       </div>
       <button className="map-locate" onClick={locate} aria-label="Vị trí của tôi">◎</button>

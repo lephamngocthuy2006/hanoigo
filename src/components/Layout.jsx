@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 import { liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
-import Emoji from './Emoji'
+import Emoji, { emojify } from './Emoji'
 
 const TABS = [
   { to: '/journal', label: 'Sổ hành trình', icon: '📸' },
@@ -50,7 +50,7 @@ export default function Layout() {
             {({ isActive }) => (
               <>
                 <span className="navicon"><Emoji e={t.icon || profile?.avatar || '🐢'} play={isActive ? 'loop' : 'static'} /></span>
-                <span className="navlabel">{t.label}</span>
+                <span className="navlabel">{emojify(t.label)}</span>
               </>
             )}
           </NavLink>

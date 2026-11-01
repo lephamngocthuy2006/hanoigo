@@ -12,7 +12,7 @@ import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 import ReviewSummary from '../components/ReviewSummary'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 export default function TourDetail() {
   const { id } = useParams()
@@ -72,15 +72,15 @@ export default function TourDetail() {
         <h1>{tour.title}</h1>
         <p className="tour-sub">{tour.subtitle}</p>
         <div className="tour-progress light"><div style={{ width: `${progress.pct}%` }} /></div>
-        <span className="small">{progress.done}/{progress.total} điểm dừng · {isClaimed ? '🏅 Đã hoàn thành' : `Thưởng hoàn thành: ⭐ +${tour.bonus_xp} · 🪙 +${tour.bonus_coins}`}</span>
+        <span className="small">{progress.done}/{progress.total} điểm dừng · {emojify(isClaimed ? '🏅 Đã hoàn thành' : `Thưởng hoàn thành: ⭐ +${tour.bonus_xp} · 🪙 +${tour.bonus_coins}`)}</span>
       </section>
 
       <div className="info-grid">
-        <div><span>⏱ Thời lượng</span><strong>{tour.duration}</strong></div>
-        <div><span>🚶 Quãng đường</span><strong>Khoảng {formatDistance(totalM * 1.3)} đi bộ</strong></div>
-        <div><span>💰 Chi phí ước tính</span><strong>{tour.est_cost}</strong></div>
-        <div><span>🕗 Thời điểm đẹp</span><strong>{tour.best_time}</strong></div>
-        <div className="span2"><span>👥 Phù hợp với</span><strong>{tour.audience}</strong></div>
+        <div><span><Emoji e="⏱" play="static" /> Thời lượng</span><strong>{tour.duration}</strong></div>
+        <div><span><Emoji e="🚶" play="static" /> Quãng đường</span><strong>Khoảng {formatDistance(totalM * 1.3)} đi bộ</strong></div>
+        <div><span><Emoji e="💰" play="static" /> Chi phí ước tính</span><strong>{tour.est_cost}</strong></div>
+        <div><span><Emoji e="🕗" play="static" /> Thời điểm đẹp</span><strong>{tour.best_time}</strong></div>
+        <div className="span2"><span><Emoji e="👥" play="static" /> Phù hợp với</span><strong>{tour.audience}</strong></div>
       </div>
 
       <p>{tour.description}</p>
@@ -99,7 +99,7 @@ export default function TourDetail() {
       )}
 
       <section className="card">
-        <div className="section-head"><h3>🗺️ Lộ trình</h3><span className="muted small">{stops.length} điểm dừng</span></div>
+        <div className="section-head"><h3><Emoji e="🗺️" play="static" /> Lộ trình</h3><span className="muted small">{stops.length} điểm dừng</span></div>
         <ol className="timeline">
           {stops.map((s) => {
             const done = isDone(s.quest)
@@ -107,14 +107,14 @@ export default function TourDetail() {
             return (
               <li key={s.quest_id} className={`${done ? 'done' : ''}${isNext ? ' next' : ''}`}>
                 {legs[s.quest_id] != null && (
-                  <div className="leg">🚶 {formatDistance(legs[s.quest_id] * 1.3)} · khoảng {walkMinutes(legs[s.quest_id])} phút đi bộ</div>
+                  <div className="leg"><Emoji e="🚶" play="static" /> {formatDistance(legs[s.quest_id] * 1.3)} · khoảng {walkMinutes(legs[s.quest_id])} phút đi bộ</div>
                 )}
                 <Link to={`/quest/${s.quest.id}`} className="stop">
                   <span className="stop-dot">{done ? '✓' : <Emoji e={s.quest.emoji} play="once" />}</span>
                   <span className="stop-body">
-                    <span className="quest-kind">{KIND[s.quest.kind].label}{s.quest.place_name && ` · ${s.quest.place_name}`}</span>
+                    <span className="quest-kind">{emojify(KIND[s.quest.kind].label)}{s.quest.place_name && ` · ${s.quest.place_name}`}</span>
                     <strong>{s.quest.title}</strong>
-                    {s.note && <span className="muted small">💡 {s.note}</span>}
+                    {s.note && <span className="muted small"><Emoji e="💡" play="static" /> {s.note}</span>}
                   </span>
                   {isNext && <span className="tag ok">Tiếp theo</span>}
                 </Link>
@@ -124,7 +124,7 @@ export default function TourDetail() {
         </ol>
         {!isClaimed && (
           <button className="btn gold block big" disabled={!allDone || busy} onClick={claim}>
-            {allDone ? (busy ? 'Đang nhận…' : `🏅 Nhận thưởng hoàn thành tour`) : `Hoàn thành ${progress.total - progress.done} điểm nữa để nhận thưởng`}
+            {emojify(allDone ? (busy ? 'Đang nhận…' : `🏅 Nhận thưởng hoàn thành tour`) : `Hoàn thành ${progress.total - progress.done} điểm nữa để nhận thưởng`)}
           </button>
         )}
         {!isClaimed && nextStop && (
@@ -144,9 +144,9 @@ export default function TourDetail() {
           <div className="reward-grid">
             <div><strong><Emoji e="⭐" play="once" /> +{reward?.xp}</strong><span>XP</span></div>
             <div><strong><Emoji e="🪙" play="once" /> +{reward?.coins}</strong><span>Coins</span></div>
-            <div><strong>🏅</strong><span>Huy hiệu tour</span></div>
+            <div><strong><Emoji e="🏅" play="static" /></strong><span>Huy hiệu tour</span></div>
           </div>
-          <p className="muted small">Hãy đánh giá tour để giúp người sau trải nghiệm tốt hơn (+20 🪙)</p>
+          <p className="muted small">Hãy đánh giá tour để giúp người sau trải nghiệm tốt hơn (+20 <Emoji e="🪙" play="static" />)</p>
           <button className="btn primary" onClick={() => { setReward(null); setReviewSignal((n) => n + 1) }}>Đánh giá ngay</button>
         </div>
       </Modal>

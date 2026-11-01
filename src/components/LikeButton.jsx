@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { toggleLike } from '../lib/friends'
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
+import Emoji, { emojify } from './Emoji'
 
 // Nút thả tim; cập nhật ngay trên giao diện rồi mới gửi lên server
 export default function LikeButton({ entryId, userId, like, onChange }) {
@@ -24,7 +25,7 @@ export default function LikeButton({ entryId, userId, like, onChange }) {
 
   return (
     <button className={`like-btn${liked ? ' liked' : ''}`} onClick={click} disabled={busy} aria-pressed={liked}>
-      {liked ? '❤️' : '🤍'} {count > 0 ? count : 'Thả tim'}
+      {emojify(liked ? '❤️' : '🤍')} {count > 0 ? count : 'Thả tim'}
     </button>
   )
 }

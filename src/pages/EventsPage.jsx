@@ -6,7 +6,7 @@ import { useToast } from '../context/ToastContext'
 import { RARITY, levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import VoucherShop from '../components/VoucherShop'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 const PACK_COST = 100
 
@@ -21,9 +21,9 @@ export default function EventsPage() {
         <p>Làm nhiệm vụ nhận Hanoi Coins, mở gói thẻ và sưu tầm đủ bộ Hà Nội!</p>
       </section>
       <div className="segmented">
-        <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}>🎴 Thẻ</button>
-        <button className={tab === 'shop' ? 'active' : ''} onClick={() => setTab('shop')}>🎁 Đổi quà</button>
-        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}>🏆 Hạng</button>
+        <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}><Emoji e="🎴" play="static" /> Thẻ</button>
+        <button className={tab === 'shop' ? 'active' : ''} onClick={() => setTab('shop')}><Emoji e="🎁" play="static" /> Đổi quà</button>
+        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}><Emoji e="🏆" play="static" /> Hạng</button>
       </div>
       {tab === 'cards' && <Collection />}
       {tab === 'shop' && <VoucherShop />}
@@ -72,7 +72,7 @@ function Collection() {
           <h3>Gói thẻ Hà Nội</h3>
           <p className="muted small">3 thẻ ngẫu nhiên · có cơ hội ra thẻ Huyền thoại</p>
           <button className="btn gold" onClick={openPack} disabled={opening || (profile?.coins ?? 0) < PACK_COST}>
-            {opening ? 'Đang mở…' : `Mở gói · 🪙 ${PACK_COST}`}
+            {emojify(opening ? 'Đang mở…' : `Mở gói · 🪙 ${PACK_COST}`)}
           </button>
           {(profile?.coins ?? 0) < PACK_COST && <p className="muted small">Làm thêm nhiệm vụ để có đủ coins nhé!</p>}
         </div>
@@ -102,7 +102,7 @@ function Collection() {
             <div key={i} className="game-card reveal" style={{ '--rar': RARITY[c.rarity].color, animationDelay: `${i * 0.15}s` }}>
               <span className="game-card-emoji"><Emoji e={c.emoji} play="loop" /></span>
               <span className="game-card-name">{c.name}</span>
-              <span className="rarity" style={{ color: RARITY[c.rarity].color }}>{RARITY[c.rarity].label}</span>
+              <span className="rarity" style={{ color: RARITY[c.rarity].color }}>{emojify(RARITY[c.rarity].label)}</span>
             </div>
           ))}
         </div>
@@ -114,7 +114,7 @@ function Collection() {
           <div className="celebrate">
             <div className="celebrate-emoji"><Emoji e={selected.emoji} play="loop" /></div>
             <h2>{selected.name}</h2>
-            <div className="rarity" style={{ color: RARITY[selected.rarity].color }}>{RARITY[selected.rarity].label}</div>
+            <div className="rarity" style={{ color: RARITY[selected.rarity].color }}>{emojify(RARITY[selected.rarity].label)}</div>
             <p>{selected.description}</p>
             <p className="muted small">Bạn có {owned[selected.id]} thẻ này</p>
           </div>
@@ -144,8 +144,8 @@ function Leaderboard() {
   return (
     <section className="card">
       <div className="chips">
-        <button className={`chip${scope === 'all' ? ' active' : ''}`} onClick={() => setScope('all')}>🌏 Tất cả</button>
-        <button className={`chip${scope === 'friends' ? ' active' : ''}`} onClick={() => setScope('friends')}>👥 Bạn bè</button>
+        <button className={`chip${scope === 'all' ? ' active' : ''}`} onClick={() => setScope('all')}><Emoji e="🌏" play="static" /> Tất cả</button>
+        <button className={`chip${scope === 'friends' ? ' active' : ''}`} onClick={() => setScope('friends')}><Emoji e="👥" play="static" /> Bạn bè</button>
       </div>
       {!rows ? <div className="spinner" /> : rows.map((r, i) => (
         <Link key={r.id} to={isFriend(r.id) ? `/u/${r.username}` : r.id === user.id ? '/me' : '#'}

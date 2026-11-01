@@ -7,7 +7,7 @@ import { CATEGORIES, fmtDateVN } from '../lib/partner'
 import { levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 const STATUS = {
   pending: { label: 'Chờ duyệt', cls: '' },
@@ -28,16 +28,16 @@ export default function AdminPage() {
     <div className="page">
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
       <section className="admin-hero">
-        <div className="eyebrow light">Quản trị hệ thống · {profile.is_super_admin ? '👑 Tối cao' : '🛡️ Admin'}</div>
-        <h1>🛡️ Trang quản trị</h1>
+        <div className="eyebrow light">Quản trị hệ thống · {emojify(profile.is_super_admin ? '👑 Tối cao' : '🛡️ Admin')}</div>
+        <h1><Emoji e="🛡️" play="static" /> Trang quản trị</h1>
         <p>Duyệt đối tác, quản lý người dùng và kiểm duyệt nội dung đánh giá.</p>
       </section>
       <div className="segmented">
         <button className={tab === 'partners' ? 'active' : ''} onClick={() => setTab('partners')}>
-          🏪 Đối tác{pending > 0 && <span className="badge static">{pending}</span>}
+          <Emoji e="🏪" play="static" /> Đối tác{pending > 0 && <span className="badge static">{pending}</span>}
         </button>
-        <button className={tab === 'users' ? 'active' : ''} onClick={() => setTab('users')}>👤 Người dùng</button>
-        <button className={tab === 'reviews' ? 'active' : ''} onClick={() => setTab('reviews')}>💬 Đánh giá</button>
+        <button className={tab === 'users' ? 'active' : ''} onClick={() => setTab('users')}><Emoji e="👤" play="static" /> Người dùng</button>
+        <button className={tab === 'reviews' ? 'active' : ''} onClick={() => setTab('reviews')}><Emoji e="💬" play="static" /> Đánh giá</button>
       </div>
       {tab === 'partners' && <PartnersTab onPendingCount={setPending} />}
       {tab === 'users' && <UsersTab />}
@@ -89,7 +89,7 @@ function PartnersTab({ onPendingCount }) {
     <>
       <div className="chips">
         {['pending', 'approved', 'rejected'].map((s) => (
-          <button key={s} className={`chip${filter === s ? ' active' : ''}`} onClick={() => setFilter(s)}>{STATUS[s].label} ({count(s)})</button>
+          <button key={s} className={`chip${filter === s ? ' active' : ''}`} onClick={() => setFilter(s)}>{emojify(STATUS[s].label)} ({count(s)})</button>
         ))}
         <button className={`chip${filter === 'all' ? ' active' : ''}`} onClick={() => setFilter('all')}>Tất cả</button>
       </div>
@@ -101,13 +101,13 @@ function PartnersTab({ onPendingCount }) {
             <span className="partner-emoji small"><Emoji e={p.emoji} play="loop" /></span>
             <div className="grow">
               <strong>{p.name}</strong>
-              <div className="muted small">{CATEGORIES[p.category]?.emoji} {CATEGORIES[p.category]?.label} · đăng ký {fmtDateVN(p.created_at)}</div>
+              <div className="muted small">{emojify(CATEGORIES[p.category]?.emoji)} {emojify(CATEGORIES[p.category]?.label)} · đăng ký {fmtDateVN(p.created_at)}</div>
             </div>
-            <span className={`tag ${STATUS[p.status].cls}`}>{STATUS[p.status].label}</span>
+            <span className={`tag ${STATUS[p.status].cls}`}>{emojify(STATUS[p.status].label)}</span>
           </div>
           {p.description && <p className="small">{p.description}</p>}
           <dl className="admin-dl">
-            <dt>Chủ tài khoản</dt><dd>{p.owner?.avatar} {p.owner?.display_name} (@{p.owner?.username})</dd>
+            <dt>Chủ tài khoản</dt><dd>{emojify(p.owner?.avatar)} {p.owner?.display_name} (@{p.owner?.username})</dd>
             {p.address && <><dt>Địa chỉ</dt><dd>{p.address}</dd></>}
             {p.phone && <><dt>Điện thoại</dt><dd>{p.phone}</dd></>}
             <dt>Vị trí</dt>
@@ -127,7 +127,7 @@ function PartnersTab({ onPendingCount }) {
         title={deciding?.status === 'approved' ? 'Duyệt đối tác' : deciding?.partner.status === 'approved' ? 'Thu hồi quyền đối tác' : 'Từ chối hồ sơ'}>
         {deciding && (
           <>
-            <p><b>{deciding.partner.emoji} {deciding.partner.name}</b></p>
+            <p><b>{emojify(deciding.partner.emoji)} {deciding.partner.name}</b></p>
             {deciding.status === 'rejected' && (
               <p className="muted small">Nhiệm vụ và ưu đãi của đối tác này sẽ bị ẩn khỏi app cho tới khi được duyệt lại.</p>
             )}
@@ -225,7 +225,7 @@ function UsersTab() {
       <input className="search-input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="🔍 Tìm tên đăng nhập…" autoCapitalize="none" />
       <div className="chips">
         {SORTS.map((x) => (
-          <button key={x.id} className={`chip${sort === x.id ? ' active' : ''}`} onClick={() => setSort(x.id)}>{x.label}</button>
+          <button key={x.id} className={`chip${sort === x.id ? ' active' : ''}`} onClick={() => setSort(x.id)}>{emojify(x.label)}</button>
         ))}
       </div>
 
@@ -238,20 +238,20 @@ function UsersTab() {
               <div className="admin-user-body">
                 <strong>
                   {u.display_name || u.username}
-                  {u.is_super_admin ? <span className="tag gold">👑 Tối cao</span> : u.is_admin && <span className="tag ok">🛡️ Admin</span>}
+                  {u.is_super_admin ? <span className="tag gold"><Emoji e="👑" play="static" /> Tối cao</span> : u.is_admin && <span className="tag ok"><Emoji e="🛡️" play="static" /> Admin</span>}
                   {isNew(u) && <span className="tag new">Mới</span>}
                 </strong>
-                <span className="muted small">@{u.username} · Lv {levelInfo(u.xp).level} · 🪙 {u.coins}</span>
+                <span className="muted small">@{u.username} · Lv {levelInfo(u.xp).level} · <Emoji e="🪙" play="static" /> {u.coins}</span>
                 <span className="muted small">
                   Đăng ký {new Date(u.created_at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}
                   {u.last_active_date && ` · hoạt động ${fmtDateVN(u.last_active_date)}`}
                 </span>
                 <div className="admin-user-actions">
                   <button className={`chip${u.is_demo ? ' active' : ''}`} onClick={() => toggleDemo(u)} title="Chế độ demo: check-in được ở bất kỳ đâu">
-                    🎤 Demo {u.is_demo ? 'bật' : 'tắt'}
+                    <Emoji e="🎤" play="static" /> Demo {u.is_demo ? 'bật' : 'tắt'}
                   </button>
                   {isSuper && u.id !== user.id && (
-                    <button className="chip" onClick={() => setEditing(u)}>🔑 Phân quyền</button>
+                    <button className="chip" onClick={() => setEditing(u)}><Emoji e="🔑" play="static" /> Phân quyền</button>
                   )}
                 </div>
               </div>
@@ -263,12 +263,12 @@ function UsersTab() {
       <Modal open={!!editing} onClose={() => setEditing(null)} title="Phân quyền">
         {editing && (
           <>
-            <p>{editing.avatar} <b>{editing.display_name || editing.username}</b> <span className="muted">@{editing.username}</span></p>
+            <p>{emojify(editing.avatar)} <b>{editing.display_name || editing.username}</b> <span className="muted">@{editing.username}</span></p>
             <div className="role-list">
               {Object.entries(ROLES).map(([key, r]) => (
                 <button key={key} className={`role-option${roleOf(editing) === key ? ' current' : ''}`} disabled={busy || roleOf(editing) === key}
                   onClick={() => setRole(key)}>
-                  <strong>{r.label}{roleOf(editing) === key && ' · hiện tại'}</strong>
+                  <strong>{emojify(r.label)}{roleOf(editing) === key && ' · hiện tại'}</strong>
                   <span className="muted small">{r.desc}</span>
                 </button>
               ))}
@@ -320,7 +320,7 @@ function ReviewsTab() {
             <span className="muted small">{r.quests ? `${r.quests.emoji} ${r.quests.title}` : `${r.tours?.emoji} Tour ${r.tours?.title}`} · {fmtDateVN(r.created_at)}</span>
             {r.comment ? <p>{r.comment}</p> : <p className="muted small">(không có nhận xét)</p>}
           </div>
-          <button className="ghost small danger-text" onClick={() => remove(r)} aria-label="Xoá đánh giá">🗑</button>
+          <button className="ghost small danger-text" onClick={() => remove(r)} aria-label="Xoá đánh giá"><Emoji e="🗑" play="static" /></button>
         </div>
       ))}
     </section>

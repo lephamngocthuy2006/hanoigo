@@ -13,7 +13,7 @@ import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 import ReviewSummary from '../components/ReviewSummary'
 import { useTours } from '../lib/tours'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 // key theo id để mỗi nhiệm vụ có state riêng (ảnh, đáp án, popup thưởng…)
 export default function QuestDetail() {
@@ -114,9 +114,9 @@ function QuestDetailInner({ id }) {
       <div className="detail-head">
         <span className="detail-emoji"><Emoji e={quest.emoji} play="loop" /></span>
         <div>
-          <div className="eyebrow">{KIND[quest.kind].label}{quest.is_daily && ' · Hằng ngày'}</div>
+          <div className="eyebrow">{emojify(KIND[quest.kind].label)}{quest.is_daily && ' · Hằng ngày'}</div>
           <h1>{quest.title}</h1>
-          {quest.place_name && <div className="muted">📍 {quest.place_name}{quest.area && ` · ${quest.area}`}</div>}
+          {quest.place_name && <div className="muted"><Emoji e="📍" play="static" /> {quest.place_name}{quest.area && ` · ${quest.area}`}</div>}
         </div>
       </div>
 
@@ -125,20 +125,20 @@ function QuestDetailInner({ id }) {
       <div className="reward-grid">
         <div><strong><Emoji e="⭐" play="once" /> +{quest.xp_reward}</strong><span>XP</span></div>
         <div><strong><Emoji e="🪙" play="once" /> +{quest.coin_reward}</strong><span>Coins</span></div>
-        <div><strong>{quest.kind === 'photo' ? '📖 +1' : '🔥'}</strong><span>{quest.kind === 'photo' ? 'Trang nhật ký' : 'Streak'}</span></div>
+        <div><strong>{emojify(quest.kind === 'photo' ? '📖 +1' : '🔥')}</strong><span>{quest.kind === 'photo' ? 'Trang nhật ký' : 'Streak'}</span></div>
       </div>
 
-      {quest.tip && <div className="tip">💡 {quest.tip}</div>}
+      {quest.tip && <div className="tip"><Emoji e="💡" play="static" /> {quest.tip}</div>}
 
       {quest.partners && (
         <section className="card partner-card">
           <span className="partner-emoji small"><Emoji e={quest.partners.emoji} play="loop" /></span>
           <div>
-            <div className="eyebrow">🏪 Đối tác HANOI GO!</div>
+            <div className="eyebrow"><Emoji e="🏪" play="static" /> Đối tác HANOI GO!</div>
             <strong>{quest.partners.name}</strong>
             {quest.partners.description && <p className="small">{quest.partners.description}</p>}
-            <span className="muted small">{quest.partners.address}{quest.partners.phone && ` · ☎ ${quest.partners.phone}`}</span>
-            <Link to="/events" state={{ tab: 'shop' }} className="ghost small" style={{ alignSelf: 'flex-start', marginTop: 6 }}>🎁 Xem ưu đãi đối tác</Link>
+            <span className="muted small">{quest.partners.address}{emojify(quest.partners.phone && ` · ☎ ${quest.partners.phone}`)}</span>
+            <Link to="/events" state={{ tab: 'shop' }} className="ghost small" style={{ alignSelf: 'flex-start', marginTop: 6 }}><Emoji e="🎁" play="static" /> Xem ưu đãi đối tác</Link>
           </div>
         </section>
       )}
@@ -146,20 +146,20 @@ function QuestDetailInner({ id }) {
       {inTours.length > 0 && (
         <div className="chips">
           {inTours.map((t) => (
-            <Link key={t.id} to={`/tour/${t.id}`} className="chip tour-link" style={{ '--tour': t.color }}>{t.emoji} Thuộc tour: {t.title}</Link>
+            <Link key={t.id} to={`/tour/${t.id}`} className="chip tour-link" style={{ '--tour': t.color }}>{emojify(t.emoji)} Thuộc tour: {t.title}</Link>
           ))}
         </div>
       )}
 
       {(quest.opening_hours || quest.ticket_info || quest.story || quest.etiquette) && (
         <section className="card place-info">
-          <h3>🏛️ Thông tin điểm đến</h3>
+          <h3><Emoji e="🏛️" play="static" /> Thông tin điểm đến</h3>
           <div className="info-grid compact">
-            {quest.opening_hours && <div><span>🕗 Giờ mở cửa</span><strong>{quest.opening_hours}</strong></div>}
-            {quest.ticket_info && <div><span>🎫 Vé tham quan</span><strong>{quest.ticket_info}</strong></div>}
+            {quest.opening_hours && <div><span><Emoji e="🕗" play="static" /> Giờ mở cửa</span><strong>{quest.opening_hours}</strong></div>}
+            {quest.ticket_info && <div><span><Emoji e="🎫" play="static" /> Vé tham quan</span><strong>{quest.ticket_info}</strong></div>}
           </div>
-          {quest.story && <div className="story"><b>📜 Câu chuyện</b><p>{quest.story}</p></div>}
-          {quest.etiquette && <div className="etiquette"><b>🙏 Lưu ý văn hoá</b><p>{quest.etiquette}</p></div>}
+          {quest.story && <div className="story"><b><Emoji e="📜" play="static" /> Câu chuyện</b><p>{quest.story}</p></div>}
+          {quest.etiquette && <div className="etiquette"><b><Emoji e="🙏" play="static" /> Lưu ý văn hoá</b><p>{quest.etiquette}</p></div>}
           <p className="muted small">Thông tin mang tính tham khảo, có thể thay đổi theo thời điểm.</p>
         </section>
       )}
@@ -179,7 +179,7 @@ function QuestDetailInner({ id }) {
 
       {done ? (
         <div className="card done-card">
-          ✅ {quest.is_daily ? 'Bạn đã hoàn thành nhiệm vụ này hôm nay. Mai quay lại nhé!' : 'Bạn đã hoàn thành nhiệm vụ này.'}
+          <Emoji e="✅" play="static" /> {quest.is_daily ? 'Bạn đã hoàn thành nhiệm vụ này hôm nay. Mai quay lại nhé!' : 'Bạn đã hoàn thành nhiệm vụ này.'}
         </div>
       ) : (
         <section className="card action-card">
@@ -193,7 +193,7 @@ function QuestDetailInner({ id }) {
                 </div>
               ) : (
                 <button className="photo-drop" onClick={() => fileRef.current.click()}>
-                  <span>📷</span>
+                  <span><Emoji e="📷" play="static" /></span>
                   Chụp ảnh hoặc chọn từ thư viện
                 </button>
               )}
@@ -222,13 +222,13 @@ function QuestDetailInner({ id }) {
               <span className="muted">
                 {dist != null ? `Bạn đang cách ${formatDistance(dist)} (cần trong ${quest.radius_m} m)` : 'Cần bật định vị khi đến nơi.'}
               </span>
-              <button className="ghost small" onClick={locate}>📍 Lấy vị trí</button>
+              <button className="ghost small" onClick={locate}><Emoji e="📍" play="static" /> Lấy vị trí</button>
             </div>
           )}
 
           <button className="btn primary block big" onClick={submit}
             disabled={busy || (quest.kind === 'photo' && !file) || (quest.kind === 'quiz' && answer == null)}>
-            {busy ? 'Đang gửi…' : quest.kind === 'photo' ? '📸 Hoàn thành & lưu ảnh' : quest.kind === 'quiz' ? 'Trả lời' : '📍 Check-in ngay'}
+            {emojify(busy ? 'Đang gửi…' : quest.kind === 'photo' ? '📸 Hoàn thành & lưu ảnh' : quest.kind === 'quiz' ? 'Trả lời' : '📍 Check-in ngay')}
           </button>
         </section>
       )}
@@ -250,7 +250,7 @@ function QuestDetailInner({ id }) {
           <div className="row">
             {quest.kind === 'photo' && <button className="btn" onClick={() => navigate('/journal')}>Xem Sổ hành trình</button>}
             {quest.kind !== 'quiz' && (
-              <button className="btn gold" onClick={() => { setReward(null); setReviewSignal((n) => n + 1) }}>⭐ Đánh giá +20 🪙</button>
+              <button className="btn gold" onClick={() => { setReward(null); setReviewSignal((n) => n + 1) }}><Emoji e="⭐" play="static" /> Đánh giá +20 <Emoji e="🪙" play="static" /></button>
             )}
             <button className="btn primary" onClick={() => navigate('/')}>Nhiệm vụ khác</button>
           </div>

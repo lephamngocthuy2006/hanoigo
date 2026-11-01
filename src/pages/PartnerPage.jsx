@@ -9,7 +9,7 @@ import { KIND } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
 import PartnerProfileForm from '../components/PartnerProfileForm'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 const TABS = [
   { id: 'overview', label: '📊 Tổng quan' },
@@ -56,13 +56,13 @@ export default function PartnerPage() {
           <h1>Trở thành đối tác HANOI GO!</h1>
           <p>Đưa địa điểm của bạn vào hành trình khám phá Hà Nội: tạo nhiệm vụ thu hút khách, phát hành ưu đãi và lắng nghe phản hồi.</p>
           <ul className="benefits">
-            <li>🎯 Tạo nhiệm vụ check-in, chụp ảnh tại địa điểm</li>
-            <li>🎟️ Phát hành voucher đổi bằng Hanoi Coins</li>
-            <li>📊 Theo dõi lượt khách, đánh giá chất lượng dịch vụ</li>
+            <li><Emoji e="🎯" play="static" /> Tạo nhiệm vụ check-in, chụp ảnh tại địa điểm</li>
+            <li><Emoji e="🎟️" play="static" /> Phát hành voucher đổi bằng Hanoi Coins</li>
+            <li><Emoji e="📊" play="static" /> Theo dõi lượt khách, đánh giá chất lượng dịch vụ</li>
           </ul>
         </section>
         <section className="card">
-          <h3 style={{ marginBottom: 12 }}>📝 Đăng ký đối tác</h3>
+          <h3 style={{ marginBottom: 12 }}><Emoji e="📝" play="static" /> Đăng ký đối tác</h3>
           <PartnerProfileForm onSaved={reload} />
         </section>
       </div>
@@ -75,13 +75,13 @@ export default function PartnerPage() {
         <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
         <section className="card center">
           <div className="empty-emoji"><Emoji e={partner.status === 'pending' ? '⏳' : '❌'} play="loop" /></div>
-          <h2>{partner.emoji} {partner.name}</h2>
+          <h2>{emojify(partner.emoji)} {partner.name}</h2>
           <p>{partner.status === 'pending'
             ? 'Hồ sơ đối tác đang chờ quản trị viên duyệt. Bạn sẽ dùng được cổng đối tác ngay khi được duyệt.'
             : 'Hồ sơ đối tác chưa được duyệt. Hãy cập nhật thông tin và liên hệ quản trị viên.'}</p>
-          {partner.admin_note && <div className="admin-note">🛡️ <b>Ghi chú từ quản trị viên:</b> {partner.admin_note}</div>}
+          {partner.admin_note && <div className="admin-note"><Emoji e="🛡️" play="static" /> <b>Ghi chú từ quản trị viên:</b> {partner.admin_note}</div>}
           <div className="row">
-            <button className="btn" onClick={() => setEditOpen(true)}>✏️ Sửa hồ sơ</button>
+            <button className="btn" onClick={() => setEditOpen(true)}><Emoji e="✏️" play="static" /> Sửa hồ sơ</button>
             <button className="btn primary" onClick={reload}>↻ Kiểm tra lại</button>
           </div>
         </section>
@@ -101,18 +101,18 @@ export default function PartnerPage() {
         <div className="partner-head">
           <span className="partner-emoji"><Emoji e={partner.emoji} play="loop" /></span>
           <div>
-            <div className="eyebrow light">Cổng quản lý đối tác · {CATEGORIES[partner.category]?.label}</div>
+            <div className="eyebrow light">Cổng quản lý đối tác · {emojify(CATEGORIES[partner.category]?.label)}</div>
             <h1>{partner.name}</h1>
-            {partner.address && <p>📍 {partner.address}</p>}
+            {partner.address && <p><Emoji e="📍" play="static" /> {partner.address}</p>}
           </div>
         </div>
-        <button className="ghost small light" onClick={() => setEditOpen(true)}>✏️ Hồ sơ</button>
+        <button className="ghost small light" onClick={() => setEditOpen(true)}><Emoji e="✏️" play="static" /> Hồ sơ</button>
       </section>
 
       <div className="tabs-scroll">
         {TABS.map((t) => (
           <button key={t.id} className={`chip${tab === t.id ? ' active' : ''}`} onClick={() => setTab(t.id)}>
-            {t.label}{t.id === 'feedback' && unhandled > 0 && <span className="badge static">{unhandled}</span>}
+            {emojify(t.label)}{t.id === 'feedback' && unhandled > 0 && <span className="badge static">{unhandled}</span>}
           </button>
         ))}
       </div>
@@ -160,7 +160,7 @@ function Overview({ quests, reviews, goTo }) {
       </div>
 
       <section className="card">
-        <div className="section-head"><h3>📈 Lượt tham gia 7 ngày qua</h3><span className="muted small">{week} lượt</span></div>
+        <div className="section-head"><h3><Emoji e="📈" play="static" /> Lượt tham gia 7 ngày qua</h3><span className="muted small">{week} lượt</span></div>
         <div className="bar-chart">
           {stats.daily.map((d) => (
             <div key={d.day} className="bar-col" title={`${d.n} lượt`}>
@@ -174,11 +174,11 @@ function Overview({ quests, reviews, goTo }) {
 
       {s.count > 0 && (
         <section className="card">
-          <div className="section-head"><h3>⭐ Chất lượng dịch vụ</h3><span className="muted small">👍 {s.recommendPct}% giới thiệu</span></div>
+          <div className="section-head"><h3><Emoji e="⭐" play="static" /> Chất lượng dịch vụ</h3><span className="muted small"><Emoji e="👍" play="static" /> {s.recommendPct}% giới thiệu</span></div>
           <div className="criteria-bars">
             {CRITERIA.map((c) => (
               <div key={c.key} className={`crit-bar wide${weakest?.key === c.key ? ' weak' : ''}`}>
-                <span>{c.label}</span>
+                <span>{emojify(c.label)}</span>
                 <div className="bar"><div style={{ width: `${(s.criteria[c.key] / 5) * 100}%` }} /></div>
                 <b>{fmtScore(s.criteria[c.key])}</b>
               </div>
@@ -188,11 +188,11 @@ function Overview({ quests, reviews, goTo }) {
       )}
 
       <section className="card">
-        <div className="section-head"><h3>✅ Việc cần làm</h3></div>
-        {todo.length === 0 ? <p className="muted small">Mọi thứ đều ổn. Tiếp tục duy trì chất lượng nhé! 🎉</p> : todo.map((t) => (
+        <div className="section-head"><h3><Emoji e="✅" play="static" /> Việc cần làm</h3></div>
+        {todo.length === 0 ? <p className="muted small">Mọi thứ đều ổn. Tiếp tục duy trì chất lượng nhé! <Emoji e="🎉" play="static" /></p> : todo.map((t) => (
           <div key={t.text} className="todo-row">
-            <div><span className="tag">{t.level}</span><p>{t.text}</p></div>
-            <button className="ghost small" onClick={() => goTo(t.tab)}>{t.cta} →</button>
+            <div><span className="tag">{t.level}</span><p>{emojify(t.text)}</p></div>
+            <button className="ghost small" onClick={() => goTo(t.tab)}>{emojify(t.cta)} →</button>
           </div>
         ))}
       </section>
@@ -243,11 +243,11 @@ function QuestsTab({ quests, reload }) {
             <button key={q.id} className="quest-row as-button" onClick={() => open(q)}>
               <span className="quest-emoji"><Emoji e={q.emoji} play="once" /></span>
               <span className="quest-main">
-                <span className="quest-kind">{KIND[q.kind].label} · {q.active ? '🟢 Đang hiển thị' : '⚪ Đã ẩn'}</span>
+                <span className="quest-kind">{emojify(KIND[q.kind].label)} · {emojify(q.active ? '🟢 Đang hiển thị' : '⚪ Đã ẩn')}</span>
                 <span className="quest-title">{q.title}</span>
-                <span className="quest-reward">⭐ +{q.xp_reward} XP · 🪙 +{q.coin_reward}</span>
+                <span className="quest-reward"><Emoji e="⭐" play="static" /> +{q.xp_reward} XP · <Emoji e="🪙" play="static" /> +{q.coin_reward}</span>
               </span>
-              <span className="quest-status">✏️</span>
+              <span className="quest-status"><Emoji e="✏️" play="static" /></span>
             </button>
           ))}
         </section>
@@ -260,8 +260,8 @@ function QuestsTab({ quests, reload }) {
               <input value={editing.title} onChange={set('title')} required minLength={3} maxLength={80} placeholder="vd: Check-in góc ban công view phố cổ" /></label>
             <div className="field"><span>Loại nhiệm vụ</span>
               <div className="seg-mini">
-                <button type="button" className={editing.kind === 'photo' ? 'active' : ''} onClick={() => setEditing({ ...editing, kind: 'photo' })}>📸 Chụp ảnh</button>
-                <button type="button" className={editing.kind === 'checkin' ? 'active' : ''} onClick={() => setEditing({ ...editing, kind: 'checkin' })}>📍 Check-in GPS</button>
+                <button type="button" className={editing.kind === 'photo' ? 'active' : ''} onClick={() => setEditing({ ...editing, kind: 'photo' })}><Emoji e="📸" play="static" /> Chụp ảnh</button>
+                <button type="button" className={editing.kind === 'checkin' ? 'active' : ''} onClick={() => setEditing({ ...editing, kind: 'checkin' })}><Emoji e="📍" play="static" /> Check-in GPS</button>
               </div>
             </div>
             <label className="field"><span>Mô tả nhiệm vụ</span>
@@ -349,7 +349,7 @@ function VouchersTab() {
   return (
     <>
       <section className="card verify-card">
-        <h3>✅ Xác nhận voucher của khách</h3>
+        <h3><Emoji e="✅" play="static" /> Xác nhận voucher của khách</h3>
         <p className="muted small">Nhập mã 8 ký tự trên màn hình của khách để xác nhận sử dụng.</p>
         <form onSubmit={verify} className="pw-row">
           <input className="code-input" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} maxLength={8} placeholder="VD: A1B2C3D4" required />
@@ -369,8 +369,8 @@ function VouchersTab() {
           <div className="voucher-left"><Emoji e="🎟️" play="once" /></div>
           <div className="voucher-body">
             <strong>{v.title}</strong>
-            <span className="muted small">🪙 {v.cost_coins} coins · {v.stock == null ? 'Không giới hạn' : `Còn ${v.stock} lượt`}{v.valid_until && ` · HSD ${fmtDateVN(v.valid_until)}`}</span>
-            <span className="small">Đã đổi {countOf(v.id)} · Đã dùng {countOf(v.id, 'used')} · {v.active ? '🟢 Đang mở' : '⚪ Đã tắt'}</span>
+            <span className="muted small"><Emoji e="🪙" play="static" /> {v.cost_coins} coins · {v.stock == null ? 'Không giới hạn' : `Còn ${v.stock} lượt`}{v.valid_until && ` · HSD ${fmtDateVN(v.valid_until)}`}</span>
+            <span className="small">Đã đổi {countOf(v.id)} · Đã dùng {countOf(v.id, 'used')} · {emojify(v.active ? '🟢 Đang mở' : '⚪ Đã tắt')}</span>
           </div>
         </button>
       ))}
@@ -457,9 +457,9 @@ function FeedbackCard({ review, onSaved }) {
         <Stars value={review.overall} size="0.85rem" />
         <span className={`tag${review.handled ? ' ok' : ''}`} style={{ marginLeft: 'auto' }}>{review.handled ? 'Đã xử lý' : 'Chưa xử lý'}</span>
       </div>
-      <span className="muted small">{review.quests?.emoji} {review.quests?.title} · {fmtDateVN(review.created_at)} · {review.recommend ? '👍 Sẽ giới thiệu' : '👎 Không giới thiệu'}</span>
+      <span className="muted small">{emojify(review.quests?.emoji)} {review.quests?.title} · {fmtDateVN(review.created_at)} · {emojify(review.recommend ? '👍 Sẽ giới thiệu' : '👎 Không giới thiệu')}</span>
       {review.comment && <p className="feedback-comment">“{review.comment}”</p>}
-      {weak.length > 0 && <p className="small weak-note">⚠️ Điểm thấp: {weak.map((c) => `${c.label} (${review[c.key]})`).join(', ')}</p>}
+      {weak.length > 0 && <p className="small weak-note"><Emoji e="⚠️" play="static" /> Điểm thấp: {weak.map((c) => `${c.label} (${review[c.key]})`).join(', ')}</p>}
       <textarea className="reply-box" rows={2} maxLength={500} value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Phản hồi công khai tới khách (tuỳ chọn)…" />
       <div className="row tight">
         {review.handled ? (

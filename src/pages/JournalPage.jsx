@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { loadLikes } from '../lib/friends'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
-import Emoji from '../components/Emoji'
+import Emoji, { emojify } from '../components/Emoji'
 
 export default function JournalPage() {
   const { user, profile } = useAuth()
@@ -61,7 +61,7 @@ export default function JournalPage() {
 
       <div className="row tight">
         <button className="btn primary grow" onClick={() => setEditing({})}>＋ Thêm kỷ niệm</button>
-        <Link to="/friends" className="btn">👥 Bạn bè</Link>
+        <Link to="/friends" className="btn"><Emoji e="👥" play="static" /> Bạn bè</Link>
       </div>
 
       {loading ? <div className="spinner" /> : entries.length === 0 ? (
@@ -78,11 +78,11 @@ export default function JournalPage() {
           <div className="entry-view">
             {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
             <h3>{viewing.title || 'Không tiêu đề'}</h3>
-            <div className="muted small">{fmtDate(viewing.created_at)}{viewing.place_name && ` · 📍 ${viewing.place_name}`}{viewing.quest_id && ' · 🏅 Nhiệm vụ'}</div>
+            <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && ' · 🏅 Nhiệm vụ')}</div>
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
             <p className="muted small">
-              {viewing.is_private ? '🔒 Chỉ mình bạn xem được' : '👥 Bạn bè xem được'}
-              {likes[viewing.id]?.count > 0 && ` · ❤️ ${likes[viewing.id].names.join(', ')}`}
+              {emojify(viewing.is_private ? '🔒 Chỉ mình bạn xem được' : '👥 Bạn bè xem được')}
+              {emojify(likes[viewing.id]?.count > 0 && ` · ❤️ ${likes[viewing.id].names.join(', ')}`)}
             </p>
             <div className="row">
               <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>Sửa</button>
@@ -141,14 +141,14 @@ function EntryEditor({ entry, onClose, onSaved }) {
       <form onSubmit={save}>
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => setFile(e.target.files?.[0] || null)} />
         <button type="button" className="photo-drop small" onClick={() => fileRef.current.click()}>
-          <span>📷</span>{file ? file.name : entry?.photo_path ? 'Đổi ảnh khác' : 'Thêm ảnh (tuỳ chọn)'}
+          <span><Emoji e="📷" play="static" /></span>{file ? file.name : entry?.photo_path ? 'Đổi ảnh khác' : 'Thêm ảnh (tuỳ chọn)'}
         </button>
         <label className="field"><span>Tiêu đề</span><input value={form.title} onChange={set('title')} maxLength={80} required /></label>
         <label className="field"><span>Địa điểm</span><input value={form.place_name} onChange={set('place_name')} maxLength={80} placeholder="vd: Hồ Tây" /></label>
         <label className="field"><span>Ghi chú</span><textarea rows={4} value={form.note} onChange={set('note')} maxLength={1000} /></label>
         <label className="switch-row">
           <input type="checkbox" checked={form.is_private} onChange={(e) => setForm({ ...form, is_private: e.target.checked })} />
-          <span>🔒 Chỉ mình tôi <small className="muted">(bạn bè sẽ không thấy trang này)</small></span>
+          <span><Emoji e="🔒" play="static" /> Chỉ mình tôi <small className="muted">(bạn bè sẽ không thấy trang này)</small></span>
         </label>
         <button className="btn primary block" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu'}</button>
       </form>

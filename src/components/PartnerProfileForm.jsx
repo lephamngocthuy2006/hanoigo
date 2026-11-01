@@ -6,6 +6,7 @@ import { CATEGORIES } from '../lib/partner'
 import { getPosition } from '../lib/geo'
 import { pinIcon } from '../lib/mapIcons'
 import BaseMap from './BaseMap'
+import Emoji, { emojify } from './Emoji'
 
 const HANOI = [21.0313, 105.8467]
 
@@ -60,7 +61,7 @@ export default function PartnerProfileForm({ partner, onSaved }) {
       <div className="field"><span>Loại hình</span>
         <div className="chips wrap">
           {Object.entries(CATEGORIES).map(([k, c]) => (
-            <button type="button" key={k} className={`chip${form.category === k ? ' active' : ''}`} onClick={() => pickCategory(k)}>{c.emoji} {c.label}</button>
+            <button type="button" key={k} className={`chip${form.category === k ? ' active' : ''}`} onClick={() => pickCategory(k)}>{emojify(c.emoji)} {emojify(c.label)}</button>
           ))}
         </div>
       </div>
@@ -79,7 +80,7 @@ export default function PartnerProfileForm({ partner, onSaved }) {
             {loc && <Marker position={[loc.lat, loc.lng]} icon={pinIcon(form.emoji)} />}
           </MapContainer>
         </div>
-        <button type="button" className="ghost small" style={{ alignSelf: 'flex-start' }} onClick={useMyLocation}>📍 Dùng vị trí hiện tại</button>
+        <button type="button" className="ghost small" style={{ alignSelf: 'flex-start' }} onClick={useMyLocation}><Emoji e="📍" play="static" /> Dùng vị trí hiện tại</button>
       </div>
       <button className="btn primary block" disabled={busy}>{busy ? 'Đang lưu…' : partner ? 'Lưu hồ sơ' : 'Gửi đăng ký đối tác'}</button>
     </form>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { emojify } from './Emoji'
 
 export default function Modal({ open, onClose, children, title }) {
   useEffect(() => {
@@ -14,7 +15,7 @@ export default function Modal({ open, onClose, children, title }) {
         {onClose && (
           <button className="modal-close" onClick={onClose} aria-label="Đóng">✕</button>
         )}
-        {title && <h3 className="modal-title">{title}</h3>}
+        {title && <h3 className="modal-title">{emojify(title)}</h3>}
         {children}
       </div>
     </div>
