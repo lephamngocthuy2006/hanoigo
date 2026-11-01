@@ -91,7 +91,7 @@ export default function FriendsPage() {
       <section className="card">
         <label className="field" style={{ marginBottom: 6 }}>
           <span>{tr('Tìm theo tên đăng nhập')}</span>
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tr('vd: ngocthuy2006')} autoCapitalize="none" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tr('vd: voquoclong')} autoCapitalize="none" />
         </label>
         {query.trim().length >= 2 && results.length === 0 && <p className="muted small">{tr('Không tìm thấy ai.')}</p>}
         {results.map((p) => {

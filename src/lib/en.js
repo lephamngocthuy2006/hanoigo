@@ -69,6 +69,7 @@ export default {
   'Chào mừng bạn đến với HANOI GO!': 'Welcome to HANOI GO!',
   'Tên đăng nhập': 'Username',
   'vd: ngocthuy2006': 'e.g. ngocthuy2006',
+  'vd: voquoclong': 'e.g. voquoclong',
   'Mật khẩu': 'Password',
   'Nhập lại mật khẩu': 'Confirm password',
   'Tên hiển thị': 'Display name',
