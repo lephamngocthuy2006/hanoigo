@@ -14,6 +14,7 @@ import FriendProfile from './pages/FriendProfile'
 import ToursPage from './pages/ToursPage'
 import TourDetail from './pages/TourDetail'
 import InsightsPage from './pages/InsightsPage'
+import PartnerPage from './pages/PartnerPage'
 
 export default function App() {
   const { session, loading } = useAuth()
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/tours" element={<ToursPage />} />
         <Route path="/tour/:id" element={<TourDetail />} />
         <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/partner" element={<PartnerPage />} />
         <Route path="/u/:username" element={<FriendProfile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

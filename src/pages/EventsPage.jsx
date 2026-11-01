@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useOutletContext } from 'react-router-dom'
+import { Link, useLocation, useOutletContext } from 'react-router-dom'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { RARITY, levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
+import VoucherShop from '../components/VoucherShop'
 
 const PACK_COST = 100
 
 export default function EventsPage() {
-  const [tab, setTab] = useState('cards')
+  const location = useLocation()
+  const [tab, setTab] = useState(location.state?.tab || 'cards')
   return (
     <div className="page">
       <section className="event-banner">
@@ -18,10 +20,13 @@ export default function EventsPage() {
         <p>Làm nhiệm vụ nhận Hanoi Coins, mở gói thẻ và sưu tầm đủ bộ Hà Nội!</p>
       </section>
       <div className="segmented">
-        <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}>🎴 Bộ sưu tập</button>
-        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}>🏆 Bảng xếp hạng</button>
+        <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}>🎴 Thẻ</button>
+        <button className={tab === 'shop' ? 'active' : ''} onClick={() => setTab('shop')}>🎁 Đổi quà</button>
+        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}>🏆 Xếp hạng</button>
       </div>
-      {tab === 'cards' ? <Collection /> : <Leaderboard />}
+      {tab === 'cards' && <Collection />}
+      {tab === 'shop' && <VoucherShop />}
+      {tab === 'rank' && <Leaderboard />}
     </div>
   )
 }

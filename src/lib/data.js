@@ -14,7 +14,7 @@ export function useQuests() {
   const load = useCallback(async () => {
     setError(null)
     const [q, c] = await Promise.all([
-      supabase.from('quests').select('*').order('sort_order'),
+      supabase.from('quests').select('*, partners(name, emoji, description, address, phone)').order('sort_order'),
       supabase.from('quest_completions').select('quest_id, completed_on').eq('user_id', user.id),
     ])
     if (q.error || c.error) {

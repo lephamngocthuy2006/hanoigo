@@ -129,6 +129,19 @@ function QuestDetailInner({ id }) {
 
       {quest.tip && <div className="tip">💡 {quest.tip}</div>}
 
+      {quest.partners && (
+        <section className="card partner-card">
+          <span className="partner-emoji small">{quest.partners.emoji}</span>
+          <div>
+            <div className="eyebrow">🏪 Đối tác HANOI GO!</div>
+            <strong>{quest.partners.name}</strong>
+            {quest.partners.description && <p className="small">{quest.partners.description}</p>}
+            <span className="muted small">{quest.partners.address}{quest.partners.phone && ` · ☎ ${quest.partners.phone}`}</span>
+            <Link to="/events" state={{ tab: 'shop' }} className="ghost small" style={{ alignSelf: 'flex-start', marginTop: 6 }}>🎁 Xem ưu đãi đối tác</Link>
+          </div>
+        </section>
+      )}
+
       {inTours.length > 0 && (
         <div className="chips">
           {inTours.map((t) => (

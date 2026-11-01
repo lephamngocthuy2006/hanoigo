@@ -61,6 +61,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
               <Stars value={r.overall} size="0.8rem" />
             </div>
             <p>{r.comment}</p>
+            {r.partner_reply && <div className="partner-reply"><b>🏪 Phản hồi từ đối tác:</b> {r.partner_reply}</div>}
           </div>
         </div>
       ))}

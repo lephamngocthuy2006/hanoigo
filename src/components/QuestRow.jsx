@@ -9,6 +9,7 @@ export default function QuestRow({ quest, done, distance }) {
       <span className="quest-main">
         <span className="quest-kind">{KIND[quest.kind].label}{quest.is_daily && ' · Hằng ngày'}{quest.area && ` · ${quest.area}`}</span>
         <span className="quest-title">{quest.title}</span>
+        {quest.partners && <span className="partner-badge">🏪 Đối tác · {quest.partners.name}</span>}
         <span className="quest-reward">⭐ +{quest.xp_reward} XP · 🪙 +{quest.coin_reward}{distance != null && ` · 📍 ${formatDistance(distance)}`}</span>
       </span>
       <span className={`quest-status${done ? ' ok' : ''}`}>{done ? '✓' : '›'}</span>
