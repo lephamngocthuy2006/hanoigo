@@ -1,0 +1,9 @@
+{
+  "name": "HANOI GO!",
+  "short_name": "HANOI GO!",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbf6ec",
+  "theme_color": "#8f2d3a",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

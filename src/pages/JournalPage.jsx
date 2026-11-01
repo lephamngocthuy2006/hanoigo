@@ -1,0 +1,151 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { supabase, friendlyError } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
+import { deletePhoto, signedUrls, uploadPhoto } from '../lib/photos'
+import Modal from '../components/Modal'
+
+const fmtDate = (s) => new Date(s).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+
+export default function JournalPage() {
+  const { user, profile } = useAuth()
+  const toast = useToast()
+  const [entries, setEntries] = useState([])
+  const [urls, setUrls] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(null) // {} = mới, entry = sửa
+  const [viewing, setViewing] = useState(null)
+
+  const load = useCallback(async () => {
+    const { data, error } = await supabase.from('journal_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+    if (error) toast(friendlyError(error), 'error')
+    else {
+      setEntries(data)
+      setUrls(await signedUrls(data.map((e) => e.photo_path)))
+    }
+    setLoading(false)
+  }, [user.id, toast])
+
+  useEffect(() => { load() }, [load])
+
+  const remove = async (entry) => {
+    if (!confirm('Xoá trang nhật ký này?')) return
+    const { error } = await supabase.from('journal_entries').delete().eq('id', entry.id)
+    if (error) return toast(friendlyError(error), 'error')
+    // ảnh của nhiệm vụ vẫn giữ trong lịch sử hoàn thành, chỉ xoá ảnh tự thêm
+    if (!entry.quest_id) deletePhoto(entry.photo_path)
+    setViewing(null)
+    load()
+  }
+
+  const places = new Set(entries.map((e) => e.place_name).filter(Boolean)).size
+  const photos = entries.filter((e) => e.photo_path).length
+
+  return (
+    <div className="page">
+      <section className="journal-cover">
+        <div className="eyebrow light">My Hanoi Journal</div>
+        <h1>Sổ hành trình</h1>
+        <p className="cover-sub">Hà Nội của {profile?.display_name || profile?.username}</p>
+        <div className="cover-stats">
+          <div><strong>{entries.length}</strong><span>Kỷ niệm</span></div>
+          <div><strong>{photos}</strong><span>Bức ảnh</span></div>
+          <div><strong>{places}</strong><span>Địa điểm</span></div>
+        </div>
+      </section>
+
+      <button className="btn primary block" onClick={() => setEditing({})}>＋ Thêm kỷ niệm</button>
+
+      {loading ? <div className="spinner" /> : entries.length === 0 ? (
+        <div className="card empty">
+          <div className="empty-emoji">📖</div>
+          <p>Sổ hành trình còn trống. Hoàn thành một <strong>Photo Quest</strong> hoặc thêm kỷ niệm đầu tiên nhé!</p>
+        </div>
+      ) : (
+        <div className="journal-grid">
+          {entries.map((e) => (
+            <button key={e.id} className="journal-item" onClick={() => setViewing(e)}>
+              {e.photo_path ? <img src={urls[e.photo_path]} alt={e.title} loading="lazy" /> : <div className="journal-noimg">✍️</div>}
+              <div className="journal-meta">
+                <strong>{e.title || 'Không tiêu đề'}</strong>
+                <span>{fmtDate(e.created_at)}{e.place_name && ` · ${e.place_name}`}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <Modal open={!!viewing} onClose={() => setViewing(null)}>
+        {viewing && (
+          <div className="entry-view">
+            {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
+            <h3>{viewing.title || 'Không tiêu đề'}</h3>
+            <div className="muted small">{fmtDate(viewing.created_at)}{viewing.place_name && ` · 📍 ${viewing.place_name}`}{viewing.quest_id && ' · 🏅 Nhiệm vụ'}</div>
+            {viewing.note && <p className="entry-note">{viewing.note}</p>}
+            <div className="row">
+              <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>Sửa</button>
+              <button className="btn danger" onClick={() => remove(viewing)}>Xoá</button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <EntryEditor entry={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />
+    </div>
+  )
+}
+
+function EntryEditor({ entry, onClose, onSaved }) {
+  const { user } = useAuth()
+  const toast = useToast()
+  const fileRef = useRef(null)
+  const [form, setForm] = useState({ title: '', note: '', place_name: '' })
+  const [file, setFile] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const isNew = entry && !entry.id
+
+  useEffect(() => {
+    if (entry) setForm({ title: entry.title || '', note: entry.note || '', place_name: entry.place_name || '' })
+    setFile(null)
+  }, [entry])
+
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+
+  const save = async (e) => {
+    e.preventDefault()
+    setBusy(true)
+    let newPath = null
+    try {
+      if (file) newPath = await uploadPhoto(user.id, file)
+      const payload = { ...form, ...(newPath && { photo_path: newPath }) }
+      const { error } = isNew
+        ? await supabase.from('journal_entries').insert({ ...payload, user_id: user.id })
+        : await supabase.from('journal_entries').update(payload).eq('id', entry.id)
+      if (error) throw error
+      if (newPath && !isNew && entry.photo_path && !entry.quest_id) deletePhoto(entry.photo_path)
+      newPath = null
+      toast('Đã lưu vào Sổ hành trình 📖', 'success')
+      onSaved()
+    } catch (err) {
+      toast(friendlyError(err), 'error')
+    } finally {
+      if (newPath) deletePhoto(newPath)
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Modal open={!!entry} onClose={onClose} title={isNew ? 'Thêm kỷ niệm' : 'Sửa kỷ niệm'}>
+      <form onSubmit={save}>
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        <button type="button" className="photo-drop small" onClick={() => fileRef.current.click()}>
+          <span>📷</span>{file ? file.name : entry?.photo_path ? 'Đổi ảnh khác' : 'Thêm ảnh (tuỳ chọn)'}
+        </button>
+        <label className="field"><span>Tiêu đề</span><input value={form.title} onChange={set('title')} maxLength={80} required /></label>
+        <label className="field"><span>Địa điểm</span><input value={form.place_name} onChange={set('place_name')} maxLength={80} placeholder="vd: Hồ Tây" /></label>
+        <label className="field"><span>Ghi chú</span><textarea rows={4} value={form.note} onChange={set('note')} maxLength={1000} /></label>
+        <button className="btn primary block" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu'}</button>
+      </form>
+    </Modal>
+  )
+}
