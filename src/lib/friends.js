@@ -56,25 +56,48 @@ export async function searchUsers(query, excludeId) {
   return data || []
 }
 
-// Lượt thích của các trang nhật ký: { entryId: { count, mine, names } }
+// Cảm xúc "vui" (🤬 Đập bàn — rung màn hình). Đặt false để ẩn khi đi thi.
+export const ENABLE_FUN_REACTIONS = true
+
+export const REACTIONS = [
+  { e: '👍', label: 'Thích' },
+  { e: '❤️', label: 'Yêu thích' },
+  { e: '🥰', label: 'Thương thương' },
+  { e: '😆', label: 'Haha' },
+  { e: '😮', label: 'Wow' },
+  { e: '😢', label: 'Buồn' },
+  { e: '😡', label: 'Phẫn nộ' },
+  ...(ENABLE_FUN_REACTIONS ? [{ e: '🤬', label: 'Đập bàn!', shake: true }] : []),
+]
+export const reactionLabel = (e) => REACTIONS.find((r) => r.e === e)?.label || (e === '🤬' ? 'Đập bàn!' : 'Thả cảm xúc')
+
+// Cảm xúc của các trang nhật ký: { entryId: { count, mine, top: [emoji…], people: [{ name, reaction }] } }
 export async function loadLikes(entryIds, userId) {
   if (!entryIds.length) return {}
   const { data } = await supabase
     .from('journal_likes')
-    .select('entry_id, user_id, profiles(display_name, username)')
+    .select('entry_id, user_id, reaction, profiles(display_name, username)')
     .in('entry_id', entryIds)
   const map = {}
   ;(data || []).forEach((l) => {
-    map[l.entry_id] ??= { count: 0, mine: false, names: [] }
-    map[l.entry_id].count += 1
-    if (l.user_id === userId) map[l.entry_id].mine = true
-    else map[l.entry_id].names.push(l.profiles?.display_name || l.profiles?.username)
+    const r = l.reaction || '❤️'
+    map[l.entry_id] ??= { count: 0, mine: null, counts: {}, people: [] }
+    const m = map[l.entry_id]
+    m.count += 1
+    m.counts[r] = (m.counts[r] || 0) + 1
+    if (l.user_id === userId) m.mine = r
+    else m.people.push({ name: l.profiles?.display_name || l.profiles?.username, reaction: r })
+  })
+  Object.values(map).forEach((m) => {
+    m.top = Object.entries(m.counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e]) => e)
   })
   return map
 }
 
-export function toggleLike(entryId, liked, userId) {
-  return liked
-    ? supabase.from('journal_likes').delete().eq('entry_id', entryId).eq('user_id', userId)
-    : supabase.from('journal_likes').insert({ entry_id: entryId, user_id: userId })
+// Thả / đổi / gỡ cảm xúc. previous: cảm xúc hiện tại (null nếu chưa thả), reaction: null để gỡ
+export function setReaction(entryId, userId, reaction, previous) {
+  const mine = supabase.from('journal_likes')
+  if (!reaction) return mine.delete().eq('entry_id', entryId).eq('user_id', userId)
+  if (previous) return mine.update({ reaction }).eq('entry_id', entryId).eq('user_id', userId)
+  return mine.insert({ entry_id: entryId, user_id: userId, reaction })
 }

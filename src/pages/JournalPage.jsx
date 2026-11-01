@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext'
 import { deletePhoto, signedUrls, uploadPhoto } from '../lib/photos'
 import { Link } from 'react-router-dom'
 import { loadLikes } from '../lib/friends'
+import ReactionBar from '../components/ReactionBar'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import Emoji, { emojify } from '../components/Emoji'
@@ -82,8 +83,9 @@ export default function JournalPage() {
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
             <p className="muted small">
               {emojify(viewing.is_private ? '🔒 Chỉ mình bạn xem được' : '👥 Bạn bè xem được')}
-              {emojify(likes[viewing.id]?.count > 0 && ` · ❤️ ${likes[viewing.id].names.join(', ')}`)}
             </p>
+            <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} showPeople
+              onChange={(like) => setLikes((m) => ({ ...m, [viewing.id]: like }))} />
             <div className="row">
               <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>Sửa</button>
               <button className="btn danger" onClick={() => remove(viewing)}>Xoá</button>

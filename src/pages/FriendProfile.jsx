@@ -7,7 +7,7 @@ import { loadLikes } from '../lib/friends'
 import { signedUrls } from '../lib/photos'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
-import LikeButton from '../components/LikeButton'
+import ReactionBar from '../components/ReactionBar'
 import Modal from '../components/Modal'
 import Emoji, { emojify } from '../components/Emoji'
 
@@ -100,7 +100,7 @@ export default function FriendProfile() {
             <div className="muted small">{fmtDate(viewing.created_at)}{emojify(viewing.place_name && ` · 📍 ${viewing.place_name}`)}{emojify(viewing.quest_id && ' · 🏅 Nhiệm vụ')}</div>
             {viewing.note && <p className="entry-note">{viewing.note}</p>}
             <div className="row">
-              <LikeButton entryId={viewing.id} userId={user.id} like={likes[viewing.id]} onChange={setLike(viewing.id)} />
+              <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} onChange={setLike(viewing.id)} />
             </div>
           </div>
         )}

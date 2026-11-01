@@ -41,6 +41,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    4. [`supabase/004_partners.sql`](supabase/004_partners.sql) — cổng đối tác, voucher, phản hồi đánh giá
    5. [`supabase/005_admin.sql`](supabase/005_admin.sql) — trang quản trị
    6. [`supabase/006_super_admin.sql`](supabase/006_super_admin.sql) — quản trị tối cao, phân quyền trong app
+   7. [`supabase/007_reactions.sql`](supabase/007_reactions.sql) — thả cảm xúc kiểu Facebook
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -112,6 +113,10 @@ update public.profiles set is_demo = true where username = 'ten_dang_nhap';
 - Camera và GPS chỉ chạy trên **HTTPS** (GitHub Pages có sẵn) hoặc `localhost`.
 - Quên mật khẩu: chưa có email nên không tự khôi phục được. Admin đặt lại mật khẩu trong Supabase → **Authentication → Users**.
 - Project Supabase gói Free sẽ tạm dừng nếu không dùng 7 ngày; vào dashboard bấm **Restore** là chạy lại.
+
+## Cảm xúc "Đập bàn" 🤬
+
+Đây là cảm xúc vui (rung màn hình). Muốn ẩn khi thuyết trình: trong `src/lib/friends.js` đổi `ENABLE_FUN_REACTIONS = true` thành `false` rồi push.
 
 ## Ghi công
 
