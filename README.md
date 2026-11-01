@@ -40,6 +40,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    3. [`supabase/003_tours_reviews.sql`](supabase/003_tours_reviews.sql) — tour theo chủ đề, thông tin điểm đến, đánh giá, thống kê, chế độ demo
    4. [`supabase/004_partners.sql`](supabase/004_partners.sql) — cổng đối tác, voucher, phản hồi đánh giá
    5. [`supabase/005_admin.sql`](supabase/005_admin.sql) — trang quản trị
+   6. [`supabase/006_super_admin.sql`](supabase/006_super_admin.sql) — quản trị tối cao, phân quyền trong app
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -88,13 +89,15 @@ Mở <http://localhost:5173>.
 
 ## Trang quản trị
 
-Cấp quyền admin cho tài khoản của bạn (chỉ cần 1 lần):
+Cấp quyền **quản trị tối cao** cho tài khoản đầu tiên (chỉ cần 1 lần):
 
 ```sql
-update public.profiles set is_admin = true where username = 'ten_dang_nhap';
+update public.profiles set is_admin = true, is_super_admin = true where username = 'ten_dang_nhap';
 ```
 
-Sau đó vào **Tôi → 🛡️ Trang quản trị** để: duyệt / từ chối / thu hồi đối tác (kèm lời nhắn), bật tắt chế độ demo cho người dùng, xoá đánh giá vi phạm.
+Từ đó tài khoản Tối cao cấp / thu hồi quyền **Admin** hoặc **Tối cao** cho người khác ngay trong app (Trang quản trị → Người dùng → 🔑 Phân quyền).
+
+Vào **Tôi → 🛡️ Trang quản trị** để: xem thống kê đăng ký, duyệt / từ chối / thu hồi đối tác (kèm lời nhắn), bật tắt chế độ demo cho người dùng, xoá đánh giá vi phạm.
 
 ## Chế độ demo (thuyết trình)
 

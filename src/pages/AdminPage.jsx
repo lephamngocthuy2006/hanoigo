@@ -27,7 +27,7 @@ export default function AdminPage() {
     <div className="page">
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
       <section className="admin-hero">
-        <div className="eyebrow light">Quản trị hệ thống</div>
+        <div className="eyebrow light">Quản trị hệ thống · {profile.is_super_admin ? '👑 Tối cao' : '🛡️ Admin'}</div>
         <h1>🛡️ Trang quản trị</h1>
         <p>Duyệt đối tác, quản lý người dùng và kiểm duyệt nội dung đánh giá.</p>
       </section>
@@ -146,24 +146,50 @@ function PartnersTab({ onPendingCount }) {
 }
 
 /* ------------------------------ Người dùng ------------------------------ */
+const ROLES = {
+  super: { label: '👑 Tối cao', desc: 'Toàn quyền quản trị + cấp quyền cho người khác' },
+  admin: { label: '🛡️ Admin', desc: 'Duyệt đối tác, quản lý người dùng, kiểm duyệt đánh giá' },
+  user: { label: '👤 Người dùng', desc: 'Không có quyền quản trị' },
+}
+const roleOf = (u) => (u.is_super_admin ? 'super' : u.is_admin ? 'admin' : 'user')
+const SORTS = [
+  { id: 'new', label: 'Mới đăng ký', col: 'created_at' },
+  { id: 'active', label: 'Hoạt động gần đây', col: 'last_active_date' },
+  { id: 'xp', label: 'Nhiều XP', col: 'xp' },
+]
+
 function UsersTab() {
+  const { user, profile } = useAuth()
   const toast = useToast()
   const [query, setQuery] = useState('')
+  const [sort, setSort] = useState('new')
   const [rows, setRows] = useState(null)
+  const [stats, setStats] = useState(null)
+  const [editing, setEditing] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const isSuper = profile?.is_super_admin
 
   const load = useCallback(async () => {
-    let q = supabase.from('profiles').select('id, username, display_name, avatar, xp, coins, is_demo, is_admin, created_at, last_active_date')
-      .order('created_at', { ascending: false }).limit(50)
+    const col = SORTS.find((x) => x.id === sort).col
+    let q = supabase
+      .from('profiles')
+      .select('id, username, display_name, avatar, xp, coins, is_demo, is_admin, is_super_admin, created_at, last_active_date')
+      .order(col, { ascending: false, nullsFirst: false })
+      .limit(200)
     const term = query.trim().toLowerCase().replace(/[^a-z0-9_]/g, '')
     if (term) q = q.ilike('username', `%${term}%`)
     const { data } = await q
     setRows(data || [])
-  }, [query])
+  }, [query, sort])
 
   useEffect(() => {
     const t = setTimeout(load, 250)
     return () => clearTimeout(t)
   }, [load])
+
+  useEffect(() => {
+    supabase.rpc('admin_user_stats').then(({ data }) => setStats(data))
+  }, [])
 
   const toggleDemo = async (u) => {
     const { error } = await supabase.rpc('admin_set_demo', { p_user_id: u.id, p_on: !u.is_demo })
@@ -172,28 +198,84 @@ function UsersTab() {
     load()
   }
 
+  const setRole = async (role) => {
+    setBusy(true)
+    const { error } = await supabase.rpc('admin_set_role', { p_user_id: editing.id, p_role: role })
+    setBusy(false)
+    if (error) return toast(friendlyError(error), 'error')
+    toast(`@${editing.username} giờ là ${ROLES[role].label}`, 'success')
+    setEditing(null)
+    load()
+  }
+
+  const isNew = (u) => Date.now() - new Date(u.created_at).getTime() < 86400000
+
   return (
     <>
+      {stats && (
+        <div className="kpi-grid">
+          <div className="kpi"><span className="kpi-icon">👥</span><strong>{stats.total}</strong><span>Tổng tài khoản</span></div>
+          <div className="kpi"><span className="kpi-icon">🆕</span><strong>{stats.today}</strong><span>Đăng ký hôm nay · {stats.week} trong 7 ngày</span></div>
+          <div className="kpi"><span className="kpi-icon">🔥</span><strong>{stats.active_today}</strong><span>Hoạt động hôm nay</span></div>
+          <div className="kpi"><span className="kpi-icon">🛡️</span><strong>{stats.admins}</strong><span>Quản trị viên</span></div>
+        </div>
+      )}
+
       <input className="search-input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="🔍 Tìm tên đăng nhập…" autoCapitalize="none" />
+      <div className="chips">
+        {SORTS.map((x) => (
+          <button key={x.id} className={`chip${sort === x.id ? ' active' : ''}`} onClick={() => setSort(x.id)}>{x.label}</button>
+        ))}
+      </div>
+
       {!rows ? <div className="spinner" /> : (
         <section className="card">
           <div className="section-head"><h3>Người dùng</h3><span className="muted small">{rows.length} tài khoản</span></div>
           {rows.map((u) => (
-            <div key={u.id} className="person-row">
-              <span className="person-link">
-                <span className="rank-avatar">{u.avatar}</span>
-                <span className="rank-name">
-                  <strong>{u.display_name || u.username} {u.is_admin && <span className="tag ok">Admin</span>}</strong>
-                  <span className="muted small">@{u.username} · Lv {levelInfo(u.xp).level} · 🪙 {u.coins} · tham gia {fmtDateVN(u.created_at)}</span>
+            <div key={u.id} className="admin-user">
+              <span className="rank-avatar">{u.avatar}</span>
+              <div className="admin-user-body">
+                <strong>
+                  {u.display_name || u.username}
+                  {u.is_super_admin ? <span className="tag gold">👑 Tối cao</span> : u.is_admin && <span className="tag ok">🛡️ Admin</span>}
+                  {isNew(u) && <span className="tag new">Mới</span>}
+                </strong>
+                <span className="muted small">@{u.username} · Lv {levelInfo(u.xp).level} · 🪙 {u.coins}</span>
+                <span className="muted small">
+                  Đăng ký {new Date(u.created_at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                  {u.last_active_date && ` · hoạt động ${fmtDateVN(u.last_active_date)}`}
                 </span>
-              </span>
-              <button className={`chip${u.is_demo ? ' active' : ''}`} onClick={() => toggleDemo(u)} title="Chế độ demo: check-in được ở bất kỳ đâu">
-                🎤 Demo {u.is_demo ? 'bật' : 'tắt'}
-              </button>
+                <div className="admin-user-actions">
+                  <button className={`chip${u.is_demo ? ' active' : ''}`} onClick={() => toggleDemo(u)} title="Chế độ demo: check-in được ở bất kỳ đâu">
+                    🎤 Demo {u.is_demo ? 'bật' : 'tắt'}
+                  </button>
+                  {isSuper && u.id !== user.id && (
+                    <button className="chip" onClick={() => setEditing(u)}>🔑 Phân quyền</button>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </section>
       )}
+
+      <Modal open={!!editing} onClose={() => setEditing(null)} title="Phân quyền">
+        {editing && (
+          <>
+            <p>{editing.avatar} <b>{editing.display_name || editing.username}</b> <span className="muted">@{editing.username}</span></p>
+            <div className="role-list">
+              {Object.entries(ROLES).map(([key, r]) => (
+                <button key={key} className={`role-option${roleOf(editing) === key ? ' current' : ''}`} disabled={busy || roleOf(editing) === key}
+                  onClick={() => setRole(key)}>
+                  <strong>{r.label}{roleOf(editing) === key && ' · hiện tại'}</strong>
+                  <span className="muted small">{r.desc}</span>
+                </button>
+              ))}
+            </div>
+            <p className="muted small">Quản trị viên tối cao có thể cấp hoặc thu hồi quyền của người khác, nhưng không tự hạ quyền của mình.</p>
+          </>
+        )}
+      </Modal>
     </>
   )
 }
