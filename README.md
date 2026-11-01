@@ -44,6 +44,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    7. [`supabase/007_reactions.sql`](supabase/007_reactions.sql) — thả cảm xúc kiểu Facebook
    8. [`supabase/008_delete_user.sql`](supabase/008_delete_user.sql) — quyền xoá tài khoản cho Tối cao & dọn dữ liệu test
    9. [`supabase/009_english.sql`](supabase/009_english.sql) — nội dung tiếng Anh cho nhiệm vụ, câu đố, thẻ, tour
+  10. [`supabase/010_dau_chan_ha_noi.sql`](supabase/010_dau_chan_ha_noi.sql) — tour mẫu thử nghiệm "Dấu chân Hà Nội" (6 trạm Hồ Gươm – Phố Cổ)
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
