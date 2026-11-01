@@ -7,6 +7,7 @@ import { CATEGORIES, fmtDateVN } from '../lib/partner'
 import { levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
+import Emoji from '../components/Emoji'
 
 const STATUS = {
   pending: { label: 'Chờ duyệt', cls: '' },
@@ -97,7 +98,7 @@ function PartnersTab({ onPendingCount }) {
       {list.map((p) => (
         <section key={p.id} className="card admin-partner">
           <div className="admin-partner-head">
-            <span className="partner-emoji small">{p.emoji}</span>
+            <span className="partner-emoji small"><Emoji e={p.emoji} play="loop" /></span>
             <div className="grow">
               <strong>{p.name}</strong>
               <div className="muted small">{CATEGORIES[p.category]?.emoji} {CATEGORIES[p.category]?.label} · đăng ký {fmtDateVN(p.created_at)}</div>
@@ -214,10 +215,10 @@ function UsersTab() {
     <>
       {stats && (
         <div className="kpi-grid">
-          <div className="kpi"><span className="kpi-icon">👥</span><strong>{stats.total}</strong><span>Tổng tài khoản</span></div>
-          <div className="kpi"><span className="kpi-icon">🆕</span><strong>{stats.today}</strong><span>Đăng ký hôm nay · {stats.week} trong 7 ngày</span></div>
-          <div className="kpi"><span className="kpi-icon">🔥</span><strong>{stats.active_today}</strong><span>Hoạt động hôm nay</span></div>
-          <div className="kpi"><span className="kpi-icon">🛡️</span><strong>{stats.admins}</strong><span>Quản trị viên</span></div>
+          <div className="kpi"><span className="kpi-icon"><Emoji e="👥" play="once" /></span><strong>{stats.total}</strong><span>Tổng tài khoản</span></div>
+          <div className="kpi"><span className="kpi-icon"><Emoji e="🆕" play="once" /></span><strong>{stats.today}</strong><span>Đăng ký hôm nay · {stats.week} trong 7 ngày</span></div>
+          <div className="kpi"><span className="kpi-icon"><Emoji e="🔥" play="once" /></span><strong>{stats.active_today}</strong><span>Hoạt động hôm nay</span></div>
+          <div className="kpi"><span className="kpi-icon"><Emoji e="🛡️" play="once" /></span><strong>{stats.admins}</strong><span>Quản trị viên</span></div>
         </div>
       )}
 
@@ -233,7 +234,7 @@ function UsersTab() {
           <div className="section-head"><h3>Người dùng</h3><span className="muted small">{rows.length} tài khoản</span></div>
           {rows.map((u) => (
             <div key={u.id} className="admin-user">
-              <span className="rank-avatar">{u.avatar}</span>
+              <span className="rank-avatar"><Emoji e={u.avatar} play="hover" /></span>
               <div className="admin-user-body">
                 <strong>
                   {u.display_name || u.username}
@@ -310,7 +311,7 @@ function ReviewsTab() {
       {rows.length === 0 && <p className="muted small">Chưa có đánh giá nào.</p>}
       {rows.map((r) => (
         <div key={r.id} className="review-item">
-          <span className="rank-avatar">{r.profiles?.avatar}</span>
+          <span className="rank-avatar"><Emoji e={r.profiles?.avatar} play="hover" /></span>
           <div className="grow">
             <div className="review-head">
               <strong>{r.profiles?.display_name || r.profiles?.username}</strong>

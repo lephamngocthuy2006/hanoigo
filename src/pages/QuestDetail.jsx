@@ -13,6 +13,7 @@ import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 import ReviewSummary from '../components/ReviewSummary'
 import { useTours } from '../lib/tours'
+import Emoji from '../components/Emoji'
 
 // key theo id để mỗi nhiệm vụ có state riêng (ảnh, đáp án, popup thưởng…)
 export default function QuestDetail() {
@@ -111,7 +112,7 @@ function QuestDetailInner({ id }) {
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
 
       <div className="detail-head">
-        <span className="detail-emoji">{quest.emoji}</span>
+        <span className="detail-emoji"><Emoji e={quest.emoji} play="loop" /></span>
         <div>
           <div className="eyebrow">{KIND[quest.kind].label}{quest.is_daily && ' · Hằng ngày'}</div>
           <h1>{quest.title}</h1>
@@ -122,8 +123,8 @@ function QuestDetailInner({ id }) {
       <p>{quest.description}</p>
 
       <div className="reward-grid">
-        <div><strong>⭐ +{quest.xp_reward}</strong><span>XP</span></div>
-        <div><strong>🪙 +{quest.coin_reward}</strong><span>Coins</span></div>
+        <div><strong><Emoji e="⭐" play="once" /> +{quest.xp_reward}</strong><span>XP</span></div>
+        <div><strong><Emoji e="🪙" play="once" /> +{quest.coin_reward}</strong><span>Coins</span></div>
         <div><strong>{quest.kind === 'photo' ? '📖 +1' : '🔥'}</strong><span>{quest.kind === 'photo' ? 'Trang nhật ký' : 'Streak'}</span></div>
       </div>
 
@@ -131,7 +132,7 @@ function QuestDetailInner({ id }) {
 
       {quest.partners && (
         <section className="card partner-card">
-          <span className="partner-emoji small">{quest.partners.emoji}</span>
+          <span className="partner-emoji small"><Emoji e={quest.partners.emoji} play="loop" /></span>
           <div>
             <div className="eyebrow">🏪 Đối tác HANOI GO!</div>
             <strong>{quest.partners.name}</strong>
@@ -238,13 +239,13 @@ function QuestDetailInner({ id }) {
 
       <Modal open={!!reward} onClose={() => navigate('/')}>
         <div className="celebrate">
-          <div className="celebrate-emoji">🎉</div>
+          <div className="celebrate-emoji"><Emoji e="🎉" play="loop" /></div>
           <h2>Hoàn thành!</h2>
           <p>{quest.title}</p>
           <div className="reward-grid">
-            <div><strong>⭐ +{reward?.xp}</strong><span>XP</span></div>
-            <div><strong>🪙 +{reward?.coins}</strong><span>Coins</span></div>
-            <div><strong>🔥 {reward?.streak}</strong><span>ngày liên tiếp</span></div>
+            <div><strong><Emoji e="⭐" play="once" /> +{reward?.xp}</strong><span>XP</span></div>
+            <div><strong><Emoji e="🪙" play="once" /> +{reward?.coins}</strong><span>Coins</span></div>
+            <div><strong><Emoji e="🔥" play="once" /> {reward?.streak}</strong><span>ngày liên tiếp</span></div>
           </div>
           <div className="row">
             {quest.kind === 'photo' && <button className="btn" onClick={() => navigate('/journal')}>Xem Sổ hành trình</button>}

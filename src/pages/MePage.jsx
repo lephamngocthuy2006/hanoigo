@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { AVATARS, levelInfo, levelTitle, liveStreak } from '../lib/game'
 import Modal from '../components/Modal'
+import Emoji from '../components/Emoji'
 
 export default function MePage() {
   const { user, profile, refreshProfile, signOut } = useAuth()
@@ -31,7 +32,7 @@ export default function MePage() {
   return (
     <div className="page">
       <section className="profile-hero">
-        <div className="profile-avatar">{profile.avatar}</div>
+        <div className="profile-avatar"><Emoji e={profile.avatar} play="loop" /></div>
         <h1>{profile.display_name || profile.username}</h1>
         <div className="muted">@{profile.username}</div>
         {profile.is_demo && <span className="tag ok" title="Check-in được ở bất kỳ đâu khi thuyết trình">🎤 Chế độ demo</span>}
@@ -50,12 +51,12 @@ export default function MePage() {
       </section>
 
       <div className="stat-grid">
-        <div className="stat"><strong>🪙 {profile.coins}</strong><span>Hanoi Coins</span></div>
-        <div className="stat"><strong>⭐ {profile.xp}</strong><span>Tổng XP</span></div>
-        <div className="stat"><strong>🔥 {liveStreak(profile)}</strong><span>Streak (kỷ lục {profile.best_streak})</span></div>
-        <div className="stat"><strong>🏅 {stats?.quests ?? '…'}</strong><span>Lượt hoàn thành</span></div>
-        <div className="stat"><strong>📸 {stats?.photos ?? '…'}</strong><span>Ảnh đã lưu</span></div>
-        <div className="stat"><strong>🎴 {stats?.cards ?? '…'}</strong><span>Loại thẻ</span></div>
+        <div className="stat"><strong><Emoji e="🪙" play="once" /> {profile.coins}</strong><span>Hanoi Coins</span></div>
+        <div className="stat"><strong><Emoji e="⭐" play="once" /> {profile.xp}</strong><span>Tổng XP</span></div>
+        <div className="stat"><strong><Emoji e="🔥" play="once" /> {liveStreak(profile)}</strong><span>Streak (kỷ lục {profile.best_streak})</span></div>
+        <div className="stat"><strong><Emoji e="🏅" play="once" /> {stats?.quests ?? '…'}</strong><span>Lượt hoàn thành</span></div>
+        <div className="stat"><strong><Emoji e="📸" play="once" /> {stats?.photos ?? '…'}</strong><span>Ảnh đã lưu</span></div>
+        <div className="stat"><strong><Emoji e="🎴" play="once" /> {stats?.cards ?? '…'}</strong><span>Loại thẻ</span></div>
       </div>
 
       <section className="card menu">
@@ -101,7 +102,9 @@ function EditProfile({ open, onClose, profile, onSaved }) {
         <div className="field"><span>Avatar</span>
           <div className="avatar-grid">
             {AVATARS.map((a) => (
-              <button type="button" key={a} className={form.avatar === a ? 'active' : ''} onClick={() => setForm({ ...form, avatar: a })}>{a}</button>
+              <button type="button" key={a} className={form.avatar === a ? 'active' : ''} onClick={() => setForm({ ...form, avatar: a })}>
+                <Emoji e={a} play={form.avatar === a ? 'loop' : 'static'} />
+              </button>
             ))}
           </div>
         </div>

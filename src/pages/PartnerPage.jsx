@@ -9,6 +9,7 @@ import { KIND } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
 import PartnerProfileForm from '../components/PartnerProfileForm'
+import Emoji from '../components/Emoji'
 
 const TABS = [
   { id: 'overview', label: '📊 Tổng quan' },
@@ -73,7 +74,7 @@ export default function PartnerPage() {
       <div className="page">
         <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
         <section className="card center">
-          <div className="empty-emoji">{partner.status === 'pending' ? '⏳' : '❌'}</div>
+          <div className="empty-emoji"><Emoji e={partner.status === 'pending' ? '⏳' : '❌'} play="loop" /></div>
           <h2>{partner.emoji} {partner.name}</h2>
           <p>{partner.status === 'pending'
             ? 'Hồ sơ đối tác đang chờ quản trị viên duyệt. Bạn sẽ dùng được cổng đối tác ngay khi được duyệt.'
@@ -98,7 +99,7 @@ export default function PartnerPage() {
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
       <section className="partner-hero compact">
         <div className="partner-head">
-          <span className="partner-emoji">{partner.emoji}</span>
+          <span className="partner-emoji"><Emoji e={partner.emoji} play="loop" /></span>
           <div>
             <div className="eyebrow light">Cổng quản lý đối tác · {CATEGORIES[partner.category]?.label}</div>
             <h1>{partner.name}</h1>
@@ -152,10 +153,10 @@ function Overview({ quests, reviews, goTo }) {
   return (
     <>
       <div className="kpi-grid">
-        <div className="kpi"><span className="kpi-icon">🏅</span><strong>{stats.completions}</strong><span>Lượt hoàn thành nhiệm vụ</span></div>
-        <div className="kpi"><span className="kpi-icon">👤</span><strong>{stats.visitors}</strong><span>Khách tham gia</span></div>
-        <div className="kpi"><span className="kpi-icon">🎟️</span><strong>{stats.used}/{stats.issued}</strong><span>Voucher đã dùng / đã đổi ({useRate}%)</span></div>
-        <div className="kpi"><span className="kpi-icon">⭐</span><strong>{fmtScore(s.overall)}</strong><span>Điểm đánh giá ({s.count} lượt)</span></div>
+        <div className="kpi"><span className="kpi-icon"><Emoji e="🏅" play="once" /></span><strong>{stats.completions}</strong><span>Lượt hoàn thành nhiệm vụ</span></div>
+        <div className="kpi"><span className="kpi-icon"><Emoji e="👤" play="once" /></span><strong>{stats.visitors}</strong><span>Khách tham gia</span></div>
+        <div className="kpi"><span className="kpi-icon"><Emoji e="🎟️" play="once" /></span><strong>{stats.used}/{stats.issued}</strong><span>Voucher đã dùng / đã đổi ({useRate}%)</span></div>
+        <div className="kpi"><span className="kpi-icon"><Emoji e="⭐" play="once" /></span><strong>{fmtScore(s.overall)}</strong><span>Điểm đánh giá ({s.count} lượt)</span></div>
       </div>
 
       <section className="card">
@@ -233,14 +234,14 @@ function QuestsTab({ quests, reload }) {
       <button className="btn primary block" onClick={() => open(null)}>＋ Tạo nhiệm vụ cho khách</button>
       {quests.length === 0 ? (
         <div className="card empty">
-          <div className="empty-emoji">🧭</div>
+          <div className="empty-emoji"><Emoji e="🧭" play="loop" /></div>
           <p>Biến chuyến ghé thăm thành một cuộc khám phá: tạo nhiệm vụ check-in hoặc chụp ảnh tại địa điểm của bạn.</p>
         </div>
       ) : (
         <section className="card">
           {quests.map((q) => (
             <button key={q.id} className="quest-row as-button" onClick={() => open(q)}>
-              <span className="quest-emoji">{q.emoji}</span>
+              <span className="quest-emoji"><Emoji e={q.emoji} play="once" /></span>
               <span className="quest-main">
                 <span className="quest-kind">{KIND[q.kind].label} · {q.active ? '🟢 Đang hiển thị' : '⚪ Đã ẩn'}</span>
                 <span className="quest-title">{q.title}</span>
@@ -360,12 +361,12 @@ function VouchersTab() {
 
       {vouchers.length === 0 ? (
         <div className="card empty">
-          <div className="empty-emoji">🎟️</div>
+          <div className="empty-emoji"><Emoji e="🎟️" play="loop" /></div>
           <p>Ưu đãi giúp chuyển khách khám phá thành khách hàng: giảm giá đồ uống, quà tặng, vé tham quan…</p>
         </div>
       ) : vouchers.map((v) => (
         <button key={v.id} className="voucher-card as-button" onClick={() => open(v)}>
-          <div className="voucher-left">🎟️</div>
+          <div className="voucher-left"><Emoji e="🎟️" play="once" /></div>
           <div className="voucher-body">
             <strong>{v.title}</strong>
             <span className="muted small">🪙 {v.cost_coins} coins · {v.stock == null ? 'Không giới hạn' : `Còn ${v.stock} lượt`}{v.valid_until && ` · HSD ${fmtDateVN(v.valid_until)}`}</span>
@@ -397,7 +398,7 @@ function VouchersTab() {
 
       <Modal open={!!verified} onClose={() => setVerified(null)}>
         <div className="celebrate">
-          <div className="celebrate-emoji">✅</div>
+          <div className="celebrate-emoji"><Emoji e="✅" play="loop" /></div>
           <h2>Mã hợp lệ!</h2>
           <p><b>{verified?.voucher}</b></p>
           <p className="muted">Khách hàng: {verified?.customer}</p>
@@ -451,7 +452,7 @@ function FeedbackCard({ review, onSaved }) {
   return (
     <section className={`card feedback-card${review.handled ? ' handled' : ''}`}>
       <div className="review-head">
-        <span className="rank-avatar">{review.profiles?.avatar}</span>
+        <span className="rank-avatar"><Emoji e={review.profiles?.avatar} play="hover" /></span>
         <strong>{review.profiles?.display_name || review.profiles?.username}</strong>
         <Stars value={review.overall} size="0.85rem" />
         <span className={`tag${review.handled ? ' ok' : ''}`} style={{ marginLeft: 'auto' }}>{review.handled ? 'Đã xử lý' : 'Chưa xử lý'}</span>

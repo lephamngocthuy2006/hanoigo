@@ -5,11 +5,12 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { searchUsers } from '../lib/friends'
 import { levelInfo, liveStreak } from '../lib/game'
+import Emoji from '../components/Emoji'
 
 function PersonRow({ person, children, to }) {
   const body = (
     <>
-      <span className="rank-avatar">{person.avatar}</span>
+      <span className="rank-avatar"><Emoji e={person.avatar} play="hover" /></span>
       <span className="rank-name">
         <strong>{person.display_name || person.username}</strong>
         <span className="muted small">@{person.username} · Lv {levelInfo(person.xp).level} · 🔥 {liveStreak(person)}</span>

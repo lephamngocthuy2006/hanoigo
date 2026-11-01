@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext'
 import QuestRow from '../components/QuestRow'
 import TourCard from '../components/TourCard'
 import { tourProgress, useTours } from '../lib/tours'
+import Emoji from '../components/Emoji'
 
 const FILTERS = [
   { id: 'all', label: 'Tất cả' },
@@ -74,7 +75,7 @@ export default function QuestsPage() {
 
       {featured && (
         <Link to={`/quest/${featured.id}`} className="hero-quest">
-          <div className="hero-emoji">{featured.emoji}</div>
+          <div className="hero-emoji"><Emoji e={featured.emoji} play="loop" /></div>
           <div className="hero-body">
             <div className="eyebrow light">{KIND[featured.kind].label} gợi ý</div>
             <h2>{featured.title}</h2>
@@ -104,7 +105,7 @@ export default function QuestsPage() {
       )}
 
       <section className={`streak-banner${doneToday ? ' lit' : ''}`}>
-        <span className="streak-fire">🔥</span>
+        <span className="streak-fire"><Emoji e="🔥" play="loop" /></span>
         <div>
           <strong>{doneToday ? `Chuỗi ${streak} ngày — tuyệt vời!` : streak > 0 ? `Giữ chuỗi ${streak} ngày nhé!` : 'Thắp sáng streak của bạn hôm nay!'}</strong>
           <p className="muted">{doneToday ? 'Bạn đã hoàn thành nhiệm vụ hôm nay. Mai gặp lại!' : 'Hoàn thành một nhiệm vụ hôm nay để duy trì chuỗi khám phá.'}</p>

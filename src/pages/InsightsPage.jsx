@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { CRITERIA, fmtScore, summarize } from '../lib/reviews'
 import Stars from '../components/Stars'
+import Emoji from '../components/Emoji'
 
 // Gợi ý hành động cho tiêu chí có điểm thấp nhất
 const ADVICE = {
@@ -64,7 +65,7 @@ export default function InsightsPage() {
       <div className="kpi-grid">
         {kpis.map((k) => (
           <div key={k.label} className="kpi">
-            <span className="kpi-icon">{k.icon}</span>
+            <span className="kpi-icon"><Emoji e={k.icon} play="once" /></span>
             <strong>{k.value ?? 0}</strong>
             <span>{k.label}</span>
           </div>
@@ -108,7 +109,7 @@ export default function InsightsPage() {
           {ranking.map((g, i) => (
             <button key={g.link} className="rank-row as-button" onClick={() => navigate(g.link)}>
               <span className="rank-no">{i + 1}</span>
-              <span className="rank-avatar">{g.emoji}</span>
+              <span className="rank-avatar"><Emoji e={g.emoji} play="hover" /></span>
               <span className="rank-name">
                 <strong>{g.name}</strong>
                 <span className="muted small">{g.isTour ? 'Tour' : 'Điểm đến'} · {g.count} đánh giá · 👍 {g.recommendPct}%</span>
@@ -140,7 +141,7 @@ export default function InsightsPage() {
           <div className="section-head"><h3>💬 Nhận xét gần đây</h3></div>
           {reviews.filter((r) => r.comment).slice(0, 8).map((r) => (
             <div key={r.id} className="review-item">
-              <span className="rank-avatar">{r.profiles?.avatar}</span>
+              <span className="rank-avatar"><Emoji e={r.profiles?.avatar} play="hover" /></span>
               <div>
                 <div className="review-head">
                   <strong>{r.profiles?.display_name || r.profiles?.username}</strong>

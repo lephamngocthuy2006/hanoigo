@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { CRITERIA, fmtScore, loadReviews, summarize } from '../lib/reviews'
 import ReviewForm from './ReviewForm'
 import Stars from './Stars'
+import Emoji from './Emoji'
 
 // Khối đánh giá đặt trong trang nhiệm vụ / tour
 export default function ReviewSummary({ target, title, canReview, openSignal = 0 }) {
@@ -54,7 +55,7 @@ export default function ReviewSummary({ target, title, canReview, openSignal = 0
 
       {(showAll ? comments : comments.slice(0, 3)).map((r) => (
         <div key={r.id} className="review-item">
-          <span className="rank-avatar">{r.profiles?.avatar}</span>
+          <span className="rank-avatar"><Emoji e={r.profiles?.avatar} play="hover" /></span>
           <div>
             <div className="review-head">
               <strong>{r.profiles?.display_name || r.profiles?.username}</strong>

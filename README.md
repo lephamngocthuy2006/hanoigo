@@ -112,3 +112,7 @@ update public.profiles set is_demo = true where username = 'ten_dang_nhap';
 - Camera và GPS chỉ chạy trên **HTTPS** (GitHub Pages có sẵn) hoặc `localhost`.
 - Quên mật khẩu: chưa có email nên không tự khôi phục được. Admin đặt lại mật khẩu trong Supabase → **Authentication → Users**.
 - Project Supabase gói Free sẽ tạm dừng nếu không dùng 7 ngày; vào dashboard bấm **Restore** là chạy lại.
+
+## Ghi công
+
+Biểu tượng động: [Noto Animated Emoji](https://googlefonts.github.io/noto-emoji-animation/) của Google (CC BY 4.0). Bản đồ: OpenFreeMap & © OpenStreetMap.

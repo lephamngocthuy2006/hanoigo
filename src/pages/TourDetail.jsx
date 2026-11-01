@@ -12,6 +12,7 @@ import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 import ReviewSummary from '../components/ReviewSummary'
+import Emoji from '../components/Emoji'
 
 export default function TourDetail() {
   const { id } = useParams()
@@ -66,7 +67,7 @@ export default function TourDetail() {
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
 
       <section className="tour-hero" style={{ '--tour': tour.color }}>
-        <span className="tour-hero-emoji">{tour.emoji}</span>
+        <span className="tour-hero-emoji"><Emoji e={tour.emoji} play="loop" /></span>
         <div className="eyebrow light">Tour theo chủ đề · {tour.difficulty}</div>
         <h1>{tour.title}</h1>
         <p className="tour-sub">{tour.subtitle}</p>
@@ -109,7 +110,7 @@ export default function TourDetail() {
                   <div className="leg">🚶 {formatDistance(legs[s.quest_id] * 1.3)} · khoảng {walkMinutes(legs[s.quest_id])} phút đi bộ</div>
                 )}
                 <Link to={`/quest/${s.quest.id}`} className="stop">
-                  <span className="stop-dot">{done ? '✓' : s.quest.emoji}</span>
+                  <span className="stop-dot">{done ? '✓' : <Emoji e={s.quest.emoji} play="once" />}</span>
                   <span className="stop-body">
                     <span className="quest-kind">{KIND[s.quest.kind].label}{s.quest.place_name && ` · ${s.quest.place_name}`}</span>
                     <strong>{s.quest.title}</strong>
@@ -137,12 +138,12 @@ export default function TourDetail() {
 
       <Modal open={!!reward} onClose={() => setReward(null)}>
         <div className="celebrate">
-          <div className="celebrate-emoji">🏅</div>
+          <div className="celebrate-emoji"><Emoji e="🏅" play="loop" /></div>
           <h2>Hoàn thành tour!</h2>
           <p>{tour.title}</p>
           <div className="reward-grid">
-            <div><strong>⭐ +{reward?.xp}</strong><span>XP</span></div>
-            <div><strong>🪙 +{reward?.coins}</strong><span>Coins</span></div>
+            <div><strong><Emoji e="⭐" play="once" /> +{reward?.xp}</strong><span>XP</span></div>
+            <div><strong><Emoji e="🪙" play="once" /> +{reward?.coins}</strong><span>Coins</span></div>
             <div><strong>🏅</strong><span>Huy hiệu tour</span></div>
           </div>
           <p className="muted small">Hãy đánh giá tour để giúp người sau trải nghiệm tốt hơn (+20 🪙)</p>

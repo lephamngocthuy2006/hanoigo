@@ -83,7 +83,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
   border-top: 1px solid var(--line);
 }
 .navitem { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: var(--muted); font-size: 0.68rem; font-weight: 600; }
-.navicon { font-size: 1.35rem; filter: grayscale(0.7); transition: transform 0.15s; }
+.navicon { font-size: 1.55rem; filter: grayscale(0.85) opacity(0.7); transition: transform 0.15s, filter 0.15s; line-height: 0; }
 .navitem.active { color: var(--brand); }
 .navitem.active .navicon { filter: none; transform: translateY(-2px) scale(1.1); }
 
@@ -178,9 +178,9 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 
 .streak-banner { display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--line); }
 .streak-banner p { margin: 2px 0 0; font-size: 0.82rem; }
-.streak-fire { font-size: 2rem; filter: grayscale(1); opacity: 0.5; }
+.streak-fire { font-size: 2.4rem; filter: grayscale(1); opacity: 0.5; line-height: 0; }
 .streak-banner.lit { background: linear-gradient(135deg, #fff4dc, #ffe6c7); border-color: #f5d39b; }
-.streak-banner.lit .streak-fire { filter: none; opacity: 1; animation: flicker 1.5s ease-in-out infinite; }
+.streak-banner.lit .streak-fire { filter: none; opacity: 1; }
 @keyframes flicker { 50% { transform: scale(1.12) rotate(-4deg); } }
 
 .quest-row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border-top: 1px solid var(--line); text-decoration: none; color: inherit; }
@@ -535,3 +535,35 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .role-option { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card); font: inherit; }
 .role-option:not(:disabled):hover { border-color: var(--brand); }
 .role-option.current { border-color: var(--brand); background: var(--brand-soft); opacity: 1; }
+
+/* ---------- Animated emoji ---------- */
+.emo { position: relative; display: inline-block; vertical-align: -0.2em; flex-shrink: 0; line-height: 0; }
+.emo > img, .emo-anim { position: absolute; inset: 0; width: 100%; height: 100%; }
+.emo-anim { transition: opacity 0.2s; }
+.emo-anim svg { display: block; }
+.emo-text { width: auto !important; height: auto !important; line-height: 1; vertical-align: baseline; }
+.pill { display: inline-flex; align-items: center; gap: 4px; }
+.pill .emo { width: 1.25em !important; height: 1.25em !important; }
+.pill.dim .emo { filter: grayscale(1); opacity: 0.6; }
+.icon-btn .emo, .avatar-btn .emo { width: 1.35em !important; height: 1.35em !important; }
+.avatar-grid .emo { width: 1.5em !important; height: 1.5em !important; }
+.stat strong, .reward-grid strong { display: inline-flex; align-items: center; gap: 4px; }
+.quest-emoji .emo, .tour-emoji .emo, .voucher-left .emo, .stop-dot .emo { width: 1.3em !important; height: 1.3em !important; }
+.hero-emoji .emo, .detail-emoji .emo, .partner-emoji .emo { width: 1.35em !important; height: 1.35em !important; }
+.celebrate-emoji .emo, .empty-emoji .emo { width: 1.6em !important; height: 1.6em !important; }
+.celebrate-emoji, .empty-emoji, .pack-art, .profile-avatar, .cover-avatar, .tour-hero-emoji { line-height: 0; }
+.celebrate-emoji { font-size: 4.2rem; }
+.empty-emoji { font-size: 3rem; margin-bottom: 4px; }
+.pack-art .emo { width: 1.25em !important; height: 1.25em !important; }
+.profile-avatar .emo, .cover-avatar .emo { width: 1.3em !important; height: 1.3em !important; }
+.tour-hero-emoji { font-size: 3.2rem; }
+.rank-avatar { line-height: 0; }
+.rank-avatar .emo { width: 1.3em !important; height: 1.3em !important; }
+.rank-no .emo { width: 1.6em !important; height: 1.6em !important; }
+.game-card-emoji { line-height: 0; }
+.game-card-emoji .emo { width: 1.5em !important; height: 1.5em !important; }
+.kpi-icon { line-height: 0; }
+.kpi-icon .emo { width: 1.5em !important; height: 1.5em !important; }
+.navicon .emo { width: 1.15em !important; height: 1.15em !important; }
+@media (prefers-reduced-motion: reduce) { .emo-anim { display: none; } }
+.segmented button { white-space: nowrap; font-size: 0.88rem; padding: 9px 4px; }

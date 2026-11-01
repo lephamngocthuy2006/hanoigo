@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { loadLikes } from '../lib/friends'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
+import Emoji from '../components/Emoji'
 
 export default function JournalPage() {
   const { user, profile } = useAuth()
@@ -65,7 +66,7 @@ export default function JournalPage() {
 
       {loading ? <div className="spinner" /> : entries.length === 0 ? (
         <div className="card empty">
-          <div className="empty-emoji">📖</div>
+          <div className="empty-emoji"><Emoji e="📖" play="loop" /></div>
           <p>Sổ hành trình còn trống. Hoàn thành một <strong>Photo Quest</strong> hoặc thêm kỷ niệm đầu tiên nhé!</p>
         </div>
       ) : (

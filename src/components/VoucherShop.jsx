@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { fmtDateVN } from '../lib/partner'
 import Modal from './Modal'
+import Emoji from './Emoji'
 
 // Đổi Hanoi Coins lấy voucher của đối tác + ví voucher của tôi
 export default function VoucherShop() {
@@ -49,7 +50,7 @@ export default function VoucherShop() {
           <div className="section-head"><h3>👛 Ví voucher của tôi</h3><span className="muted small">{unused.length} mã chưa dùng</span></div>
           {unused.map((c) => (
             <button key={c.id} className="voucher-card as-button mine" onClick={() => setShowing(c)}>
-              <div className="voucher-left">{c.vouchers?.partners?.emoji}</div>
+              <div className="voucher-left"><Emoji e={c.vouchers?.partners?.emoji} play="once" /></div>
               <div className="voucher-body">
                 <strong>{c.vouchers?.title}</strong>
                 <span className="muted small">{c.vouchers?.partners?.name}</span>
@@ -69,7 +70,7 @@ export default function VoucherShop() {
           const enough = (profile?.coins ?? 0) >= v.cost_coins
           return (
             <div key={v.id} className="voucher-card">
-              <div className="voucher-left">{v.partners?.emoji}</div>
+              <div className="voucher-left"><Emoji e={v.partners?.emoji} play="once" /></div>
               <div className="voucher-body">
                 <strong>{v.title}</strong>
                 <span className="muted small">{v.partners?.name}{v.partners?.address && ` · ${v.partners.address}`}</span>
@@ -89,7 +90,7 @@ export default function VoucherShop() {
           <div className="section-head"><h3>🧾 Đã sử dụng</h3></div>
           {used.map((c) => (
             <div key={c.id} className="voucher-card used">
-              <div className="voucher-left">✓</div>
+              <div className="voucher-left"><Emoji e="✓" play="once" /></div>
               <div className="voucher-body">
                 <strong>{c.vouchers?.title}</strong>
                 <span className="muted small">{c.vouchers?.partners?.name} · dùng ngày {fmtDateVN(c.used_at)}</span>

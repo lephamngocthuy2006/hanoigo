@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext'
 import { RARITY, levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import VoucherShop from '../components/VoucherShop'
+import Emoji from '../components/Emoji'
 
 const PACK_COST = 100
 
@@ -22,7 +23,7 @@ export default function EventsPage() {
       <div className="segmented">
         <button className={tab === 'cards' ? 'active' : ''} onClick={() => setTab('cards')}>🎴 Thẻ</button>
         <button className={tab === 'shop' ? 'active' : ''} onClick={() => setTab('shop')}>🎁 Đổi quà</button>
-        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}>🏆 Xếp hạng</button>
+        <button className={tab === 'rank' ? 'active' : ''} onClick={() => setTab('rank')}>🏆 Hạng</button>
       </div>
       {tab === 'cards' && <Collection />}
       {tab === 'shop' && <VoucherShop />}
@@ -66,7 +67,7 @@ function Collection() {
   return (
     <>
       <section className="card pack-card">
-        <div className="pack-art">🎁</div>
+        <div className="pack-art"><Emoji e="🎁" play="loop" /></div>
         <div className="pack-body">
           <h3>Gói thẻ Hà Nội</h3>
           <p className="muted small">3 thẻ ngẫu nhiên · có cơ hội ra thẻ Huyền thoại</p>
@@ -87,7 +88,7 @@ function Collection() {
           {cards.map((c) => (
             <button key={c.id} className={`game-card${owned[c.id] ? '' : ' locked'}`} style={{ '--rar': RARITY[c.rarity].color }}
               onClick={() => owned[c.id] && setSelected(c)}>
-              <span className="game-card-emoji">{owned[c.id] ? c.emoji : '❔'}</span>
+              <span className="game-card-emoji"><Emoji e={owned[c.id] ? c.emoji : '❔'} play={owned[c.id] ? "once" : "static"} /></span>
               <span className="game-card-name">{owned[c.id] ? c.name : '???'}</span>
               {owned[c.id] > 1 && <span className="game-card-count">×{owned[c.id]}</span>}
             </button>
@@ -99,7 +100,7 @@ function Collection() {
         <div className="pack-result">
           {result?.map((c, i) => (
             <div key={i} className="game-card reveal" style={{ '--rar': RARITY[c.rarity].color, animationDelay: `${i * 0.15}s` }}>
-              <span className="game-card-emoji">{c.emoji}</span>
+              <span className="game-card-emoji"><Emoji e={c.emoji} play="loop" /></span>
               <span className="game-card-name">{c.name}</span>
               <span className="rarity" style={{ color: RARITY[c.rarity].color }}>{RARITY[c.rarity].label}</span>
             </div>
@@ -111,7 +112,7 @@ function Collection() {
       <Modal open={!!selected} onClose={() => setSelected(null)}>
         {selected && (
           <div className="celebrate">
-            <div className="celebrate-emoji">{selected.emoji}</div>
+            <div className="celebrate-emoji"><Emoji e={selected.emoji} play="loop" /></div>
             <h2>{selected.name}</h2>
             <div className="rarity" style={{ color: RARITY[selected.rarity].color }}>{RARITY[selected.rarity].label}</div>
             <p>{selected.description}</p>
@@ -150,8 +151,8 @@ function Leaderboard() {
         <Link key={r.id} to={isFriend(r.id) ? `/u/${r.username}` : r.id === user.id ? '/me' : '#'}
           onClick={(e) => !isFriend(r.id) && r.id !== user.id && e.preventDefault()}
           className={`rank-row${r.id === user.id ? ' me' : ''}`}>
-          <span className="rank-no">{['🥇', '🥈', '🥉'][i] || i + 1}</span>
-          <span className="rank-avatar">{r.avatar}</span>
+          <span className="rank-no">{i < 3 ? <Emoji e={['🥇', '🥈', '🥉'][i]} play="loop" /> : i + 1}</span>
+          <span className="rank-avatar"><Emoji e={r.avatar} play="hover" /></span>
           <span className="rank-name">
             <strong>{r.display_name || r.username}</strong>
             <span className="muted small">@{r.username} · Lv {levelInfo(r.xp).level}</span>

@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
+import Emoji from './Emoji'
 
 export default function TourCard({ tour, progress, claimed, wide }) {
   return (
     <Link to={`/tour/${tour.id}`} className={`tour-card${wide ? ' wide' : ''}`} style={{ '--tour': tour.color }}>
       <div className="tour-card-top">
-        <span className="tour-emoji">{tour.emoji}</span>
+        <span className="tour-emoji"><Emoji e={tour.emoji} play="loop" /></span>
         {claimed ? <span className="tour-chip done">✓ Hoàn thành</span> : <span className="tour-chip">{tour.stops.length} điểm dừng</span>}
       </div>
       <h3>{tour.title}</h3>

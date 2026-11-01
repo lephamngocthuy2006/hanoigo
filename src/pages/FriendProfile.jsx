@@ -9,6 +9,7 @@ import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import LikeButton from '../components/LikeButton'
 import Modal from '../components/Modal'
+import Emoji from '../components/Emoji'
 
 export default function FriendProfile() {
   const { username } = useParams()
@@ -63,15 +64,15 @@ export default function FriendProfile() {
       <button className="ghost back" onClick={() => navigate(-1)}>← Quay lại</button>
 
       <section className="journal-cover">
-        <div className="cover-avatar">{person.avatar}</div>
+        <div className="cover-avatar"><Emoji e={person.avatar} play="loop" /></div>
         <div className="eyebrow light">Sổ hành trình</div>
         <h1>Hà Nội của {person.display_name || person.username}</h1>
         <p className="cover-sub">@{person.username} · Lv {lv.level} {levelTitle(lv.level)}</p>
         {person.bio && <p className="cover-bio">“{person.bio}”</p>}
         <div className="cover-stats">
           <div><strong>{entries.length}</strong><span>Kỷ niệm</span></div>
-          <div><strong>⭐ {person.xp}</strong><span>XP</span></div>
-          <div><strong>🔥 {liveStreak(person)}</strong><span>Streak</span></div>
+          <div><strong><Emoji e="⭐" play="once" /> {person.xp}</strong><span>XP</span></div>
+          <div><strong><Emoji e="🔥" play="once" /> {liveStreak(person)}</strong><span>Streak</span></div>
         </div>
       </section>
 
@@ -82,7 +83,7 @@ export default function FriendProfile() {
         </div>
       ) : entries.length === 0 ? (
         <div className="card empty">
-          <div className="empty-emoji">📖</div>
+          <div className="empty-emoji"><Emoji e="📖" play="loop" /></div>
           <p>{person.display_name || person.username} chưa chia sẻ kỷ niệm nào.</p>
         </div>
       ) : (
