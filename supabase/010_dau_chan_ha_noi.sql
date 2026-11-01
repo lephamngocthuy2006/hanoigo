@@ -104,7 +104,7 @@ select t.id, q.id, s.pos, s.note, s.note_en
 from (values
   ('Tháp Hòa Phong', 1, 'Trạm 1 · Điểm xuất phát bên bờ đông Hồ Gươm.', 'Station 1 · Starting point on the east bank of Hoan Kiem Lake.'),
   ('Qua cầu Thê Húc', 2, 'Trạm 2 · Đền Ngọc Sơn & Cầu Thê Húc.', 'Station 2 · Ngoc Son Temple & The Huc Bridge.'),
-  ('Ô Quan Chưởng', 3, 'Trạm 3 · Đi bộ lên phía bắc qua phố cổ khoảng 15 phút.', 'Station 3 · About a 15-minute walk north through the Old Quarter.'),
+  ('Ô Quan Chưởng', 3, 'Trạm 3 · Đi bộ lên phía bắc xuyên phố cổ đến cửa ô cổ cuối cùng.', 'Station 3 · Walk north through the Old Quarter to the last ancient city gate.'),
   ('Phố ẩm thực', 4, 'Trạm 4 · Nghỉ chân và thưởng thức ẩm thực Hà Nội.', 'Station 4 · Take a break and taste Hanoi food.'),
   ('Văn hóa Phố Cổ', 5, 'Trạm 5 · Tìm hiểu "36 phố phường" và các phố nghề.', 'Station 5 · Discover the "36 streets" and craft streets.'),
   ('Tổng kết: Dấu chân Hà Nội', 6, 'Trạm 6 · Tổng kết & Đổi thưởng: trả lời câu hỏi rồi bấm nhận thưởng tour.', 'Station 6 · Wrap-up & Rewards: answer the question, then claim the tour reward.')
