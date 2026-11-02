@@ -17,10 +17,15 @@ export function timeAgo(s) {
 }
 
 // ---------- Bình luận ----------
+// parent_id: bình luận gốc của chuỗi trả lời; reply_user: người được trả lời (có thể là tác giả một phản hồi)
+const COMMENT_COLS = `id, entry_id, user_id, body, created_at, parent_id, reply_to,
+  author:profiles!journal_comments_user_id_fkey(${ACTOR_COLS}),
+  reply_user:profiles!journal_comments_reply_to_fkey(id, username, display_name)`
+
 export async function loadComments(entryId) {
   const { data, error } = await supabase
     .from('journal_comments')
-    .select(`id, entry_id, user_id, body, created_at, author:profiles!journal_comments_user_id_fkey(${ACTOR_COLS})`)
+    .select(COMMENT_COLS)
     .eq('entry_id', entryId)
     .order('created_at')
   return { data: data || [], error }
@@ -35,11 +40,11 @@ export async function loadCommentCounts(entryIds) {
   return map
 }
 
-export function addComment(entryId, userId, body) {
+export function addComment(entryId, userId, body, parentId = null) {
   return supabase
     .from('journal_comments')
-    .insert({ entry_id: entryId, user_id: userId, body: body.trim() })
-    .select(`id, entry_id, user_id, body, created_at, author:profiles!journal_comments_user_id_fkey(${ACTOR_COLS})`)
+    .insert({ entry_id: entryId, user_id: userId, body: body.trim(), parent_id: parentId })
+    .select(COMMENT_COLS)
     .single()
 }
 
@@ -76,6 +81,7 @@ export function notiText(n) {
     case 'comment': return tr('đã bình luận về kỷ niệm{0} của bạn', title)
     case 'reply': return tr('cũng đã bình luận về kỷ niệm{0}', title)
     case 'comment_reaction': return tr('đã bày tỏ cảm xúc về bình luận của bạn')
+    case 'comment_reply': return tr('đã trả lời bình luận của bạn')
     case 'friend_request': return tr('đã gửi lời mời kết bạn')
     case 'friend_accept': return tr('đã chấp nhận lời mời kết bạn')
     default: return ''

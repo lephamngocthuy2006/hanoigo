@@ -715,4 +715,10 @@ export default {
   'Biết ngay khi bạn bè thả cảm xúc, bình luận kỷ niệm hay gửi lời mời kết bạn — kể cả khi đã đóng web.': 'Know right away when friends react, comment on your memories or send a friend request — even when the site is closed.',
   'Để sau': 'Later',
   'Bạn có thể bật / tắt bất cứ lúc nào trong ⚙️ Cài đặt.': 'You can turn this on or off anytime in ⚙️ Settings.',
+  'đã trả lời bình luận của bạn': 'replied to your comment',
+  'Xoá bình luận này và các phản hồi bên dưới?': 'Delete this comment and its replies?',
+  'Xem thêm {0} phản hồi': 'View {0} more replies',
+  'Đang trả lời ': 'Replying to ',
+  'Huỷ trả lời': 'Cancel reply',
+  'Trả lời {0}…': 'Reply to {0}…',
 }

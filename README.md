@@ -51,6 +51,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
   14. [`supabase/014_qr_checkin.sql`](supabase/014_qr_checkin.sql) — mã QR tại từng điểm: quét để check-in không cần GPS (in mã ở Trang quản trị → Mã QR)
   15. [`supabase/015_tour_certificates.sql`](supabase/015_tour_certificates.sql) — chứng nhận hoàn thành tour có mã xác thực (quét QR trên ảnh để kiểm tra)
   16. [`supabase/016_push_notifications.sql`](supabase/016_push_notifications.sql) — thông báo đẩy (cần thêm Edge Function `send-push` + mật khẩu chung trong Vault, xem mục Thông báo đẩy bên dưới)
+  17. [`supabase/017_comment_replies.sql`](supabase/017_comment_replies.sql) — trả lời bình luận (1 cấp như Facebook) + thông báo "đã trả lời bình luận của bạn"
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
