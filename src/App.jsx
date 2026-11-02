@@ -12,6 +12,7 @@ import MePage from './pages/MePage'
 import Splash from './components/Splash'
 import FriendsPage from './pages/FriendsPage'
 import FriendProfile from './pages/FriendProfile'
+import NotificationsPage from './pages/NotificationsPage'
 import ToursPage from './pages/ToursPage'
 import TourDetail from './pages/TourDetail'
 
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="/partner" element={<PartnerPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/u/:username" element={<FriendProfile />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
       <Route path="*" element={<Navigate to={backTo} state={backState} replace />} />
     </Routes>

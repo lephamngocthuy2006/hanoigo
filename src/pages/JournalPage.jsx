@@ -3,9 +3,11 @@ import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { deletePhoto, signedUrls, uploadPhoto } from '../lib/photos'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { loadLikes } from '../lib/friends'
 import ReactionBar from '../components/ReactionBar'
+import Comments from '../components/Comments'
+import { loadCommentCounts } from '../lib/social'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import Emoji, { emojify } from '../components/Emoji'
@@ -17,23 +19,36 @@ export default function JournalPage() {
   const [entries, setEntries] = useState([])
   const [urls, setUrls] = useState({})
   const [likes, setLikes] = useState({})
+  const [comments, setComments] = useState({})
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null) // {} = mới, entry = sửa
   const [viewing, setViewing] = useState(null)
+  const [params, setParams] = useSearchParams()
 
   const load = useCallback(async () => {
     const { data, error } = await supabase.from('journal_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
     if (error) toast(friendlyError(error), 'error')
     else {
       setEntries(data)
-      const [u, l] = await Promise.all([signedUrls(data.map((e) => e.photo_path)), loadLikes(data.map((e) => e.id), user.id)])
+      const ids = data.map((e) => e.id)
+      const [u, l, c] = await Promise.all([signedUrls(data.map((e) => e.photo_path)), loadLikes(ids, user.id), loadCommentCounts(ids)])
       setUrls(u)
       setLikes(l)
+      setComments(c)
     }
     setLoading(false)
   }, [user.id, toast])
 
   useEffect(() => { load() }, [load])
+
+  // Mở thẳng một trang khi đi từ thông báo (/journal?entry=123)
+  const openId = Number(params.get('entry'))
+  useEffect(() => {
+    if (!openId) return
+    const found = entries.find((e) => e.id === openId)
+    if (found) setViewing(found)
+    if (found || !loading) setParams({}, { replace: true })
+  }, [openId, entries, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const remove = async (entry) => {
     if (!confirm(tr('Xoá trang nhật ký này?'))) return
@@ -72,7 +87,7 @@ export default function JournalPage() {
           <p>{tr('Sổ hành trình còn trống. Hoàn thành một ')}<strong>Photo Quest</strong>{tr(' hoặc thêm kỷ niệm đầu tiên nhé!')}</p>
         </div>
       ) : (
-        <JournalGrid entries={entries} urls={urls} likes={likes} onOpen={setViewing} />
+        <JournalGrid entries={entries} urls={urls} likes={likes} comments={comments} onOpen={setViewing} />
       )}
 
       <Modal open={!!viewing} onClose={() => setViewing(null)}>
@@ -87,6 +102,10 @@ export default function JournalPage() {
             </p>
             <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} showPeople
               onChange={(like) => setLikes((m) => ({ ...m, [viewing.id]: like }))} />
+            {!viewing.is_private && (
+              <Comments entryId={viewing.id} ownerId={user.id} userId={user.id}
+                onCount={(n) => setComments((m) => ({ ...m, [viewing.id]: n }))} />
+            )}
             <div className="row">
               <button className="btn" onClick={() => { setEditing(viewing); setViewing(null) }}>{tr('Sửa')}</button>
               <button className="btn danger" onClick={() => remove(viewing)}>{tr('Xoá')}</button>

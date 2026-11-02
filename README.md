@@ -46,6 +46,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
    9. [`supabase/009_english.sql`](supabase/009_english.sql) — nội dung tiếng Anh cho nhiệm vụ, câu đố, thẻ, tour
   10. [`supabase/010_dau_chan_ha_noi.sql`](supabase/010_dau_chan_ha_noi.sql) — tour mẫu thử nghiệm "Dấu chân Hà Nội" (6 trạm Hồ Gươm – Phố Cổ)
   11. [`supabase/011_dau_chan_quests.sql`](supabase/011_dau_chan_quests.sql) — nhiệm vụ chi tiết 6 trạm "Dấu chân Hà Nội" theo bài thuyết trình
+  12. [`supabase/012_comments_notifications.sql`](supabase/012_comments_notifications.sql) — bình luận dưới Sổ hành trình & thông báo khi bạn bè tương tác
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.

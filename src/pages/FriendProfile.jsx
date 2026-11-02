@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -8,6 +8,8 @@ import { signedUrls } from '../lib/photos'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import ReactionBar from '../components/ReactionBar'
+import Comments from '../components/Comments'
+import { loadCommentCounts } from '../lib/social'
 import Modal from '../components/Modal'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
@@ -22,7 +24,9 @@ export default function FriendProfile() {
   const [entries, setEntries] = useState([])
   const [urls, setUrls] = useState({})
   const [likes, setLikes] = useState({})
+  const [comments, setComments] = useState({})
   const [viewing, setViewing] = useState(null)
+  const [params, setParams] = useSearchParams()
 
   const friendship = friends.find((f) => f.other?.username === username)
 
@@ -38,12 +42,24 @@ export default function FriendProfile() {
     const { data } = await supabase.from('journal_entries').select('*').eq('user_id', p.id).order('created_at', { ascending: false })
     const list = data || []
     setEntries(list)
-    const [u, l] = await Promise.all([signedUrls(list.map((e) => e.photo_path)), loadLikes(list.map((e) => e.id), user.id)])
+    const ids = list.map((e) => e.id)
+    const [u, l, c] = await Promise.all([signedUrls(list.map((e) => e.photo_path)), loadLikes(ids, user.id), loadCommentCounts(ids)])
     setUrls(u)
     setLikes(l)
+    setComments(c)
   }, [username, user.id])
 
   useEffect(() => { load() }, [load, friendship?.id])
+
+  // Mở thẳng một trang khi đi từ thông báo (/u/ten?entry=123)
+  const openId = Number(params.get('entry'))
+  useEffect(() => {
+    if (!openId || person === undefined) return
+    const found = entries.find((e) => e.id === openId)
+    if (found) setViewing(found)
+    // trang đã bị xoá / chuyển riêng tư → chỉ bỏ tham số
+    if (found || entries.length || !person) setParams({}, { replace: true })
+  }, [openId, entries, person]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (person === undefined) return <div className="page"><div className="spinner" /></div>
   if (!person) return <div className="page"><p className="muted">{tr('Không tìm thấy người dùng @')}{username}.</p></div>
@@ -88,7 +104,7 @@ export default function FriendProfile() {
           <p>{person.display_name || person.username}{tr(' chưa chia sẻ kỷ niệm nào.')}</p>
         </div>
       ) : (
-        <JournalGrid entries={entries} urls={urls} likes={likes} onOpen={setViewing} />
+        <JournalGrid entries={entries} urls={urls} likes={likes} comments={comments} onOpen={setViewing} />
       )}
 
       {friendship && <button className="ghost small danger-text" style={{ alignSelf: 'center' }} onClick={unfriend}>{tr('Huỷ kết bạn')}</button>}
@@ -103,6 +119,8 @@ export default function FriendProfile() {
             <div className="row">
               <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} onChange={setLike(viewing.id)} />
             </div>
+            <Comments entryId={viewing.id} ownerId={person.id} userId={user.id}
+              onCount={(n) => setComments((m) => ({ ...m, [viewing.id]: n }))} />
           </div>
         )}
       </Modal>

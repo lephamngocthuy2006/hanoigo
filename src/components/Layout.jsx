@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
+import { useNotifications, notiIcon, notiText, personName } from '../lib/social'
+import { useToast } from '../context/ToastContext'
 import Emoji, { emojify } from './Emoji'
 import { tr } from '../lib/i18n'
 
@@ -18,8 +20,9 @@ const TABS = [
 // Menu bên trái trên máy tính: thứ tự ưu tiên khác điện thoại + thêm các mục phụ
 const SIDE_MAIN = [TABS[2], TABS[1], TABS[0], TABS[3]]
 const SIDE_MORE = [
+  { to: '/notifications', label: tr('Thông báo'), icon: '🔔', badge: 'unread' },
   { to: '/tours', label: tr('Tour theo chủ đề'), icon: '🧭' },
-  { to: '/friends', label: tr('Bạn bè'), icon: '🤝', badge: true },
+  { to: '/friends', label: tr('Bạn bè'), icon: '🤝', badge: 'pending' },
   { to: '/insights', label: tr('Thống kê trải nghiệm'), icon: '📊' },
   { to: '/partner', label: tr('Cổng đối tác'), icon: '🏪' },
 ]
@@ -41,8 +44,15 @@ function SideLink({ to, label, icon, end, badge }) {
 export default function Layout() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const toast = useToast()
   const friendships = useFriendships(user.id)
   const pending = friendships.incoming.length
+  // Thông báo mới tới (realtime): hiện toast, lời mời kết bạn thì tải lại danh sách bạn
+  const notifications = useNotifications(user.id, (n) => {
+    toast(`${notiIcon(n)} ${personName(n.actor)} ${notiText(n)}`)
+    if (n.kind.startsWith('friend_')) friendships.reload()
+  })
+  const unread = notifications.unread
   const lv = levelInfo(profile?.xp || 0)
   return (
     <div className="app">
@@ -57,7 +67,7 @@ export default function Layout() {
         <nav className="side-nav">
           {SIDE_MAIN.map((t) => <SideLink key={t.to} {...t} />)}
           <div className="side-sep">{tr('Khám phá thêm')}</div>
-          {SIDE_MORE.map((t) => <SideLink key={t.to} {...t} badge={t.badge ? pending : 0} />)}
+          {SIDE_MORE.map((t) => <SideLink key={t.to} {...t} badge={{ pending, unread }[t.badge] || 0} />)}
           {profile?.is_admin && <SideLink to="/admin" label={tr('Trang quản trị')} icon="🛡️" />}
         </nav>
         <button className="side-profile" onClick={() => navigate('/me')}>
@@ -85,8 +95,8 @@ export default function Layout() {
             <Emoji e="🔥" play={liveStreak(profile) ? 'loop' : 'static'} /> {liveStreak(profile)}
           </span>
           <span className="pill" title="Hanoi Coins"><Emoji e="🪙" play="hover" /> {profile?.coins ?? '—'}</span>
-          <button className="icon-btn" onClick={() => navigate('/friends')} aria-label={tr('Bạn bè{0}', pending ? tr(', {0} lời mời mới', pending) : '')}>
-            <Emoji e="🤝" play={pending > 0 ? 'loop' : 'hover'} />{pending > 0 && <span className="badge">{pending}</span>}
+          <button className="icon-btn" onClick={() => navigate('/notifications')} aria-label={tr('Thông báo{0}', unread ? tr(', {0} chưa đọc', unread) : '')}>
+            <Emoji e="🔔" play={unread > 0 ? 'loop' : 'hover'} />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}
           </button>
           <button className="avatar-btn" onClick={() => navigate('/me')} aria-label={tr('Hồ sơ')}>
             <Emoji e={profile?.avatar || '🐢'} play="hover" />
@@ -95,7 +105,7 @@ export default function Layout() {
       </header>
       <main className="content">
         <Suspense fallback={<div className="page"><div className="spinner" /></div>}>
-          <Outlet context={friendships} />
+          <Outlet context={{ ...friendships, notifications }} />
         </Suspense>
       </main>
       <nav className="bottomnav">

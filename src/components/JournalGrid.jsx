@@ -4,7 +4,7 @@ import { tr, locale } from '../lib/i18n'
 
 export { fmtDate }
 
-export default function JournalGrid({ entries, urls, likes = {}, onOpen }) {
+export default function JournalGrid({ entries, urls, likes = {}, comments = {}, onOpen }) {
   return (
     <div className="journal-grid">
       {entries.map((e) => (
@@ -13,6 +13,9 @@ export default function JournalGrid({ entries, urls, likes = {}, onOpen }) {
           {e.is_private && <span className="journal-lock" title={tr('Chỉ mình tôi')}><Emoji e="🔒" play="static" /></span>}
           {likes[e.id]?.count > 0 && (
             <span className="journal-likes">{likes[e.id].top.map((r) => <Emoji key={r} e={r} play="static" />)} {likes[e.id].count}</span>
+          )}
+          {comments[e.id] > 0 && (
+            <span className="journal-comments"><Emoji e="💬" play="static" /> {comments[e.id]}</span>
           )}
           <div className="journal-meta">
             <strong>{e.title || tr('Không tiêu đề')}</strong>
