@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { supabase, usernameToEmail, USERNAME_RE } from '../lib/supabase'
+import { useToast } from './ToastContext'
 import { tr } from '../lib/i18n'
 
 const AuthContext = createContext(null)
@@ -8,12 +9,23 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const toast = useToast()
 
   const loadProfile = useCallback(async (userId) => {
     if (!userId) return setProfile(null)
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+    if (!data && !error) {
+      // Không còn hồ sơ: hỏi lại máy chủ xem tài khoản còn tồn tại không (bị quản trị viên xoá
+      // thì phiên đăng nhập cũ vẫn còn trong máy) → đăng xuất thay vì kẹt ở màn hình tải
+      const { error: userError } = await supabase.auth.getUser()
+      if (userError && userError.status !== 0 && !/fetch|network/i.test(userError.message)) {
+        await supabase.auth.signOut({ scope: 'local' })
+        toast(tr('Tài khoản này không còn tồn tại. Vui lòng đăng nhập lại.'), 'error')
+        return setProfile(null)
+      }
+    }
     setProfile(data)
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -28,7 +40,14 @@ export function AuthProvider({ children }) {
         setTimeout(() => loadProfile(s?.user.id), 0)
       }
     })
-    return () => sub.subscription.unsubscribe()
+    // quay lại tab → kiểm tra lại tài khoản (có thể vừa bị xoá ở máy khác)
+    const onFocus = () => document.visibilityState === 'visible' &&
+      supabase.auth.getSession().then(({ data }) => data.session && loadProfile(data.session.user.id))
+    document.addEventListener('visibilitychange', onFocus)
+    return () => {
+      sub.subscription.unsubscribe()
+      document.removeEventListener('visibilitychange', onFocus)
+    }
   }, [loadProfile])
 
   const signUp = async ({ username, password, displayName }) => {
