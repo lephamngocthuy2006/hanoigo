@@ -84,14 +84,16 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
     choose(mine ? null : '❤️')
   }
 
+  // Rê chuột: mở sau 0,45s; rời đi thì đóng sau 0,5s (quay lại kịp thì huỷ đóng)
   const onEnter = (e) => {
     if (e.pointerType !== 'mouse') return
-    hoverTimer.current = setTimeout(showPicker, 450)
+    clearTimeout(hoverTimer.current)
+    if (!open) hoverTimer.current = setTimeout(showPicker, 450)
   }
   const onLeave = (e) => {
     if (e.pointerType !== 'mouse') return
     clearTimeout(hoverTimer.current)
-    hoverTimer.current = setTimeout(() => setOpen(false), 350)
+    hoverTimer.current = setTimeout(() => setOpen(false), 500)
   }
 
   return (

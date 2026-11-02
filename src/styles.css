@@ -949,3 +949,6 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 /* bảng chọn mở sang phải từ nút nhỏ, không bị tràn ra ngoài khung bình luận */
 .reaction-wrap.compact .reaction-picker { left: -60px; transform: none; animation-name: picker-in-left; }
 @keyframes picker-in-left { from { opacity: 0; transform: translateY(8px) scale(0.9); } }
+/* cầu nối vô hình giữa nút và bảng chọn: rê chuột qua khe hở không làm bảng đóng */
+.reaction-picker::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
+.reaction-picker.below::after { top: auto; bottom: 100%; }
