@@ -47,7 +47,7 @@ export const deleteComment = (id) => supabase.from('journal_comments').delete().
 // ---------- Thông báo ----------
 const NOTI_COLS = `id, kind, entry_id, reaction, body, read_at, created_at,
   actor:profiles!notifications_actor_id_fkey(${ACTOR_COLS}),
-  entry:journal_entries(id, title, user_id, owner:profiles(username))`
+  entry:journal_entries(id, title, user_id, owner:profiles!journal_entries_user_id_fkey(username))`
 
 // Câu hiển thị của một thông báo (không gồm tên người)
 export function notiText(n) {
