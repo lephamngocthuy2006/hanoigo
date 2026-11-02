@@ -11,6 +11,7 @@
   "dependencies": {
     "@maplibre/maplibre-gl-leaflet": "^0.0.22",
     "@supabase/supabase-js": "^2.45.4",
+    "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
     "lottie-web": "^5.12.2",
     "maplibre-gl": "^4.7.1",

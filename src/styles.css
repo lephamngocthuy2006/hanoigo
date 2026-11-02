@@ -952,3 +952,33 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 /* cầu nối vô hình giữa nút và bảng chọn: rê chuột qua khe hở không làm bảng đóng */
 .reaction-picker::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
 .reaction-picker.below::after { top: auto; bottom: 100%; }
+
+/* ---------- Mã QR tại điểm ---------- */
+.loc-actions { display: inline-flex; gap: 6px; flex-shrink: 0; }
+.loc-row.qr-ok { color: var(--ok); font-weight: 700; }
+.qr-scanner { position: relative; border-radius: 18px; overflow: hidden; background: #000; aspect-ratio: 1; margin-bottom: 10px; }
+.qr-scanner video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.qr-frame { position: absolute; inset: 18%; border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 18px; box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.35); }
+.qr-sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.qr-card { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.qr-card-head { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.qr-stop { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); }
+.qr-img { width: 100%; max-width: 220px; aspect-ratio: 1; border-radius: 12px; background: #fff; display: grid; place-items: center; }
+.qr-hint { margin: 0; font-size: 0.82rem; color: var(--muted); }
+.qr-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.qr-actions a { text-decoration: none; }
+
+@media print {
+  @page { size: A4; margin: 12mm; }
+  html, body, .app, .content { background: #fff !important; }
+  .sidebar, .topbar, .bottomnav, .toasts, .page > :not(.qr-sheet) { display: none !important; }
+  .app { display: block !important; box-shadow: none !important; }
+  .page { padding: 0 !important; max-width: none !important; }
+  .qr-sheet { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm; }
+  .qr-card { break-inside: avoid; box-shadow: none; border: 1.5px dashed #999; color: #3a2a24; background: #fff; padding: 8mm 6mm; height: 125mm; justify-content: center; }
+  .qr-card .muted, .qr-hint { color: #555 !important; }
+  .qr-stop { color: #8f2d3a; font-size: 11pt; }
+  .qr-card strong { font-size: 14pt; }
+  .qr-img { max-width: 70mm; }
+  .qr-actions { display: none; }
+}

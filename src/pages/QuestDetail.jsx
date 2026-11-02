@@ -12,6 +12,8 @@ import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 import ReviewSummary from '../components/ReviewSummary'
+import QrScanner from '../components/QrScanner'
+import { parseQrToken, scanQr, useQrVerified } from '../lib/qr'
 import { useTours } from '../lib/tours'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
@@ -39,6 +41,8 @@ function QuestDetailInner({ id }) {
   const [answer, setAnswer] = useState(null)
   const [busy, setBusy] = useState(false)
   const [reward, setReward] = useState(null)
+  const [scanOpen, setScanOpen] = useState(false)
+  const [qrOk, setQrOk] = useQrVerified(Number(id), user.id)
 
   useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview])
 
@@ -69,12 +73,25 @@ function QuestDetailInner({ id }) {
     }
   }
 
+  // Quét QR trong web: đúng điểm này thì xác nhận luôn, mã của điểm khác thì chuyển sang nhiệm vụ đó
+  const onScan = async (text) => {
+    setScanOpen(false)
+    const token = parseQrToken(text)
+    if (!token) return toast(tr('Đây không phải mã QR của HANOI GO!'), 'error')
+    const { data, error } = await scanQr(token)
+    if (error) return toast(friendlyError(error), 'error')
+    if (!data.ok) return toast(data.message, 'error')
+    toast(tr('Đã xác nhận bạn đang ở điểm này bằng mã QR!'), 'success')
+    if (data.quest_id === quest.id) setQrOk(true)
+    else navigate(`/quest/${data.quest_id}`)
+  }
+
   const submit = async () => {
     setBusy(true)
     let photoPath = null
     try {
       let p = pos
-      if (needsLocation && !p) {
+      if (needsLocation && !p && !qrOk) {
         // tài khoản demo vẫn thử lấy vị trí nhưng không bắt buộc
         p = profile?.is_demo ? await getPosition().catch(() => null) : await locate()
         if (!p && !profile?.is_demo) return
@@ -205,14 +222,22 @@ function QuestDetailInner({ id }) {
             </>
           )}
 
-          {needsLocation && (
+          {needsLocation && (qrOk ? (
+            <div className="loc-row qr-ok">
+              <span><Emoji e="✅" play="static" />{tr(' Đã xác nhận bạn ở đây bằng mã QR — không cần GPS.')}</span>
+            </div>
+          ) : (
             <div className="loc-row">
               <span className="muted">
-                {dist != null ? tr('Bạn đang cách {0} (cần trong {1} m)', formatDistance(dist), quest.radius_m) : tr('Cần bật định vị khi đến nơi.')}
+                {dist != null ? tr('Bạn đang cách {0} (cần trong {1} m)', formatDistance(dist), quest.radius_m) : tr('Cần bật định vị hoặc quét mã QR khi đến nơi.')}
               </span>
-              <button className="ghost small" onClick={locate}><Emoji e="📍" play="static" />{tr(' Lấy vị trí')}</button>
+              <span className="loc-actions">
+                <button className="ghost small" onClick={locate}><Emoji e="📍" play="static" />{tr(' Lấy vị trí')}</button>
+                <button className="ghost small" onClick={() => setScanOpen(true)}><Emoji e="📷" play="static" />{tr(' Quét QR')}</button>
+              </span>
             </div>
-          )}
+          ))}
+          <QrScanner open={scanOpen} onClose={() => setScanOpen(false)} onResult={onScan} />
 
           <button className="btn primary block big" onClick={submit}
             disabled={busy || (quest.kind === 'photo' && !file) || (quest.kind === 'quiz' && answer == null)}>

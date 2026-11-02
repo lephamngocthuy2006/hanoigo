@@ -7,6 +7,7 @@ import { CATEGORIES, fmtDateVN } from '../lib/partner'
 import { levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
+import AdminQrTab from '../components/AdminQrTab'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr, locale, localize } from '../lib/i18n'
 
@@ -39,10 +40,12 @@ export default function AdminPage() {
         </button>
         <button className={tab === 'users' ? 'active' : ''} onClick={() => setTab('users')}><Emoji e="👤" play="static" />{tr(' Người dùng')}</button>
         <button className={tab === 'reviews' ? 'active' : ''} onClick={() => setTab('reviews')}><Emoji e="💬" play="static" />{tr(' Đánh giá')}</button>
+        <button className={tab === 'qr' ? 'active' : ''} onClick={() => setTab('qr')}><Emoji e="📱" play="static" />{tr(' Mã QR')}</button>
       </div>
       {tab === 'partners' && <PartnersTab onPendingCount={setPending} />}
       {tab === 'users' && <UsersTab />}
       {tab === 'reviews' && <ReviewsTab />}
+      {tab === 'qr' && <AdminQrTab />}
     </div>
   )
 }
