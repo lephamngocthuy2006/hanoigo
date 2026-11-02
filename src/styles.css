@@ -18,6 +18,7 @@
   --top-h: 60px;
   font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
   color: var(--ink);
+  color-scheme: light;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -57,7 +58,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 0 14px;
   padding-top: env(safe-area-inset-top);
-  background: rgba(255, 250, 241, 0.92);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
@@ -276,7 +277,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; margin-top: 10px; }
 .game-card {
   position: relative; aspect-ratio: 3 / 4; border-radius: 14px; border: 2px solid var(--rar); padding: 8px 6px;
-  background: linear-gradient(180deg, #fff, color-mix(in srgb, var(--rar) 14%, #fff));
+  background: linear-gradient(180deg, var(--card), color-mix(in srgb, var(--rar) 14%, var(--card)));
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center;
 }
 .game-card.locked { filter: grayscale(1); opacity: 0.45; border-style: dashed; }
@@ -491,7 +492,7 @@ code { background: var(--brand-soft); padding: 1px 6px; border-radius: 6px; font
 .voucher-card.as-button { cursor: pointer; }
 .voucher-card.mine { border-style: solid; border-color: var(--gold-dark); background: #fff6dc; }
 .voucher-card.used { opacity: 0.6; border-style: solid; border-color: var(--line); background: var(--paper); }
-.voucher-left { font-size: 1.6rem; width: 48px; height: 48px; flex-shrink: 0; display: grid; place-items: center; border-radius: 14px; background: #fff; border: 1px solid var(--line); }
+.voucher-left { font-size: 1.6rem; width: 48px; height: 48px; flex-shrink: 0; display: grid; place-items: center; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
 .voucher-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .voucher-card > .btn { flex-shrink: 0; }
 .code-chip { font-weight: 700; color: var(--brand); }
@@ -830,3 +831,70 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .noti-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; font-size: 0.92rem; }
 .noti-quote { color: var(--muted); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .noti-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--brand); flex-shrink: 0; }
+
+/* ---------- Giao diện tối ---------- */
+.theme-switch { min-width: 260px; }
+.theme-switch button { white-space: nowrap; }
+@media (max-width: 480px) { .lang-card .theme-switch { width: 100%; } }
+
+:root[data-theme="dark"] {
+  --brand: #d66a78;
+  --brand-dark: #9e3a49;
+  --brand-soft: #3d2328;
+  --gold-dark: #c99a22;
+  --bg: #15100e;
+  --paper: #1e1714;
+  --card: #2a211d;
+  --ink: #f1e6da;
+  --muted: #a8998c;
+  --line: #3e322c;
+  --ok: #3fb47e;
+  --danger: #e66a62;
+  --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+[data-theme="dark"] .app { box-shadow: 0 0 40px rgba(0, 0, 0, 0.4); }
+[data-theme="dark"] .navicon { filter: grayscale(0.85) opacity(0.55); }
+[data-theme="dark"] .navitem.active .navicon { filter: none; }
+[data-theme="dark"] .btn.gold { color: #3a2a24; }
+[data-theme="dark"] .btn.danger { border-color: #6b302c; }
+[data-theme="dark"] .toast { background: #4a3c34; }
+[data-theme="dark"] .toast-error { background: #b23b35; }
+[data-theme="dark"] .toast-success { background: #23805a; }
+[data-theme="dark"] .error, [data-theme="dark"] .tag.bad { background: #3d2220; }
+[data-theme="dark"] .hero-quest, [data-theme="dark"] .side-link.active { box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); }
+[data-theme="dark"] .hero-quest, [data-theme="dark"] .journal-cover { --brand: #8f2d3a; --brand-dark: #6e1f2b; }
+[data-theme="dark"] .side-link.active, [data-theme="dark"] .btn.primary, [data-theme="dark"] .chip.active,
+[data-theme="dark"] .quiz-opt.picked span, [data-theme="dark"] .noti-dot { background: #b8475a; border-color: #b8475a; }
+[data-theme="dark"] .modal-backdrop { background: rgba(0, 0, 0, 0.6); }
+
+/* nền nhạt màu ấm (gợi ý, voucher, đối tác…) */
+[data-theme="dark"] .tip, [data-theme="dark"] .etiquette, [data-theme="dark"] .advice,
+[data-theme="dark"] .voucher-card, [data-theme="dark"] .partner-card, [data-theme="dark"] .partner-reply,
+[data-theme="dark"] .partner-emoji.small { background: #30271b; border-color: #574629; }
+[data-theme="dark"] .voucher-card.mine { background: #3a2f17; border-color: var(--gold-dark); }
+[data-theme="dark"] .pack-art { background: linear-gradient(135deg, #3d3218, #3d2230); }
+[data-theme="dark"] .streak-banner.lit { background: linear-gradient(135deg, #3a2c17, #3d2818); border-color: #6b5228; }
+[data-theme="dark"] .timeline li.next .stop-dot { box-shadow: 0 0 0 4px #4a3a17; }
+[data-theme="dark"] .weak-note, [data-theme="dark"] .partner-badge { color: #e7a35c; }
+[data-theme="dark"] .tag.gold { background: #3d321a; color: var(--gold); }
+[data-theme="dark"] .tag.new { background: #1d2a40; color: #8db4f0; }
+[data-theme="dark"] .admin-note { background: #2b2636; }
+/* nền xanh "đã xong" */
+[data-theme="dark"] .done-card, [data-theme="dark"] .tag.ok, [data-theme="dark"] .verify-card { background: #1b3227; border-color: #2c5440; color: #8fd6b0; }
+/* đã thả tim / cảm xúc */
+[data-theme="dark"] .like-btn.liked, [data-theme="dark"] .reaction-btn.active { background: var(--brand-soft); border-color: #7a3a46; }
+/* nhãn nhỏ đè trên ảnh */
+[data-theme="dark"] .journal-lock, [data-theme="dark"] .journal-likes, [data-theme="dark"] .journal-comments { background: rgba(30, 23, 20, 0.88); }
+[data-theme="dark"] .reaction-picker { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+@keyframes flash-dark { 0%, 40% { background: #4a3a17; border-color: var(--gold-dark); } }
+[data-theme="dark"] .map-item.flash { animation-name: flash-dark; }
+
+/* bản đồ Leaflet */
+[data-theme="dark"] .leaflet-container { background: #1b1a1f; }
+[data-theme="dark"] .leaflet-popup-content-wrapper, [data-theme="dark"] .leaflet-popup-tip { background: var(--card); color: var(--ink); }
+[data-theme="dark"] .leaflet-bar a { background: var(--card); color: var(--ink); border-bottom-color: var(--line); }
+[data-theme="dark"] .leaflet-bar a:hover { background: var(--paper); }
+[data-theme="dark"] .leaflet-control-attribution { background: rgba(30, 23, 20, 0.8) !important; color: var(--muted); }
+[data-theme="dark"] .leaflet-control-attribution a { color: var(--ink); }
+[data-theme="dark"] .leaflet-container a.leaflet-popup-close-button { color: var(--muted); }

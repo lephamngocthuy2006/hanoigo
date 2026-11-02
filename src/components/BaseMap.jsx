@@ -1,11 +1,16 @@
 import { useEffect } from 'react'
 import { useMap } from 'react-leaflet'
 import L from 'leaflet'
+import { useTheme } from '../lib/theme'
 
 // Bản đồ vector của OpenFreeMap (dữ liệu OpenStreetMap): nét trên mọi màn hình,
 // miễn phí, không cần API key. Vẽ bằng MapLibre bên dưới các marker của Leaflet.
 // MapLibre khá nặng nên chỉ tải khi có bản đồ trên màn hình.
-const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty'
+// Giao diện tối dùng style "dark" của OpenFreeMap
+const STYLE_URL = {
+  light: 'https://tiles.openfreemap.org/styles/liberty',
+  dark: 'https://tiles.openfreemap.org/styles/dark',
+}
 const VI_NAME = ['coalesce', ['get', 'name:vi'], ['get', 'name']]
 
 const loadMapLibre = () =>
@@ -25,12 +30,13 @@ function applyVietnameseLabels(gl) {
 
 export default function BaseMap() {
   const map = useMap()
+  const { theme } = useTheme()
   useEffect(() => {
     let layer = null
     let cancelled = false
     loadMapLibre().then(() => {
       if (cancelled) return
-      layer = L.maplibreGL({ style: STYLE_URL, attributionControl: false }).addTo(map)
+      layer = L.maplibreGL({ style: STYLE_URL[theme], attributionControl: false }).addTo(map)
       const gl = layer.getMaplibreMap()
       // Một vài POI trong style OpenFreeMap thiếu icon sprite → nạp ảnh rỗng 1x1 để tránh warning console
       gl.on('styleimagemissing', ({ id }) => {
@@ -46,6 +52,6 @@ export default function BaseMap() {
       if (layer) map.removeLayer(layer)
       map.attributionControl.removeAttribution(attribution)
     }
-  }, [map])
+  }, [map, theme])
   return null
 }

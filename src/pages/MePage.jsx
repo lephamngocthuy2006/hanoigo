@@ -8,6 +8,7 @@ import Modal from '../components/Modal'
 import Emoji from '../components/Emoji'
 import { tr, locale } from '../lib/i18n'
 import LangSwitch from '../components/LangSwitch'
+import ThemeSwitch from '../components/ThemeSwitch'
 
 export default function MePage() {
   const { user, profile, refreshProfile, signOut } = useAuth()
@@ -78,6 +79,10 @@ export default function MePage() {
       <section className="card lang-card">
         <span><Emoji e="🌐" play="static" /> Ngôn ngữ · Language</span>
         <LangSwitch />
+      </section>
+      <section className="card lang-card">
+        <span><Emoji e="🌓" play="static" />{tr(' Giao diện')}</span>
+        <ThemeSwitch />
       </section>
       <p className="muted small center">{tr('Tham gia từ ')}{new Date(profile.created_at).toLocaleDateString(locale)}</p>
       </div>

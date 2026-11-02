@@ -642,4 +642,8 @@ export default {
   'Cảm xúc, bình luận và lời mời kết bạn từ bạn bè.': 'Reactions, comments and friend requests from your friends.',
   'Chưa có thông báo nào. Kết bạn và chia sẻ kỷ niệm để nhận tương tác nhé!': 'No notifications yet. Add friends and share memories to get some love!',
   'Tài khoản này không còn tồn tại. Vui lòng đăng nhập lại.': 'This account no longer exists. Please sign in again.',
+  'Giao diện': 'Appearance',
+  'Sáng': 'Light',
+  'Tối': 'Dark',
+  'Theo máy': 'System',
 }
