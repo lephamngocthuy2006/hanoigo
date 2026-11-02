@@ -940,7 +940,8 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .comment-reacts .emo { width: 1.15em !important; height: 1.15em !important; }
 .comment-reacts .emo + .emo { margin-left: -3px; }
 .comment-meta { align-items: center; }
-.reaction-wrap.compact { position: relative; display: inline-flex; }
+.reaction-wrap.compact { display: inline-flex; flex-direction: row; width: auto; margin: 0; gap: 0; }
+.comment-meta > span { white-space: nowrap; }
 .reaction-link { display: inline-flex; align-items: center; gap: 3px; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
 .reaction-link .emo { width: 1.15em !important; height: 1.15em !important; }
 .reaction-link.active { color: var(--brand); }
