@@ -1,4 +1,4 @@
-// Giao diện Sáng / Tối / Theo máy. Lưu lựa chọn trong máy; "Theo máy" đi theo cài đặt hệ điều hành.
+// Giao diện Sáng / Tối / Theo máy. Mặc định là Sáng; lựa chọn lưu trong máy, "Theo máy" đi theo cài đặt hệ điều hành.
 // index.html đã đặt sẵn data-theme trước khi tải CSS để không bị chớp trắng.
 import { useSyncExternalStore } from 'react'
 
@@ -10,9 +10,9 @@ const listeners = new Set()
 function readPref() {
   try {
     const saved = localStorage.getItem(KEY)
-    if (saved === 'light' || saved === 'dark') return saved
+    if (saved === 'dark' || saved === 'system') return saved
   } catch { /* chế độ ẩn danh */ }
-  return 'system'
+  return 'light'
 }
 
 let pref = readPref()
@@ -34,7 +34,7 @@ if (typeof document !== 'undefined') {
 export function setThemePref(next) {
   pref = next
   try {
-    if (next === 'system') localStorage.removeItem(KEY)
+    if (next === 'light') localStorage.removeItem(KEY)
     else localStorage.setItem(KEY, next)
   } catch { /* bỏ qua */ }
   apply()

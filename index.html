@@ -11,11 +11,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script>
-      // Đặt giao diện Sáng/Tối trước khi vẽ trang để không bị chớp trắng (xem src/lib/theme.js)
+      // Mặc định Sáng; đặt giao diện trước khi vẽ trang để không bị chớp trắng (xem src/lib/theme.js)
       try {
         var t = localStorage.getItem('hanoigo-theme')
-        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        document.documentElement.dataset.theme = t
+        if (t === 'system') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = t === 'dark' ? 'dark' : 'light'
       } catch (e) {}
     </script>
     <title>HANOI GO! — Khám phá Hà Nội</title>
