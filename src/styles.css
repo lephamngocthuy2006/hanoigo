@@ -1003,3 +1003,8 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 [data-theme="dark"] .cert-verify h1 { color: color-mix(in srgb, var(--tour, var(--brand)) 60%, #fff); }
 .setting-btn { flex-shrink: 0; }
 @media (max-width: 600px) { .setting-row .setting-btn { width: 100%; } }
+
+/* ---------- Hộp xác nhận ---------- */
+.confirm-box { text-align: center; }
+.confirm-box p { font-size: 1.02rem; font-weight: 600; margin: 4px 0 6px; }
+.btn.danger-fill { background: var(--danger); border-color: var(--danger); color: #fff; }

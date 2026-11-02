@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { addComment, deleteComment, loadCommentReactions, loadComments, personName, setCommentReaction, timeAgo } from '../lib/social'
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../context/ConfirmContext'
 import Emoji from './Emoji'
 import ReactionBar from './ReactionBar'
 import { tr } from '../lib/i18n'
@@ -13,6 +14,7 @@ import { tr } from '../lib/i18n'
  */
 export default function Comments({ entryId, ownerId, userId, onCount }) {
   const toast = useToast()
+  const confirm = useConfirm()
   const [items, setItems] = useState(null)
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
@@ -47,7 +49,7 @@ export default function Comments({ entryId, ownerId, userId, onCount }) {
   }
 
   const remove = async (c) => {
-    if (!confirm(tr('Xoá bình luận này?'))) return
+    if (!(await confirm(tr('Xoá bình luận này?'), { ok: tr('Xoá'), danger: true }))) return
     const { error } = await deleteComment(c.id)
     if (error) return toast(friendlyError(error), 'error')
     setItems((list) => list.filter((x) => x.id !== c.id))

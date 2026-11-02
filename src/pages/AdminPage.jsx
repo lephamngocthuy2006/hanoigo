@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../context/ConfirmContext'
 import { CATEGORIES, fmtDateVN } from '../lib/partner'
 import { levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
@@ -323,6 +324,7 @@ function UsersTab() {
 /* ------------------------------ Đánh giá ------------------------------ */
 function ReviewsTab() {
   const toast = useToast()
+  const confirm = useConfirm()
   const [rows, setRows] = useState(null)
 
   const load = useCallback(async () => {
@@ -336,7 +338,7 @@ function ReviewsTab() {
   useEffect(() => { load() }, [load])
 
   const remove = async (r) => {
-    if (!confirm(tr('Xoá đánh giá này? Thao tác không thể hoàn tác.'))) return
+    if (!(await confirm(tr('Xoá đánh giá này? Thao tác không thể hoàn tác.'), { ok: tr('Xoá'), danger: true }))) return
     const { error } = await supabase.rpc('admin_delete_review', { p_id: r.id })
     if (error) return toast(friendlyError(error), 'error')
     toast(tr('Đã xoá đánh giá'), 'success')

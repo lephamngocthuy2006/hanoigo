@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../context/ConfirmContext'
 import { useQuests } from '../lib/data'
 import { useTours } from '../lib/tours'
 import { qrUrl } from '../lib/qr'
@@ -14,6 +15,7 @@ import { tr } from '../lib/i18n'
  */
 export default function AdminQrTab() {
   const toast = useToast()
+  const confirm = useConfirm()
   const { quests, loading } = useQuests()
   const { tours } = useTours()
   const [tokens, setTokens] = useState(null)
@@ -47,7 +49,7 @@ export default function AdminQrTab() {
   }, [items, tokens])
 
   const regenerate = async (quest) => {
-    if (!confirm(tr('Đổi mã QR cho "{0}"? Mã cũ đã in ra sẽ không dùng được nữa.', quest.title))) return
+    if (!(await confirm(tr('Đổi mã QR cho "{0}"? Mã cũ đã in ra sẽ không dùng được nữa.', quest.title), { ok: tr(' Đổi mã').trim() }))) return
     const { data, error } = await supabase.rpc('regenerate_quest_qr', { p_quest_id: quest.id })
     if (error) return toast(friendlyError(error), 'error')
     setImages((m) => { const n = { ...m }; delete n[quest.id]; return n })

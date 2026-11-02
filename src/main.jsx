@@ -9,6 +9,7 @@ import App from './App'
 import { isConfigured } from './lib/supabase'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
+import { ConfirmProvider } from './context/ConfirmContext'
 import SetupNeeded from './pages/SetupNeeded'
 
 registerServiceWorker()
@@ -18,9 +19,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     {isConfigured ? (
       <HashRouter>
         <ToastProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <ConfirmProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </ConfirmProvider>
         </ToastProvider>
       </HashRouter>
     ) : (

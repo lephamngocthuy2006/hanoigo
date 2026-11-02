@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useOutletContext, useParams, useSearchPara
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../context/ConfirmContext'
 import { loadLikes } from '../lib/friends'
 import { signedUrls } from '../lib/photos'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
@@ -19,6 +20,7 @@ export default function FriendProfile() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const toast = useToast()
+  const confirm = useConfirm()
   const { friends, reload: reloadFriends } = useOutletContext()
   const [person, setPerson] = useState(undefined)
   const [entries, setEntries] = useState([])
@@ -66,7 +68,7 @@ export default function FriendProfile() {
   if (person.id === user.id) return <Navigate to="/journal" replace />
 
   const unfriend = async () => {
-    if (!confirm(tr('Huỷ kết bạn với {0}?', person.display_name || person.username))) return
+    if (!(await confirm(tr('Huỷ kết bạn với {0}?', person.display_name || person.username), { ok: tr('Huỷ kết bạn'), danger: true }))) return
     const { error } = await supabase.from('friendships').delete().eq('id', friendship.id)
     if (error) return toast(friendlyError(error), 'error')
     reloadFriends()

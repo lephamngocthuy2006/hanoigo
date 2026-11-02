@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useConfirm } from '../context/ConfirmContext'
 import { deletePhoto, signedUrls, uploadPhoto } from '../lib/photos'
 import { Link, useSearchParams } from 'react-router-dom'
 import { loadLikes } from '../lib/friends'
@@ -16,6 +17,7 @@ import { tr } from '../lib/i18n'
 export default function JournalPage() {
   const { user, profile } = useAuth()
   const toast = useToast()
+  const confirm = useConfirm()
   const [entries, setEntries] = useState([])
   const [urls, setUrls] = useState({})
   const [likes, setLikes] = useState({})
@@ -51,7 +53,7 @@ export default function JournalPage() {
   }, [openId, entries, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const remove = async (entry) => {
-    if (!confirm(tr('Xoá trang nhật ký này?'))) return
+    if (!(await confirm(tr('Xoá trang nhật ký này?'), { ok: tr('Xoá'), danger: true }))) return
     const { error } = await supabase.from('journal_entries').delete().eq('id', entry.id)
     if (error) return toast(friendlyError(error), 'error')
     // ảnh của nhiệm vụ vẫn giữ trong lịch sử hoàn thành, chỉ xoá ảnh tự thêm
