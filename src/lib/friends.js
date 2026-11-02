@@ -72,18 +72,13 @@ export const REACTIONS = [
 ]
 export const reactionLabel = (e) => REACTIONS.find((r) => r.e === e)?.label || (e === '🤬' ? tr('Đập bàn!') : tr('Thả cảm xúc'))
 
-// Cảm xúc của các trang nhật ký: { entryId: { count, mine, top: [emoji…], people: [{ name, reaction }] } }
-export async function loadLikes(entryIds, userId) {
-  if (!entryIds.length) return {}
-  const { data } = await supabase
-    .from('journal_likes')
-    .select('entry_id, user_id, reaction, profiles(display_name, username)')
-    .in('entry_id', entryIds)
+// Gom các lượt cảm xúc theo key: { [key]: { count, mine, top: [emoji…], people: [{ name, reaction }] } }
+export function summarizeReactions(rows, key, userId) {
   const map = {}
-  ;(data || []).forEach((l) => {
+  rows.forEach((l) => {
     const r = l.reaction || '❤️'
-    map[l.entry_id] ??= { count: 0, mine: null, counts: {}, people: [] }
-    const m = map[l.entry_id]
+    map[l[key]] ??= { count: 0, mine: null, counts: {}, people: [] }
+    const m = map[l[key]]
     m.count += 1
     m.counts[r] = (m.counts[r] || 0) + 1
     if (l.user_id === userId) m.mine = r
@@ -93,6 +88,16 @@ export async function loadLikes(entryIds, userId) {
     m.top = Object.entries(m.counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e]) => e)
   })
   return map
+}
+
+// Cảm xúc của các trang nhật ký
+export async function loadLikes(entryIds, userId) {
+  if (!entryIds.length) return {}
+  const { data } = await supabase
+    .from('journal_likes')
+    .select('entry_id, user_id, reaction, profiles(display_name, username)')
+    .in('entry_id', entryIds)
+  return summarizeReactions(data || [], 'entry_id', userId)
 }
 
 // Thả / đổi / gỡ cảm xúc. previous: cảm xúc hiện tại (null nếu chưa thả), reaction: null để gỡ

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from './supabase'
 import { tr, locale } from './i18n'
+import { summarizeReactions } from './friends'
 
 const ACTOR_COLS = 'id, username, display_name, avatar'
 export const personName = (p) => p?.display_name || p?.username || tr('Ai đó')
@@ -19,7 +20,7 @@ export function timeAgo(s) {
 export async function loadComments(entryId) {
   const { data, error } = await supabase
     .from('journal_comments')
-    .select(`id, entry_id, user_id, body, created_at, author:profiles(${ACTOR_COLS})`)
+    .select(`id, entry_id, user_id, body, created_at, author:profiles!journal_comments_user_id_fkey(${ACTOR_COLS})`)
     .eq('entry_id', entryId)
     .order('created_at')
   return { data: data || [], error }
@@ -38,11 +39,29 @@ export function addComment(entryId, userId, body) {
   return supabase
     .from('journal_comments')
     .insert({ entry_id: entryId, user_id: userId, body: body.trim() })
-    .select(`id, entry_id, user_id, body, created_at, author:profiles(${ACTOR_COLS})`)
+    .select(`id, entry_id, user_id, body, created_at, author:profiles!journal_comments_user_id_fkey(${ACTOR_COLS})`)
     .single()
 }
 
 export const deleteComment = (id) => supabase.from('journal_comments').delete().eq('id', id)
+
+// Cảm xúc của các bình luận: { commentId: { count, mine, top, people } }. Bảng chưa tạo (chưa chạy 013) → {}
+export async function loadCommentReactions(commentIds, userId) {
+  if (!commentIds.length) return {}
+  const { data } = await supabase
+    .from('comment_reactions')
+    .select('comment_id, user_id, reaction, profiles!comment_reactions_user_id_fkey(display_name, username)')
+    .in('comment_id', commentIds)
+  return summarizeReactions(data || [], 'comment_id', userId)
+}
+
+// Thả / đổi / gỡ cảm xúc cho bình luận (giống setReaction của Sổ hành trình)
+export function setCommentReaction(commentId, userId, reaction, previous) {
+  const mine = supabase.from('comment_reactions')
+  if (!reaction) return mine.delete().eq('comment_id', commentId).eq('user_id', userId)
+  if (previous) return mine.update({ reaction }).eq('comment_id', commentId).eq('user_id', userId)
+  return mine.insert({ comment_id: commentId, user_id: userId, reaction })
+}
 
 // ---------- Thông báo ----------
 const NOTI_COLS = `id, kind, entry_id, reaction, body, read_at, created_at,
@@ -56,6 +75,7 @@ export function notiText(n) {
     case 'reaction': return tr('đã bày tỏ cảm xúc về kỷ niệm{0} của bạn', title)
     case 'comment': return tr('đã bình luận về kỷ niệm{0} của bạn', title)
     case 'reply': return tr('cũng đã bình luận về kỷ niệm{0}', title)
+    case 'comment_reaction': return tr('đã bày tỏ cảm xúc về bình luận của bạn')
     case 'friend_request': return tr('đã gửi lời mời kết bạn')
     case 'friend_accept': return tr('đã chấp nhận lời mời kết bạn')
     default: return ''
@@ -63,7 +83,7 @@ export function notiText(n) {
 }
 
 export const notiIcon = (n) =>
-  n.kind === 'reaction' ? n.reaction || '❤️' : n.kind === 'friend_request' || n.kind === 'friend_accept' ? '🤝' : '💬'
+  n.kind === 'reaction' || n.kind === 'comment_reaction' ? n.reaction || '❤️' : n.kind === 'friend_request' || n.kind === 'friend_accept' ? '🤝' : '💬'
 
 // Mở đúng chỗ khi bấm vào thông báo
 export function notiLink(n, userId) {

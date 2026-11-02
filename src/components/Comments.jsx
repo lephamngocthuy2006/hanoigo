@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { addComment, deleteComment, loadComments, personName, timeAgo } from '../lib/social'
+import { addComment, deleteComment, loadCommentReactions, loadComments, personName, setCommentReaction, timeAgo } from '../lib/social'
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
 import Emoji from './Emoji'
+import ReactionBar from './ReactionBar'
 import { tr } from '../lib/i18n'
 
 /**
@@ -15,14 +16,18 @@ export default function Comments({ entryId, ownerId, userId, onCount }) {
   const [items, setItems] = useState(null)
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
+  const [reactions, setReactions] = useState({})
   const listRef = useRef(null)
 
   useEffect(() => {
     let alive = true
     setItems(null)
-    loadComments(entryId).then(({ data, error }) => {
+    setReactions({})
+    loadComments(entryId).then(async ({ data, error }) => {
       if (!alive) return
       setItems(error ? [] : data)
+      const map = await loadCommentReactions((data || []).map((c) => c.id), userId)
+      if (alive) setReactions(map)
     })
     return () => { alive = false }
   }, [entryId])
@@ -71,8 +76,17 @@ export default function Comments({ entryId, ownerId, userId, onCount }) {
                 </div>
                 <div className="comment-meta">
                   <span>{timeAgo(c.created_at)}</span>
+                  <ReactionBar compact userId={userId} like={reactions[c.id]}
+                    onChange={(next) => setReactions((m) => ({ ...m, [c.id]: next }))}
+                    save={(next, prev) => setCommentReaction(c.id, userId, next, prev)} />
                   {(c.user_id === userId || ownerId === userId) && (
                     <button type="button" className="link-btn" onClick={() => remove(c)}>{tr('Xoá')}</button>
+                  )}
+                  {reactions[c.id]?.count > 0 && (
+                    <span className="comment-reacts" title={reactions[c.id].people.map((p) => `${p.reaction} ${p.name}`).join('\n')}>
+                      {reactions[c.id].top.map((e) => <Emoji key={e} e={e} play="static" />)}
+                      {reactions[c.id].count > 1 && <span>{reactions[c.id].count}</span>}
+                    </span>
                   )}
                 </div>
               </div>

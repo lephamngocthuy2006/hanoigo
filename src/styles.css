@@ -930,3 +930,21 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 @media (max-width: 359px) {
   .topbar .brand > span { display: none; }
 }
+
+/* ---------- Cảm xúc dưới bình luận ---------- */
+.comment-reacts {
+  display: inline-flex; align-items: center; gap: 2px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 1px 6px 1px 3px;
+  font-size: 0.72rem; font-weight: 700; color: var(--muted); box-shadow: 0 1px 4px rgba(90, 50, 30, 0.12); cursor: default;
+}
+.comment-reacts .emo { width: 1.15em !important; height: 1.15em !important; }
+.comment-reacts .emo + .emo { margin-left: -3px; }
+.comment-meta { align-items: center; }
+.reaction-wrap.compact { position: relative; display: inline-flex; }
+.reaction-link { display: inline-flex; align-items: center; gap: 3px; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.reaction-link .emo { width: 1.15em !important; height: 1.15em !important; }
+.reaction-link.active { color: var(--brand); }
+.reaction-link:hover { color: var(--brand); }
+/* bảng chọn mở sang phải từ nút nhỏ, không bị tràn ra ngoài khung bình luận */
+.reaction-wrap.compact .reaction-picker { left: -60px; transform: none; animation-name: picker-in-left; }
+@keyframes picker-in-left { from { opacity: 0; transform: translateY(8px) scale(0.9); } }

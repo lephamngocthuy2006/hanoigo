@@ -651,4 +651,5 @@ export default {
   'Tuỳ chỉnh HANOI GO! theo cách bạn thích. Lựa chọn được lưu trên thiết bị này.': 'Make HANOI GO! your own. Choices are saved on this device.',
   'Đổi ngôn ngữ sẽ tải lại trang.': 'Changing the language reloads the page.',
   '“Theo máy” tự đổi Sáng / Tối theo cài đặt của điện thoại hoặc máy tính.': '“System” follows the light / dark setting of your phone or computer.',
+  'đã bày tỏ cảm xúc về bình luận của bạn': 'reacted to your comment',
 }

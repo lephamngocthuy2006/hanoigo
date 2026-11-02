@@ -21,8 +21,9 @@ function applyChange(like, next) {
  * Nút thả cảm xúc kiểu Facebook:
  * - Chạm nhanh: thả ❤️ (hoặc gỡ cảm xúc đang có)
  * - Giữ lâu / rê chuột / bấm nút 😊: mở bảng chọn 7 cảm xúc
+ * compact: chỉ một nút chữ nhỏ (dùng dưới bình luận); save: hàm lưu thay cho cảm xúc của trang nhật ký
  */
-export default function ReactionBar({ entryId, userId, like, onChange, showPeople }) {
+export default function ReactionBar({ entryId, userId, like, onChange, showPeople, compact, save }) {
   const toast = useToast()
   const [open, setOpen] = useState(false)
   const [below, setBelow] = useState(false)
@@ -61,7 +62,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
     }
     setBusy(true)
     onChange(applyChange(like, next))
-    const { error } = await setReaction(entryId, userId, next, mine)
+    const { error } = await (save ? save(next, mine) : setReaction(entryId, userId, next, mine))
     setBusy(false)
     if (error) {
       onChange(like)
@@ -94,7 +95,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
   }
 
   return (
-    <div className="reaction-wrap" ref={wrapRef} onPointerEnter={onEnter} onPointerLeave={onLeave}>
+    <div className={`reaction-wrap${compact ? ' compact' : ''}`} ref={wrapRef} onPointerEnter={onEnter} onPointerLeave={onLeave}>
       {open && (
         <div className={`reaction-picker${below ? ' below' : ''}`} role="menu" aria-label={tr('Chọn cảm xúc')}>
           {REACTIONS.map((r, i) => (
@@ -107,6 +108,13 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
         </div>
       )}
 
+      {compact ? (
+        <button type="button" className={`link-btn reaction-link${mine ? ' active' : ''}`} disabled={busy}
+          onPointerDown={onPointerDown} onPointerUp={cancelPress} onPointerLeave={cancelPress} onContextMenu={(e) => e.preventDefault()}
+          onClick={onClick} aria-pressed={!!mine} aria-label={mine ? reactionLabel(mine) : tr('Thả cảm xúc')}>
+          {mine ? <><Emoji e={mine} play="static" /> {reactionLabel(mine)}</> : tr('Thích')}
+        </button>
+      ) : (
       <div className="reaction-row">
         <button type="button" className={`reaction-btn${mine ? ' active' : ''}`} disabled={busy}
           onPointerDown={onPointerDown} onPointerUp={cancelPress} onPointerLeave={cancelPress} onContextMenu={(e) => e.preventDefault()}
@@ -125,6 +133,7 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
           </span>
         )}
       </div>
+      )}
 
       {showPeople && like?.people?.length > 0 && (
         <ul className="reaction-people">
