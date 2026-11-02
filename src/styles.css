@@ -835,7 +835,16 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 /* ---------- Giao diện tối ---------- */
 .theme-switch { min-width: 260px; }
 .theme-switch button { white-space: nowrap; }
-@media (max-width: 480px) { .lang-card .theme-switch { width: 100%; } }
+
+/* ---------- Cài đặt ---------- */
+.menu-hint { float: right; padding-left: 8px; font-weight: 500; line-height: 1.6; }
+.settings { padding: 4px 16px; }
+.setting-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 0; }
+.setting-row + .setting-row { border-top: 1px solid var(--line); }
+.setting-icon { width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); display: grid; place-items: center; }
+.setting-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 180px; }
+.setting-row .segmented { width: 300px; }
+@media (max-width: 600px) { .setting-row .segmented { width: 100%; min-width: 0; } }
 
 :root[data-theme="dark"] {
   --brand: #d66a78;

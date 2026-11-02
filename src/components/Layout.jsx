@@ -25,6 +25,7 @@ const SIDE_MORE = [
   { to: '/friends', label: tr('Bạn bè'), icon: '🤝', badge: 'pending' },
   { to: '/insights', label: tr('Thống kê trải nghiệm'), icon: '📊' },
   { to: '/partner', label: tr('Cổng đối tác'), icon: '🏪' },
+  { to: '/settings', label: tr('Cài đặt'), icon: '⚙️' },
 ]
 
 function SideLink({ to, label, icon, end, badge }) {

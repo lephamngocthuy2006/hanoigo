@@ -646,4 +646,9 @@ export default {
   'Sáng': 'Light',
   'Tối': 'Dark',
   'Theo máy': 'System',
+  'Cài đặt': 'Settings',
+  'Ngôn ngữ, giao diện': 'Language, appearance',
+  'Tuỳ chỉnh HANOI GO! theo cách bạn thích. Lựa chọn được lưu trên thiết bị này.': 'Make HANOI GO! your own. Choices are saved on this device.',
+  'Đổi ngôn ngữ sẽ tải lại trang.': 'Changing the language reloads the page.',
+  '“Theo máy” tự đổi Sáng / Tối theo cài đặt của điện thoại hoặc máy tính.': '“System” follows the light / dark setting of your phone or computer.',
 }

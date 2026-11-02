@@ -7,8 +7,6 @@ import { AVATARS, levelInfo, levelTitle, liveStreak } from '../lib/game'
 import Modal from '../components/Modal'
 import Emoji from '../components/Emoji'
 import { tr, locale } from '../lib/i18n'
-import LangSwitch from '../components/LangSwitch'
-import ThemeSwitch from '../components/ThemeSwitch'
 
 export default function MePage() {
   const { user, profile, refreshProfile, signOut } = useAuth()
@@ -73,16 +71,9 @@ export default function MePage() {
         <button onClick={() => navigate('/insights')}><Emoji e="📊" play="static" />{tr(' Thống kê chất lượng trải nghiệm')}</button>
         <button onClick={() => navigate('/partner')}><Emoji e="🏪" play="static" />{tr(' Cổng đối tác (dành cho doanh nghiệp)')}</button>
         {profile.is_admin && <button onClick={() => navigate('/admin')}><Emoji e="🛡️" play="static" />{tr(' Trang quản trị')}</button>}
+        <button onClick={() => navigate('/settings')}><Emoji e="⚙️" play="static" />{tr(' Cài đặt')}<span className="muted small menu-hint">{tr('Ngôn ngữ, giao diện')}</span></button>
         <button onClick={() => setPwOpen(true)}><Emoji e="🔒" play="static" />{tr(' Đổi mật khẩu')}</button>
         <button className="danger-text" onClick={() => { navigate('/', { replace: true }); signOut() }}>{tr('↪ Đăng xuất')}</button>
-      </section>
-      <section className="card lang-card">
-        <span><Emoji e="🌐" play="static" /> Ngôn ngữ · Language</span>
-        <LangSwitch />
-      </section>
-      <section className="card lang-card">
-        <span><Emoji e="🌓" play="static" />{tr(' Giao diện')}</span>
-        <ThemeSwitch />
       </section>
       <p className="muted small center">{tr('Tham gia từ ')}{new Date(profile.created_at).toLocaleDateString(locale)}</p>
       </div>
