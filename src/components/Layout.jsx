@@ -99,6 +99,9 @@ export default function Layout() {
           <button className="icon-btn" onClick={() => navigate('/notifications')} aria-label={tr('Thông báo{0}', unread ? tr(', {0} chưa đọc', unread) : '')}>
             <Emoji e="🔔" play={unread > 0 ? 'loop' : 'hover'} />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}
           </button>
+          <button className="icon-btn" onClick={() => navigate('/settings')} aria-label={tr('Cài đặt')} title={tr('Cài đặt')}>
+            <Emoji e="⚙️" play="hover" />
+          </button>
           <button className="avatar-btn" onClick={() => navigate('/me')} aria-label={tr('Hồ sơ')}>
             <Emoji e={profile?.avatar || '🐢'} play="hover" />
           </button>
