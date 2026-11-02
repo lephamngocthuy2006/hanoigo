@@ -12,6 +12,7 @@ import { pinIcon } from '../lib/mapIcons'
 import BaseMap from '../components/BaseMap'
 import Modal from '../components/Modal'
 import ReviewSummary from '../components/ReviewSummary'
+import TourCertificate from '../components/TourCertificate'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
 
@@ -25,6 +26,7 @@ export default function TourDetail() {
   const [busy, setBusy] = useState(false)
   const [reward, setReward] = useState(null)
   const [reviewSignal, setReviewSignal] = useState(0)
+  const [certSignal, setCertSignal] = useState(0)
 
   const tour = tours.find((t) => String(t.id) === id)
   const byId = useMemo(() => Object.fromEntries(quests.map((q) => [q.id, q])), [quests])
@@ -137,6 +139,7 @@ export default function TourDetail() {
         </div>
       )}
 
+      {isClaimed && <TourCertificate tour={tour} stops={stops} openSignal={certSignal} />}
       <ReviewSummary target={{ tourId: tour.id }} title={tour.title} canReview={isClaimed} openSignal={reviewSignal} />
       </div>
       </div>
@@ -152,7 +155,10 @@ export default function TourDetail() {
             <div><strong><Emoji e="🏅" play="static" /></strong><span>{tr('Huy hiệu tour')}</span></div>
           </div>
           <p className="muted small">{tr('Hãy đánh giá tour để giúp người sau trải nghiệm tốt hơn (+20 ')}<Emoji e="🪙" play="static" />)</p>
-          <button className="btn primary" onClick={() => { setReward(null); setReviewSignal((n) => n + 1) }}>{tr('Đánh giá ngay')}</button>
+          <div className="row">
+            <button className="btn gold" onClick={() => { setReward(null); setCertSignal((n) => n + 1) }}><Emoji e="🎖️" play="static" />{tr(' Nhận chứng nhận')}</button>
+            <button className="btn primary" onClick={() => { setReward(null); setReviewSignal((n) => n + 1) }}>{tr('Đánh giá ngay')}</button>
+          </div>
         </div>
       </Modal>
     </div>

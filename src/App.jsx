@@ -15,6 +15,7 @@ import FriendProfile from './pages/FriendProfile'
 import NotificationsPage from './pages/NotificationsPage'
 import SettingsPage from './pages/SettingsPage'
 import ScanPage from './pages/ScanPage'
+import CertPage from './pages/CertPage'
 import ToursPage from './pages/ToursPage'
 import TourDetail from './pages/TourDetail'
 
@@ -31,6 +32,7 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<AuthPage mode="login" />} />
         <Route path="/register" element={<AuthPage mode="register" />} />
+        <Route path="/cert/:code" element={<CertPage />} />
         <Route path="*" element={<Navigate to="/login" state={{ from: location }} replace />} />
       </Routes>
     )
@@ -60,6 +62,7 @@ export default function App() {
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/scan/:token" element={<ScanPage />} />
+        <Route path="/cert/:code" element={<CertPage signedIn />} />
       </Route>
       <Route path="*" element={<Navigate to={backTo} state={backState} replace />} />
     </Routes>

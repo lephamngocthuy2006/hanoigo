@@ -49,6 +49,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
   12. [`supabase/012_comments_notifications.sql`](supabase/012_comments_notifications.sql) — bình luận dưới Sổ hành trình & thông báo khi bạn bè tương tác
   13. [`supabase/013_comment_reactions.sql`](supabase/013_comment_reactions.sql) — thả cảm xúc (kể cả 🤬 Đập bàn) cho từng bình luận
   14. [`supabase/014_qr_checkin.sql`](supabase/014_qr_checkin.sql) — mã QR tại từng điểm: quét để check-in không cần GPS (in mã ở Trang quản trị → Mã QR)
+  15. [`supabase/015_tour_certificates.sql`](supabase/015_tour_certificates.sql) — chứng nhận hoàn thành tour có mã xác thực (quét QR trên ảnh để kiểm tra)
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
