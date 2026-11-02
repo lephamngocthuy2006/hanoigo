@@ -1019,3 +1019,9 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .reply-btn:hover { color: var(--brand); }
 .replying { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 0.8rem; color: var(--muted); padding: 6px 12px; margin-bottom: 6px; background: var(--brand-soft); border-radius: 12px; }
 .replying strong { color: var(--ink); }
+
+/* Trang quản trị: 4 tab không vừa một hàng trên điện thoại → lưới 2×2 */
+@media (max-width: 560px) {
+  .segmented.admin-tabs { grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
+  .segmented.admin-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+}

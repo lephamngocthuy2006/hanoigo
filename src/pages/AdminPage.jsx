@@ -35,7 +35,7 @@ export default function AdminPage() {
         <h1><Emoji e="🛡️" play="static" />{tr(' Trang quản trị')}</h1>
         <p>{tr('Duyệt đối tác, quản lý người dùng và kiểm duyệt nội dung đánh giá.')}</p>
       </section>
-      <div className="segmented">
+      <div className="segmented admin-tabs">
         <button className={tab === 'partners' ? 'active' : ''} onClick={() => setTab('partners')}>
           <Emoji e="🏪" play="static" />{tr(' Đối tác')}{pending > 0 && <span className="badge static">{pending}</span>}
         </button>
