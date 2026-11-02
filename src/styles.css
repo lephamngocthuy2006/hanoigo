@@ -1001,3 +1001,5 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .cert-verify-emoji { font-size: 3rem; line-height: 1; }
 [data-theme="dark"] .cert-card { background: linear-gradient(135deg, #3a2f17, var(--card)); border-color: #574629; }
 [data-theme="dark"] .cert-verify h1 { color: color-mix(in srgb, var(--tour, var(--brand)) 60%, #fff); }
+.setting-btn { flex-shrink: 0; }
+@media (max-width: 600px) { .setting-row .setting-btn { width: 100%; } }

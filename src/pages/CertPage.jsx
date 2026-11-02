@@ -17,7 +17,7 @@ export default function CertPage({ signedIn }) {
   const title = cert && (isEn && cert.tour_title_en ? cert.tour_title_en : cert.tour_title)
 
   return (
-    <div className={`page narrow cert-page${signedIn ? "" : " standalone"}`}>
+    <div className={`page narrow cert-page${signedIn ? '' : ' standalone'}`}>
       <div className="cert-page-brand"><Logo size={44} /><span className="brand-name">HANOI GO!</span></div>
       {!cert ? <div className="spinner" /> : cert.ok ? (
         <section className="card cert-verify" style={{ '--tour': cert.tour_color }}>

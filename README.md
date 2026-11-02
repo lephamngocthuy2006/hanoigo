@@ -50,6 +50,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
   13. [`supabase/013_comment_reactions.sql`](supabase/013_comment_reactions.sql) — thả cảm xúc (kể cả 🤬 Đập bàn) cho từng bình luận
   14. [`supabase/014_qr_checkin.sql`](supabase/014_qr_checkin.sql) — mã QR tại từng điểm: quét để check-in không cần GPS (in mã ở Trang quản trị → Mã QR)
   15. [`supabase/015_tour_certificates.sql`](supabase/015_tour_certificates.sql) — chứng nhận hoàn thành tour có mã xác thực (quét QR trên ảnh để kiểm tra)
+  16. [`supabase/016_push_notifications.sql`](supabase/016_push_notifications.sql) — thông báo đẩy (cần thêm Edge Function `send-push` + mật khẩu chung trong Vault, xem mục Thông báo đẩy bên dưới)
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
@@ -136,3 +137,17 @@ Chọn ngôn ngữ ở trang Đăng nhập hoặc **Tôi → Ngôn ngữ · Lang
 
 - Chữ trên giao diện: chuỗi tiếng Việt trong code được bọc bằng `tr('…')`; bản dịch nằm trong [`src/lib/en.js`](src/lib/en.js). Chuỗi nào chưa có bản dịch sẽ tự hiện tiếng Việt.
 - Nội dung trong database: các cột `*_en` (chạy `009_english.sql`). Nhiệm vụ đối tác tự tạo không có bản tiếng Anh nên hiện tiếng Việt.
+
+## Thông báo đẩy (Web Push)
+
+Thông báo đẩy cần 3 phần, đều chỉ làm một lần:
+
+1. **Khoá VAPID + mật khẩu chung:** tạo bằng `npx web-push generate-vapid-keys` và một chuỗi ngẫu nhiên làm `PUSH_SECRET`. Khoá công khai nằm trong `src/lib/push.js`. Khoá bí mật và mật khẩu chung **không** đưa vào git.
+2. **Database:** chạy `supabase/016_push_notifications.sql`, rồi lưu mật khẩu chung vào Vault với tên `hanoigo_push_secret` (`select vault.create_secret('<PUSH_SECRET>', 'hanoigo_push_secret');`).
+3. **Edge Function:**
+   ```bash
+   supabase secrets set --project-ref <ref> VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=... PUSH_SECRET=...
+   supabase functions deploy send-push --project-ref <ref> --no-verify-jwt
+   ```
+
+Người dùng bật thông báo ở **Cài đặt → Thông báo đẩy**. Trên iPhone (iOS 16.4+) phải thêm web ra màn hình chính rồi mở từ đó.

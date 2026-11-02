@@ -4,11 +4,14 @@ import { HashRouter } from 'react-router-dom'
 import 'leaflet/dist/leaflet.css'
 import './styles.css'
 import './lib/theme'
+import { registerServiceWorker } from './lib/push'
 import App from './App'
 import { isConfigured } from './lib/supabase'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
 import SetupNeeded from './pages/SetupNeeded'
+
+registerServiceWorker()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

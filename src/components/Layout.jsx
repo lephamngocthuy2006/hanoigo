@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
+import PushInvite from './PushInvite'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
 import { useNotifications, notiIcon, notiText, personName } from '../lib/social'
@@ -124,6 +125,7 @@ export default function Layout() {
           </NavLink>
         ))}
       </nav>
+      <PushInvite userId={user.id} />
     </div>
   )
 }
