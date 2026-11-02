@@ -9,7 +9,9 @@ self.addEventListener('fetch', () => {})
 
 self.addEventListener('push', (event) => {
   let data = {}
-  try { data = event.data ? event.data.json() : {} } catch { data = { body: event.data?.text() } }
+  // Tự giải mã UTF-8 thay vì để trình duyệt đoán bảng mã
+  const text = event.data ? new TextDecoder('utf-8').decode(event.data.arrayBuffer()) : ''
+  try { data = text ? JSON.parse(text) : {} } catch { data = { body: text } }
   const title = data.title || 'HANOI GO!'
   event.waitUntil(self.registration.showNotification(title, {
     body: data.body || '',

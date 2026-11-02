@@ -19,7 +19,10 @@ Deno.serve(async (req) => {
   }
 
   const { subscriptions = [], title, body, url, tag } = await req.json()
+  // Đổi mọi ký tự ngoài ASCII (tiếng Việt, emoji) thành \uXXXX: iPhone có lúc giải mã nội dung
+  // bằng bảng mã Mac Roman → "đã" thành "ƒë√£". Chỉ còn ASCII thì bảng mã nào cũng đọc đúng.
   const payload = JSON.stringify({ title, body, url, tag })
+    .replace(/[\u007f-\uffff]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'))
 
   const results = await Promise.allSettled(
     (subscriptions as Sub[]).map((s) => webpush.sendNotification(s, payload, { TTL: 60 * 60 * 24 })),
