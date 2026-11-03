@@ -3,7 +3,7 @@ import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useConfirm } from '../context/ConfirmContext'
-import { deletePhoto, signedUrls, uploadPhoto } from '../lib/photos'
+import { deletePhoto, signedUrls, uploadPhoto, usePhotoUrlRefresh } from '../lib/photos'
 import { Link, useSearchParams } from 'react-router-dom'
 import { loadLikes } from '../lib/friends'
 import ReactionBar from '../components/ReactionBar'
@@ -20,6 +20,7 @@ export default function JournalPage() {
   const confirm = useConfirm()
   const [entries, setEntries] = useState([])
   const [urls, setUrls] = useState({})
+  usePhotoUrlRefresh(entries.map((e) => e.photo_path), setUrls)
   const [likes, setLikes] = useState({})
   const [comments, setComments] = useState({})
   const [loading, setLoading] = useState(true)

@@ -4,8 +4,8 @@
 self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
 
-// Chrome cần có fetch handler để coi là "cài được"; cứ để trình duyệt tự tải như bình thường
-self.addEventListener('fetch', () => {})
+// Không có fetch handler: mọi lượt tải đi thẳng ra mạng, không qua service worker (nhanh hơn trên Safari).
+// Chrome hiện không còn bắt buộc fetch handler để cho "cài app".
 
 self.addEventListener('push', (event) => {
   let data = {}

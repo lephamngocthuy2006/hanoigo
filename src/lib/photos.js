@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { supabase } from './supabase'
 import { tr } from './i18n'
 
@@ -35,16 +36,37 @@ export async function uploadPhoto(userId, file) {
   return path
 }
 
-// Ảnh để private → cần signed URL (hết hạn sau 1 giờ), có cache trong phiên
-const cache = new Map()
+// Ảnh để private → cần signed URL (hết hạn sau 1 giờ). Cache trong phiên nhưng chỉ dùng lại
+// link còn hạn ít nhất 10 phút — để tab mở lâu không bị ảnh vỡ (link cũ đã hết hạn).
+const TTL = 3600
+const REUSE_MS = (TTL - 600) * 1000
+const cache = new Map() // path -> { url, at }
 
 export async function signedUrls(paths) {
-  const need = [...new Set(paths.filter((p) => p && !cache.has(p)))]
+  const now = Date.now()
+  const fresh = (p) => cache.has(p) && now - cache.get(p).at < REUSE_MS
+  const need = [...new Set(paths.filter((p) => p && !fresh(p)))]
   if (need.length) {
-    const { data, error } = await supabase.storage.from('photos').createSignedUrls(need, 3600)
-    if (!error) data.forEach((d) => d.signedUrl && cache.set(d.path, d.signedUrl))
+    const { data, error } = await supabase.storage.from('photos').createSignedUrls(need, TTL)
+    if (!error) data.forEach((d) => d.signedUrl && cache.set(d.path, { url: d.signedUrl, at: now }))
   }
-  return Object.fromEntries(paths.filter(Boolean).map((p) => [p, cache.get(p)]))
+  return Object.fromEntries(paths.filter(Boolean).map((p) => [p, cache.get(p)?.url]))
+}
+
+// Trang mở lâu (hoặc quay lại tab sau một lúc): xin link ảnh mới trước khi link cũ hết hạn
+export function usePhotoUrlRefresh(paths, setUrls) {
+  const key = paths.filter(Boolean).join('|')
+  useEffect(() => {
+    if (!key) return
+    const list = key.split('|')
+    const refresh = () => document.visibilityState === 'visible' && signedUrls(list).then(setUrls)
+    const timer = setInterval(refresh, 20 * 60 * 1000)
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      clearInterval(timer)
+      document.removeEventListener('visibilitychange', refresh)
+    }
+  }, [key, setUrls])
 }
 
 export async function deletePhoto(path) {

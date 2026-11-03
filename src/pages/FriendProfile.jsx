@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { useConfirm } from '../context/ConfirmContext'
 import { loadLikes } from '../lib/friends'
-import { signedUrls } from '../lib/photos'
+import { signedUrls, usePhotoUrlRefresh } from '../lib/photos'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import ReactionBar from '../components/ReactionBar'
@@ -25,6 +25,7 @@ export default function FriendProfile() {
   const [person, setPerson] = useState(undefined)
   const [entries, setEntries] = useState([])
   const [urls, setUrls] = useState({})
+  usePhotoUrlRefresh(entries.map((e) => e.photo_path), setUrls)
   const [likes, setLikes] = useState({})
   const [comments, setComments] = useState({})
   const [viewing, setViewing] = useState(null)
