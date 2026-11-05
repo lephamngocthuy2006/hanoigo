@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -21,7 +21,9 @@ const STATUS = {
 export default function AdminPage() {
   const navigate = useNavigate()
   const { profile } = useAuth()
-  const [tab, setTab] = useState('partners')
+  // ?tab=users: mở thẳng tab Người dùng (từ thông báo "vừa đăng ký")
+  const [params] = useSearchParams()
+  const [tab, setTab] = useState(() => (['partners', 'users', 'reviews', 'qr'].includes(params.get('tab')) ? params.get('tab') : 'partners'))
   const [pending, setPending] = useState(0)
 
   if (!profile) return <div className="page"><div className="spinner" /></div>

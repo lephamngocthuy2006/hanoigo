@@ -52,6 +52,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
   15. [`supabase/015_tour_certificates.sql`](supabase/015_tour_certificates.sql) — chứng nhận hoàn thành tour có mã xác thực (quét QR trên ảnh để kiểm tra)
   16. [`supabase/016_push_notifications.sql`](supabase/016_push_notifications.sql) — thông báo đẩy (cần thêm Edge Function `send-push` + mật khẩu chung trong Vault, xem mục Thông báo đẩy bên dưới)
   17. [`supabase/017_comment_replies.sql`](supabase/017_comment_replies.sql) — trả lời bình luận (1 cấp như Facebook) + thông báo "đã trả lời bình luận của bạn"
+  18. [`supabase/018_signup_alerts.sql`](supabase/018_signup_alerts.sql) — báo quản trị viên khi có người đăng ký mới (tự bật trong Cài đặt)
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.

@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { usePush, useInstall } from '../lib/push'
-import { friendlyError } from '../lib/supabase'
+import { supabase, friendlyError } from '../lib/supabase'
 import Emoji from '../components/Emoji'
 import LangSwitch from '../components/LangSwitch'
 import ThemeSwitch from '../components/ThemeSwitch'
@@ -11,7 +12,8 @@ import { tr } from '../lib/i18n'
 // Cài đặt: ngôn ngữ, giao diện Sáng / Tối / Theo máy, thông báo đẩy, cài app
 export default function SettingsPage() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
+  const [signupBusy, setSignupBusy] = useState(false)
   const toast = useToast()
   const push = usePush(user.id)
   const app = useInstall()
@@ -28,6 +30,17 @@ export default function SettingsPage() {
     } catch (e) {
       toast(friendlyError(e), 'error')
     }
+  }
+
+  // Chỉ quản trị viên: báo mỗi khi có người đăng ký mới
+  const toggleSignups = async () => {
+    setSignupBusy(true)
+    const next = !profile.notify_signups
+    const { error } = await supabase.rpc('set_notify_signups', { p_on: next })
+    await refreshProfile()
+    setSignupBusy(false)
+    if (error) return toast(friendlyError(error), 'error')
+    toast(next ? tr('Sẽ báo bạn mỗi khi có người đăng ký mới') : tr('Đã tắt báo người đăng ký mới'), next ? 'success' : 'info')
   }
 
   const PUSH_NOTE = {
@@ -75,6 +88,22 @@ export default function SettingsPage() {
             </button>
           )}
         </div>
+        {profile?.is_admin && (
+          <div className="setting-row">
+            <span className="setting-icon"><Emoji e="🆕" play="static" /></span>
+            <div className="setting-text">
+              <strong>{tr('Báo khi có người đăng ký')} <span className="tag gold">{tr('Quản trị')}</span></strong>
+              <span className="muted small">
+                {profile.notify_signups
+                  ? push.state === 'on' ? tr('Đang bật — mỗi tài khoản mới sẽ báo về thiết bị này.') : tr('Đang bật — hiện trong 🔔 Thông báo. Bật "Thông báo đẩy" ở trên để nhận cả trên điện thoại.')
+                  : tr('Chỉ dành cho quản trị viên: nhận thông báo mỗi khi có tài khoản mới đăng ký.')}
+              </span>
+            </div>
+            <button className={`btn ${profile.notify_signups ? '' : 'primary'} setting-btn`} disabled={signupBusy} onClick={toggleSignups}>
+              {signupBusy ? tr('Đang xử lý…') : profile.notify_signups ? tr('Tắt') : tr('Bật')}
+            </button>
+          </div>
+        )}
         <div className="setting-row">
           <span className="setting-icon"><Emoji e="📲" play="static" /></span>
           <div className="setting-text">

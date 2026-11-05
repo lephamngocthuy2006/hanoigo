@@ -721,4 +721,13 @@ export default {
   'Đang trả lời ': 'Replying to ',
   'Huỷ trả lời': 'Cancel reply',
   'Trả lời {0}…': 'Reply to {0}…',
+  'vừa đăng ký tài khoản HANOI GO!': 'just signed up for HANOI GO!',
+  'Sẽ báo bạn mỗi khi có người đăng ký mới': "You'll be notified whenever someone signs up",
+  'Đã tắt báo người đăng ký mới': 'New sign-up alerts turned off',
+  'Báo khi có người đăng ký': 'New sign-up alerts',
+  'Quản trị': 'Admin',
+  'Đang bật — mỗi tài khoản mới sẽ báo về thiết bị này.': 'On — every new account will notify this device.',
+  'Đang bật — hiện trong 🔔 Thông báo. Bật "Thông báo đẩy" ở trên để nhận cả trên điện thoại.': 'On — shown in 🔔 Notifications. Turn on "Push notifications" above to get them on your phone too.',
+  'Chỉ dành cho quản trị viên: nhận thông báo mỗi khi có tài khoản mới đăng ký.': 'Admins only: get notified whenever a new account signs up.',
+  'Bật': 'Turn on',
 }
