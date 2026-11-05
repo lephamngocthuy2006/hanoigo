@@ -176,6 +176,11 @@ function UsersTab() {
   const [editing, setEditing] = useState(null)
   const [deleting, setDeleting] = useState(null)
   const [busy, setBusy] = useState(false)
+  // Xoá nhiều tài khoản cùng lúc (dọn spam): chỉ Tối cao, không chọn được quản trị viên / chính mình
+  const confirm = useConfirm()
+  const [selecting, setSelecting] = useState(false)
+  const [picked, setPicked] = useState(() => new Map()) // id -> username
+  const [bulk, setBulk] = useState(null) // { done, total } khi đang xoá
   const isSuper = profile?.is_super_admin
 
   const loadStats = useCallback(() => {
@@ -237,6 +242,60 @@ function UsersTab() {
   }
 
   const isNew = (u) => Date.now() - new Date(u.created_at).getTime() < 86400000
+  const canDelete = (u) => u.id !== user.id && !u.is_admin && !u.is_super_admin
+
+  const togglePick = (u) => setPicked((s) => {
+    const n = new Map(s)
+    if (n.has(u.id)) n.delete(u.id)
+    else n.set(u.id, u.username)
+    return n
+  })
+  // Chọn MỌI tài khoản thường đăng ký trong 24 giờ qua (kể cả chưa hiện trong danh sách 200 dòng)
+  const pickNew = async () => {
+    const since = new Date(Date.now() - 86400000).toISOString()
+    const found = new Map()
+    for (let from = 0; ; from += 1000) {
+      const { data, error } = await supabase.from('profiles').select('id, username')
+        .gte('created_at', since).eq('is_admin', false).eq('is_super_admin', false).neq('id', user.id)
+        .order('created_at', { ascending: false }).range(from, from + 999)
+      if (error) return toast(friendlyError(error), 'error')
+      data.forEach((u) => found.set(u.id, u.username))
+      if (data.length < 1000) break
+    }
+    setPicked(found)
+    if (!found.size) toast(tr('Không có tài khoản mới nào trong 24 giờ qua'))
+  }
+  const stopSelecting = () => {
+    setSelecting(false)
+    setPicked(new Map())
+  }
+
+  // Xoá theo từng đợt 200 tài khoản (database tự bỏ qua quản trị viên / chính mình)
+  const deleteMany = async () => {
+    const ids = [...picked.keys()]
+    if (!ids.length) return
+    const names = [...picked.values()].slice(0, 5).map((n) => '@' + n).join(', ') + (ids.length > 5 ? tr(' và {0} tài khoản khác', ids.length - 5) : '')
+    if (!(await confirm(tr('Xoá vĩnh viễn {0} tài khoản: {1}? Toàn bộ nhật ký, ảnh, bình luận của họ cũng bị xoá, không thể hoàn tác.', ids.length, names), { ok: tr('Xoá {0} tài khoản', ids.length), danger: true }))) return
+    let deleted = 0
+    let error = null
+    setBulk({ done: 0, total: ids.length })
+    for (let i = 0; i < ids.length && !error; i += 200) {
+      const res = await supabase.rpc('admin_delete_users', { p_user_ids: ids.slice(i, i + 200) })
+      if (res.error) error = res.error
+      else deleted += res.data
+      setBulk({ done: Math.min(i + 200, ids.length), total: ids.length })
+    }
+    setBulk(null)
+    stopSelecting()
+    if (error) {
+      const msg = /admin_delete_users|schema cache/i.test(error.message || '')
+        ? tr('Hãy chạy file supabase/019_bulk_delete_users.sql trong Supabase SQL Editor để bật tính năng xoá nhiều tài khoản')
+        : friendlyError(error)
+      toast(deleted ? tr('Đã xoá {0} tài khoản, phần còn lại bị lỗi: {1}', deleted, msg) : msg, 'error')
+    } else toast(tr('Đã xoá {0} tài khoản', deleted), 'success')
+    load()
+    loadStats()
+  }
 
   return (
     <>
@@ -258,9 +317,36 @@ function UsersTab() {
 
       {!rows ? <div className="spinner" /> : (
         <section className="card">
-          <div className="section-head"><h3>{tr('Người dùng')}</h3><span className="muted small">{rows.length}{tr(' tài khoản')}</span></div>
+          <div className="section-head">
+            <h3>{tr('Người dùng')}</h3>
+            <span className="row tight section-actions">
+              <span className="muted small">{rows.length}{tr(' tài khoản')}</span>
+              {isSuper && !selecting && (
+                <button className="ghost small" onClick={() => setSelecting(true)}><Emoji e="☑️" play="static" />{tr(' Chọn nhiều')}</button>
+              )}
+            </span>
+          </div>
+          {selecting && (
+            <div className="bulk-bar">
+              <span><b>{picked.size}</b>{tr(' đã chọn')}</span>
+              <button className="chip" onClick={pickNew} disabled={!!bulk}><Emoji e="🆕" play="static" />{tr(' Chọn tài khoản mới (24 giờ)')}</button>
+              <button className="chip" onClick={() => setPicked(new Map())} disabled={!!bulk || !picked.size}>{tr('Bỏ chọn')}</button>
+              <span className="bulk-bar-end">
+                <button className="btn small" onClick={stopSelecting} disabled={!!bulk}>{tr('Xong')}</button>
+                <button className="btn small danger-fill" onClick={deleteMany} disabled={!!bulk || !picked.size}>
+                  {bulk ? tr('Đang xoá {0}/{1}…', bulk.done, bulk.total) : <><Emoji e="🗑️" play="static" />{tr(' Xoá {0}', picked.size)}</>}
+                </button>
+              </span>
+            </div>
+          )}
           {rows.map((u) => (
-            <div key={u.id} className="admin-user">
+            <div key={u.id} className={`admin-user${selecting && picked.has(u.id) ? ' picked' : ''}`}
+              onClick={selecting && canDelete(u) && !bulk ? () => togglePick(u) : undefined}>
+              {selecting && (
+                <input type="checkbox" className="pick-box" checked={picked.has(u.id)} disabled={!canDelete(u) || !!bulk}
+                  onChange={() => togglePick(u)} onClick={(e) => e.stopPropagation()}
+                  aria-label={tr('Chọn @{0}', u.username)} title={canDelete(u) ? '' : tr('Không xoá hàng loạt quản trị viên hoặc chính mình')} />
+              )}
               <span className="rank-avatar"><Emoji e={u.avatar} play="hover" /></span>
               <div className="admin-user-body">
                 <strong>
@@ -272,7 +358,7 @@ function UsersTab() {
                 <span className="muted small">{tr('Đăng ký lúc ')}{new Date(u.created_at).toLocaleString(locale, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}
                   {u.last_active_date && tr(' · hoạt động {0}', fmtDateVN(u.last_active_date))}
                 </span>
-                <div className="admin-user-actions">
+                {!selecting && <div className="admin-user-actions">
                   <button className={`chip${u.is_demo ? ' active' : ''}`} onClick={() => toggleDemo(u)} title={tr('Chế độ demo: check-in được ở bất kỳ đâu')}>
                     <Emoji e="🎤" play="static" /> Demo {u.is_demo ? tr('bật') : tr('tắt')}
                   </button>
@@ -282,7 +368,7 @@ function UsersTab() {
                   {isSuper && u.id !== user.id && !u.is_super_admin && (
                     <button className="chip danger-text" onClick={() => setDeleting(u)}><Emoji e="🗑️" play="static" />{tr(' Xoá')}</button>
                   )}
-                </div>
+                </div>}
               </div>
             </div>
           ))}

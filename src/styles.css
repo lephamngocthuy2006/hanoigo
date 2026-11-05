@@ -1025,3 +1025,12 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   .segmented.admin-tabs { grid-auto-flow: row; grid-template-columns: 1fr 1fr; }
   .segmented.admin-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
 }
+
+/* ---------- Xoá nhiều tài khoản ---------- */
+.section-actions { margin: 0; align-items: center; }
+.bulk-bar { position: sticky; top: calc(var(--top-h) + 6px); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; margin: 4px 0 8px; border-radius: 14px; background: var(--brand-soft); }
+.bulk-bar .chip { background: var(--card); }
+.bulk-bar-end { margin-left: auto; display: flex; gap: 6px; }
+.admin-user.picked { background: var(--brand-soft); border-radius: 12px; }
+.pick-box { width: 20px; height: 20px; margin: 10px 2px 0; flex-shrink: 0; accent-color: var(--danger); }
+@media (min-width: 1024px) { .bulk-bar { top: 12px; } }
