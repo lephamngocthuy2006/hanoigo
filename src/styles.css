@@ -1160,9 +1160,3 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   .page-enter, .journal-grid > *, .tour-scroller > *, .stat-grid > *, .kpi-grid > *, .card-grid > *,
   .menu-group, .quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li { animation: none; }
 }
-
-/* Vuốt đổi tab: trang mới trượt vào từ phía được vuốt tới */
-.page-enter.from-right { animation-name: page-from-right; }
-.page-enter.from-left { animation-name: page-from-left; }
-@keyframes page-from-right { from { opacity: 0; transform: translateX(42px); } }
-@keyframes page-from-left { from { opacity: 0; transform: translateX(-42px); } }

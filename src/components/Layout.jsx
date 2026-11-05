@@ -1,9 +1,8 @@
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 import Icon from './Icon'
-import { useTabSwipe } from '../lib/swipe'
 import PushInvite from './PushInvite'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
@@ -19,9 +18,6 @@ const TABS = [
   { to: '/events', label: tr('Thẻ & Quà'), icon: '🎁' },
   { to: '/me', label: tr('Tôi'), icon: null },
 ]
-
-// Thứ tự tab khi vuốt ngang (giống thanh dưới cùng)
-const TAB_PATHS = TABS.map((t) => t.to)
 
 // Menu bên trái trên máy tính: icon nét mảnh trong ô màu (cùng bộ với menu trang Tôi).
 // Thanh dưới cùng trên điện thoại vẫn giữ emoji động.
@@ -69,19 +65,6 @@ export default function Layout() {
   useEffect(() => {
     if (navType !== 'POP') window.scrollTo(0, 0)
   }, [location.pathname]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Vuốt ngang đổi tab (điện thoại): trang mới trượt vào từ phía ngón tay vuốt tới
-  const contentRef = useRef(null)
-  const [enterDir, setEnterDir] = useState(null)
-  useTabSwipe(contentRef, TAB_PATHS, location.pathname, (to, dir) => {
-    setEnterDir(dir === 'left' ? 'from-right' : 'from-left')
-    navigate(to)
-  })
-  useEffect(() => {
-    if (!enterDir) return
-    const t = setTimeout(() => setEnterDir(null), 450)
-    return () => clearTimeout(t)
-  }, [enterDir, location.pathname])
   const lv = levelInfo(profile?.xp || 0)
   return (
     <div className="app">
@@ -135,10 +118,10 @@ export default function Layout() {
           </button>
         </div>
       </header>
-      <main className="content" ref={contentRef}>
+      <main className="content">
         <Suspense fallback={<div className="page"><div className="spinner" /></div>}>
           {/* key theo đường dẫn → mỗi lần đổi trang chạy lại hiệu ứng trượt vào */}
-          <div key={location.pathname} className={`page-enter${enterDir ? ` ${enterDir}` : ''}`}>
+          <div key={location.pathname} className="page-enter">
             <Outlet context={{ ...friendships, notifications }} />
           </div>
         </Suspense>
