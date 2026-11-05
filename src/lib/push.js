@@ -34,6 +34,15 @@ const store = {
   set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v) } catch { /* ẩn danh */ } },
 }
 export const pushTurnedOff = () => store.get(OFF_KEY) === '1'
+
+// Lời mời bật "báo người đăng ký mới" cho quản trị viên: "Để sau" → 7 ngày; tắt trong Cài đặt → không mời nữa
+const SIGNUP_KEY = (uid) => `hanoigo-signup-invite-${uid}`
+export const signupInviteDue = (uid) => {
+  const v = store.get(SIGNUP_KEY(uid))
+  return v !== 'off' && Date.now() - Number(v || 0) > 7 * 86400 * 1000
+}
+export const signupInviteLater = (uid) => store.set(SIGNUP_KEY(uid), String(Date.now()))
+export const signupInviteOff = (uid) => store.set(SIGNUP_KEY(uid), 'off')
 export const askLater = () => store.set(LATER_KEY, String(Date.now()))
 const askedRecently = () => Date.now() - Number(store.get(LATER_KEY) || 0) < 7 * 86400 * 1000
 

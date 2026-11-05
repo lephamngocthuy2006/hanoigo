@@ -781,4 +781,8 @@ export default {
   'Chưa có bình luận nào': 'No comments yet',
   'Viết bình luận đầu tiên': 'Write the first comment',
   'Hãy là người đầu tiên chia sẻ cảm nghĩ!': 'Be the first to share your thoughts!',
+  'Đã bật! Mỗi tài khoản mới đăng ký sẽ báo về máy này.': 'Done! Every new sign-up will notify this device.',
+  'Đã bật! Tài khoản mới sẽ hiện trong 🔔 Thông báo.': 'Done! New sign-ups will show in 🔔 Notifications.',
+  'Bạn có quyền quản trị': 'You have admin access',
+  'Bật thông báo để biết ngay mỗi khi có người đăng ký tài khoản mới (giúp phát hiện spam sớm) — kèm tương tác của bạn bè.': 'Turn on notifications to know right away when someone signs up (great for spotting spam early) — plus your friends\' activity.',
 }

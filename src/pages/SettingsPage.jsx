@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
-import { usePush, useInstall } from '../lib/push'
+import { usePush, useInstall, signupInviteOff } from '../lib/push'
 import { supabase, friendlyError } from '../lib/supabase'
 import Emoji from '../components/Emoji'
 import LangSwitch from '../components/LangSwitch'
@@ -40,6 +40,7 @@ export default function SettingsPage() {
     await refreshProfile()
     setSignupBusy(false)
     if (error) return toast(friendlyError(error), 'error')
+    if (!next) signupInviteOff(user.id) // tự tắt → không tự mời lại nữa
     toast(next ? tr('Sẽ báo bạn mỗi khi có người đăng ký mới') : tr('Đã tắt báo người đăng ký mới'), next ? 'success' : 'info')
   }
 
