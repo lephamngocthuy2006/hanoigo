@@ -6,7 +6,44 @@ import { useToast } from '../context/ToastContext'
 import { AVATARS, levelInfo, levelTitle, liveStreak } from '../lib/game'
 import Modal from '../components/Modal'
 import Emoji from '../components/Emoji'
+import Icon from '../components/Icon'
 import { tr, locale } from '../lib/i18n'
+
+// Menu trang Tôi: chia nhóm, icon nét mảnh trong ô màu, mũi tên › cuối dòng
+const MENU = [
+  {
+    title: tr('Cộng đồng'),
+    items: [
+      { to: '/friends', icon: 'users', tone: 'rose', label: tr('Bạn bè'),
+        sub: ({ friends, incoming }) => tr('{0} người', friends.length) + (incoming.length ? tr(' · {0} lời mời', incoming.length) : ''),
+        badge: ({ incoming }) => incoming.length },
+      { to: '/notifications', icon: 'bell', tone: 'gold', label: tr('Thông báo'),
+        sub: ({ unread }) => (unread ? tr('{0} chưa đọc', unread) : tr('Cảm xúc, bình luận, lời mời')),
+        badge: ({ unread }) => unread },
+    ],
+  },
+  {
+    title: tr('Khám phá'),
+    items: [
+      { to: '/tours', icon: 'compass', tone: 'teal', label: tr('Tour theo chủ đề'), sub: () => tr('Lộ trình nhiều điểm & chứng nhận') },
+      { to: '/insights', icon: 'chart', tone: 'blue', label: tr('Thống kê trải nghiệm'), sub: () => tr('Đánh giá & điểm đến nổi bật') },
+    ],
+  },
+  {
+    title: tr('Doanh nghiệp & quản trị'),
+    items: [
+      { to: '/partner', icon: 'store', tone: 'amber', label: tr('Cổng đối tác'), sub: () => tr('Dành cho doanh nghiệp, cửa hàng') },
+      { to: '/admin', icon: 'shield', tone: 'plum', label: tr('Trang quản trị'), sub: () => tr('Đối tác, người dùng, mã QR'), admin: true },
+    ],
+  },
+  {
+    title: tr('Tài khoản'),
+    items: [
+      { to: '/settings', icon: 'settings', tone: 'slate', label: tr('Cài đặt'), sub: () => tr('Ngôn ngữ, giao diện, thông báo') },
+      { icon: 'lock', tone: 'slate', label: tr('Đổi mật khẩu') },
+    ],
+  },
+]
 
 export default function MePage() {
   const { user, profile, refreshProfile, signOut } = useAuth()
@@ -15,7 +52,7 @@ export default function MePage() {
   const [editOpen, setEditOpen] = useState(false)
   const [pwOpen, setPwOpen] = useState(false)
   const navigate = useNavigate()
-  const { friends, incoming } = useOutletContext()
+  const { friends, incoming, notifications } = useOutletContext()
 
   useEffect(() => {
     const count = (table, extra = (q) => q) =>
@@ -63,18 +100,34 @@ export default function MePage() {
         <div className="stat"><strong><Emoji e="🎴" play="once" /> {stats?.cards ?? '…'}</strong><span>{tr('Loại thẻ')}</span></div>
       </div>
 
-      <section className="card menu">
-        <button onClick={() => navigate('/friends')}>
-          <Emoji e="👥" play="static" />{tr(' Bạn bè (')}{friends.length}){incoming.length > 0 && <span className="badge static">{incoming.length}{tr(' lời mời')}</span>}
-        </button>
-        <button onClick={() => navigate('/tours')}><Emoji e="🧭" play="static" />{tr(' Tour theo chủ đề')}</button>
-        <button onClick={() => navigate('/insights')}><Emoji e="📊" play="static" />{tr(' Thống kê chất lượng trải nghiệm')}</button>
-        <button onClick={() => navigate('/partner')}><Emoji e="🏪" play="static" />{tr(' Cổng đối tác (dành cho doanh nghiệp)')}</button>
-        {profile.is_admin && <button onClick={() => navigate('/admin')}><Emoji e="🛡️" play="static" />{tr(' Trang quản trị')}</button>}
-        <button onClick={() => navigate('/settings')}><Emoji e="⚙️" play="static" />{tr(' Cài đặt')}<span className="muted small menu-hint">{tr('Ngôn ngữ, giao diện')}</span></button>
-        <button onClick={() => setPwOpen(true)}><Emoji e="🔒" play="static" />{tr(' Đổi mật khẩu')}</button>
-        <button className="danger-text" onClick={() => { navigate('/', { replace: true }); signOut() }}>{tr('↪ Đăng xuất')}</button>
-      </section>
+      {MENU.map((group) => {
+        const items = group.items.filter((it) => !it.admin || profile.is_admin)
+        return (
+          <section key={group.title} className="menu-group">
+            <h4 className="menu-group-title">{group.title}</h4>
+            <div className="card menu-card">
+              {items.map((it) => {
+                const sub = it.sub?.({ friends, incoming, unread: notifications?.unread || 0 })
+                const badge = it.badge?.({ incoming, unread: notifications?.unread || 0 })
+                return (
+                  <button key={it.label} className="menu-item" onClick={() => (it.to ? navigate(it.to) : setPwOpen(true))}>
+                    <span className={`menu-ico tone-${it.tone}`}><Icon name={it.icon} /></span>
+                    <span className="menu-text">
+                      <strong>{it.label}</strong>
+                      {sub && <small>{sub}</small>}
+                    </span>
+                    {badge > 0 && <span className="menu-badge">{badge > 9 ? '9+' : badge}</span>}
+                    <Icon name="chevron" size={18} className="menu-chevron" />
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+        )
+      })}
+      <button className="logout-btn" onClick={() => { navigate('/', { replace: true }); signOut() }}>
+        <Icon name="logout" size={19} />{tr('Đăng xuất')}
+      </button>
       <p className="muted small center">{tr('Tham gia từ ')}{new Date(profile.created_at).toLocaleDateString(locale)}</p>
       </div>
       </div>

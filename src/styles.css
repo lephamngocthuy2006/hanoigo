@@ -1075,3 +1075,44 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .toast-link { pointer-events: auto; cursor: pointer; border: 0; font: inherit; text-align: left; display: flex; align-items: center; gap: 10px; width: 100%; }
 .toast-link:hover { filter: brightness(1.08); }
 .toast-go { margin-left: auto; font-size: 1.3rem; line-height: 1; opacity: 0.8; }
+
+/* ---------- Menu trang Tôi (nhóm + icon nét mảnh) ---------- */
+.menu-group { display: flex; flex-direction: column; gap: 8px; }
+.menu-group-title { margin: 4px 0 0 6px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.menu-card { padding: 6px; display: flex; flex-direction: column; }
+.menu-item {
+  display: flex; align-items: center; gap: 14px; width: 100%; padding: 11px 10px; border: 0; background: none;
+  border-radius: 14px; text-align: left; font: inherit; color: var(--ink); transition: background 0.15s, transform 0.1s;
+}
+.menu-item + .menu-item { position: relative; }
+.menu-item + .menu-item::before { content: ''; position: absolute; top: 0; left: 64px; right: 10px; border-top: 1px solid var(--line); }
+.menu-item:hover { background: var(--paper); }
+.menu-item:active { transform: scale(0.99); background: var(--paper); }
+.menu-item:hover::before, .menu-item:hover + .menu-item::before { opacity: 0; }
+.menu-ico { width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; display: grid; place-items: center; color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, var(--card)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tone) 18%, transparent); }
+.tone-rose { --tone: #b8475a; }
+.tone-gold { --tone: #c58a12; }
+.tone-teal { --tone: #2f8a7a; }
+.tone-blue { --tone: #3b6fb0; }
+.tone-amber { --tone: #b5651d; }
+.tone-plum { --tone: #6b4a8a; }
+.tone-slate { --tone: #6a5f58; }
+[data-theme="dark"] .tone-rose { --tone: #e07a8a; }
+[data-theme="dark"] .tone-gold { --tone: #e8b84a; }
+[data-theme="dark"] .tone-teal { --tone: #5cc2ad; }
+[data-theme="dark"] .tone-blue { --tone: #7fa8e0; }
+[data-theme="dark"] .tone-amber { --tone: #e39a55; }
+[data-theme="dark"] .tone-plum { --tone: #b393d6; }
+[data-theme="dark"] .tone-slate { --tone: #b8aca3; }
+.menu-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.menu-text strong { font-size: 0.98rem; font-weight: 700; }
+.menu-text small { font-size: 0.8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.menu-badge { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 800; display: grid; place-items: center; }
+.menu-chevron { color: var(--muted); opacity: 0.6; flex-shrink: 0; transition: transform 0.15s, opacity 0.15s; }
+.menu-item:hover .menu-chevron { transform: translateX(2px); opacity: 1; }
+.logout-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 4px; padding: 13px;
+  border-radius: 16px; border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--line)); background: var(--card);
+  color: var(--danger); font: inherit; font-weight: 700; transition: background 0.15s;
+}
+.logout-btn:hover { background: color-mix(in srgb, var(--danger) 8%, var(--card)); }
