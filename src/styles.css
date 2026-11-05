@@ -1160,3 +1160,72 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   .page-enter, .journal-grid > *, .tour-scroller > *, .stat-grid > *, .kpi-grid > *, .card-grid > *,
   .menu-group, .quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li { animation: none; }
 }
+
+/* ---------- Thanh trên cùng: icon nét mảnh ---------- */
+.icon-btn { color: var(--ink); transition: border-color 0.15s, color 0.15s, transform 0.1s; }
+.icon-btn:hover { border-color: var(--brand); color: var(--brand); }
+.icon-btn:active { transform: scale(0.94); }
+.icon-btn.ringing { color: var(--brand); }
+.icon-btn.ringing .icon { transform-origin: 50% 15%; animation: bell-ring 2.6s ease-in-out infinite; }
+@keyframes bell-ring { 0%, 70%, 100% { transform: rotate(0); } 74% { transform: rotate(14deg); } 80% { transform: rotate(-12deg); } 86% { transform: rotate(8deg); } 92% { transform: rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .icon-btn.ringing .icon { animation: none; } }
+
+/* ---------- Cửa sổ: hiệu ứng đóng + thanh nắm vuốt xuống ---------- */
+.modal { transition: transform 0.2s ease-out; }
+.modal-backdrop.closing { animation: fade-out 0.22s ease-in forwards; pointer-events: none; }
+.modal-backdrop.closing .modal { animation: sheet-down 0.22s ease-in forwards; }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes sheet-down { from { transform: translateY(var(--drag, 0)); } to { transform: translateY(100%); } }
+.modal-grabber { display: none; }
+@media (max-width: 599px) {
+  .modal { padding-top: 26px; }
+  .modal-grabber { display: flex; justify-content: center; position: absolute; top: 0; left: 0; right: 0; height: 26px; cursor: grab; touch-action: none; }
+  .modal-grabber span { margin-top: 9px; width: 40px; height: 5px; border-radius: 999px; background: var(--line); }
+}
+@media (min-width: 600px) {
+  @keyframes modal-out { to { transform: translateY(12px) scale(0.97); opacity: 0; } }
+  .modal-backdrop.closing .modal { animation-name: modal-out; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop.closing, .modal-backdrop.closing .modal { animation-duration: 0.01s; }
+}
+
+/* ---------- Thanh dưới cùng: viên nền trượt theo tab ---------- */
+.navitem { position: relative; z-index: 1; transition: color 0.2s; }
+.navitem.active .navlabel { font-weight: 800; }
+.nav-pill {
+  position: absolute; top: 7px; height: calc(var(--nav-h) - 14px); width: calc(20% - 12px);
+  left: calc(var(--i) * 20% + 6px); border-radius: 16px; z-index: 0;
+  background: var(--brand-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand) 12%, transparent);
+  transition: left 0.38s cubic-bezier(0.34, 1.3, 0.5, 1);
+}
+@media (prefers-reduced-motion: reduce) { .nav-pill { transition: none; } }
+
+/* ---------- Màn hình trống có minh hoạ ---------- */
+.empty-state { --tone: var(--brand); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 28px 20px 24px; }
+.empty-state.compact { padding: 8px 8px 14px; gap: 4px; }
+.empty-state h3 { font-size: 1.05rem; margin-top: 6px; }
+.empty-state.compact h3 { font-size: 0.95rem; margin-top: 2px; }
+.empty-state p { margin: 0 0 6px; color: var(--muted); font-size: 0.9rem; max-width: 340px; line-height: 1.5; }
+.empty-state.compact p { font-size: 0.82rem; }
+.empty-state .btn { margin-top: 4px; text-decoration: none; }
+.empty-state.tone-gold { --tone: #c58a12; }
+.empty-state.tone-teal { --tone: #2f8a7a; }
+.empty-state.tone-amber { --tone: #b5651d; }
+.empty-art { position: relative; width: 112px; height: 96px; display: grid; place-items: center; }
+.empty-state.compact .empty-art { width: 84px; height: 70px; }
+.empty-blob {
+  width: 78px; height: 78px; border-radius: 42% 58% 55% 45% / 50% 44% 56% 50%; display: grid; place-items: center; line-height: 0;
+  background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--tone) 10%, var(--card)), color-mix(in srgb, var(--tone) 22%, var(--card)));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--tone) 18%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--tone) 18%, transparent);
+  animation: blob-float 5s ease-in-out infinite;
+}
+.empty-state.compact .empty-blob { width: 58px; height: 58px; }
+.empty-blob .emo { width: 2.4rem !important; height: 2.4rem !important; }
+.empty-state.compact .empty-blob .emo { width: 1.8rem !important; height: 1.8rem !important; }
+.empty-dot { position: absolute; border-radius: 50%; background: color-mix(in srgb, var(--tone) 35%, transparent); }
+.empty-dot.d1 { width: 10px; height: 10px; top: 8px; left: 10px; background: var(--gold); opacity: 0.7; }
+.empty-dot.d2 { width: 7px; height: 7px; bottom: 14px; right: 10px; }
+.empty-dot.d3 { width: 5px; height: 5px; top: 18px; right: 18px; }
+@keyframes blob-float { 50% { transform: translateY(-4px) rotate(3deg); border-radius: 55% 45% 48% 52% / 46% 55% 45% 54%; } }
+@media (prefers-reduced-motion: reduce) { .empty-blob { animation: none; } }

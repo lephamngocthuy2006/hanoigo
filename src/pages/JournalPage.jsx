@@ -11,6 +11,7 @@ import Comments from '../components/Comments'
 import { loadCommentCounts } from '../lib/social'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
+import EmptyState from '../components/EmptyState'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
 
@@ -89,10 +90,9 @@ export default function JournalPage() {
       </div>
 
       {loading ? <div className="spinner" /> : entries.length === 0 ? (
-        <div className="card empty">
-          <div className="empty-emoji"><Emoji e="📖" play="loop" /></div>
-          <p>{tr('Sổ hành trình còn trống. Hoàn thành một ')}<strong>Photo Quest</strong>{tr(' hoặc thêm kỷ niệm đầu tiên nhé!')}</p>
-        </div>
+        <EmptyState emoji="📖" title={tr('Sổ hành trình còn trống')} action={{ label: tr('🎯 Tìm Photo Quest'), to: '/' }}>
+          {tr('Hoàn thành một ')}<strong>Photo Quest</strong>{tr(' hoặc thêm kỷ niệm đầu tiên nhé!')}
+        </EmptyState>
       ) : (
         <JournalGrid entries={entries} urls={urls} likes={likes} comments={comments} onOpen={setViewing} />
       )}

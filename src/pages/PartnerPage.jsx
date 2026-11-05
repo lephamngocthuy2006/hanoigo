@@ -9,6 +9,7 @@ import { KIND } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
 import PartnerProfileForm from '../components/PartnerProfileForm'
+import EmptyState from '../components/EmptyState'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr, locale, localize } from '../lib/i18n'
 
@@ -236,10 +237,9 @@ function QuestsTab({ quests, reload }) {
     <>
       <button className="btn primary block" onClick={() => open(null)}>{tr('＋ Tạo nhiệm vụ cho khách')}</button>
       {quests.length === 0 ? (
-        <div className="card empty">
-          <div className="empty-emoji"><Emoji e="🧭" play="loop" /></div>
-          <p>{tr('Biến chuyến ghé thăm thành một cuộc khám phá: tạo nhiệm vụ check-in hoặc chụp ảnh tại địa điểm của bạn.')}</p>
-        </div>
+        <EmptyState emoji="🧭" tone="teal" title={tr('Chưa có nhiệm vụ nào')}>
+          {tr('Biến chuyến ghé thăm thành một cuộc khám phá: tạo nhiệm vụ check-in hoặc chụp ảnh tại địa điểm của bạn.')}
+        </EmptyState>
       ) : (
         <section className="card">
           {quests.map((q) => (
@@ -363,10 +363,9 @@ function VouchersTab() {
       <button className="btn primary block" onClick={() => open(null)}>{tr('＋ Tạo ưu đãi mới')}</button>
 
       {vouchers.length === 0 ? (
-        <div className="card empty">
-          <div className="empty-emoji"><Emoji e="🎟️" play="loop" /></div>
-          <p>{tr('Ưu đãi giúp chuyển khách khám phá thành khách hàng: giảm giá đồ uống, quà tặng, vé tham quan…')}</p>
-        </div>
+        <EmptyState emoji="🎟️" tone="amber" title={tr('Chưa có ưu đãi nào')}>
+          {tr('Ưu đãi giúp chuyển khách khám phá thành khách hàng: giảm giá đồ uống, quà tặng, vé tham quan…')}
+        </EmptyState>
       ) : <div className="voucher-list">{vouchers.map((v) => (
         <button key={v.id} className="voucher-card as-button" onClick={() => open(v)}>
           <div className="voucher-left"><Emoji e="🎟️" play="once" /></div>

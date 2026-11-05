@@ -4,6 +4,7 @@ import { addComment, deleteComment, loadCommentReactions, loadComments, personNa
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
 import { useConfirm } from '../context/ConfirmContext'
+import EmptyState from './EmptyState'
 import Emoji from './Emoji'
 import ReactionBar from './ReactionBar'
 import { tr } from '../lib/i18n'
@@ -134,7 +135,10 @@ export default function Comments({ entryId, ownerId, userId, onCount, highlightI
       </div>
 
       {items === null ? <div className="spinner small" /> : items.length === 0 ? (
-        <p className="muted small comments-empty">{tr('Chưa có bình luận nào. Hãy là người đầu tiên!')}</p>
+        <EmptyState compact emoji="💬" title={tr('Chưa có bình luận nào')}
+          action={{ label: tr('Viết bình luận đầu tiên'), onClick: () => inputRef.current?.focus() }}>
+          {tr('Hãy là người đầu tiên chia sẻ cảm nghĩ!')}
+        </EmptyState>
       ) : (
         <ul className="comment-list" ref={listRef}>
           {roots.map((c) => {

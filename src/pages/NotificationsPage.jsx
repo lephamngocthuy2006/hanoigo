@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { notiIcon, notiLink, notiText, personName, timeAgo } from '../lib/social'
+import EmptyState from '../components/EmptyState'
 import Emoji from '../components/Emoji'
 import { tr } from '../lib/i18n'
 
@@ -38,10 +39,9 @@ export default function NotificationsPage() {
       </section>
 
       {!loaded ? <div className="spinner" /> : items.length === 0 ? (
-        <div className="card empty">
-          <div className="empty-emoji"><Emoji e="🔔" play="loop" /></div>
-          <p>{tr('Chưa có thông báo nào. Kết bạn và chia sẻ kỷ niệm để nhận tương tác nhé!')}</p>
-        </div>
+        <EmptyState emoji="🔔" tone="gold" title={tr('Chưa có thông báo nào')} action={{ label: tr('🤝 Tìm bạn bè'), to: '/friends' }}>
+          {tr('Kết bạn và chia sẻ kỷ niệm để nhận tương tác nhé!')}
+        </EmptyState>
       ) : (
         <ul className="card noti-list">
           {items.map((n) => (

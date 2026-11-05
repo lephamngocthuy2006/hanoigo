@@ -62,6 +62,7 @@ export default function Layout() {
   // Sang trang mới thì về đầu trang (bấm Quay lại thì giữ nguyên vị trí)
   const location = useLocation()
   const navType = useNavigationType()
+  const activeTab = TABS.findIndex((t) => (t.end ? location.pathname === t.to : location.pathname === t.to || location.pathname.startsWith(`${t.to}/`)))
   useEffect(() => {
     if (navType !== 'POP') window.scrollTo(0, 0)
   }, [location.pathname]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -107,11 +108,11 @@ export default function Layout() {
             <Emoji e="🔥" play={liveStreak(profile) ? 'loop' : 'static'} /> {liveStreak(profile)}
           </span>
           <span className="pill" title="Hanoi Coins"><Emoji e="🪙" play="hover" /> {profile?.coins ?? '—'}</span>
-          <button className="icon-btn" onClick={() => navigate('/notifications')} aria-label={tr('Thông báo{0}', unread ? tr(', {0} chưa đọc', unread) : '')}>
-            <Emoji e="🔔" play={unread > 0 ? 'loop' : 'hover'} />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}
+          <button className={`icon-btn${unread > 0 ? ' ringing' : ''}`} onClick={() => navigate('/notifications')} aria-label={tr('Thông báo{0}', unread ? tr(', {0} chưa đọc', unread) : '')}>
+            <Icon name="bell" size={19} />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}
           </button>
           <button className="icon-btn" onClick={() => navigate('/settings')} aria-label={tr('Cài đặt')} title={tr('Cài đặt')}>
-            <Emoji e="⚙️" play="hover" />
+            <Icon name="settings" size={19} />
           </button>
           <button className="avatar-btn" onClick={() => navigate('/me')} aria-label={tr('Hồ sơ')}>
             <Emoji e={profile?.avatar || '🐢'} play="hover" />
@@ -127,6 +128,8 @@ export default function Layout() {
         </Suspense>
       </main>
       <nav className="bottomnav">
+        {/* viên nền trượt theo tab đang chọn (ẩn khi đang ở trang không thuộc 5 tab) */}
+        {activeTab >= 0 && <span className="nav-pill" style={{ '--i': activeTab }} aria-hidden="true" />}
         {TABS.map((t) => (
           <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => `navitem${isActive ? ' active' : ''}`}>
             {({ isActive }) => (

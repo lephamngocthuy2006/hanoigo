@@ -12,6 +12,7 @@ import ReactionBar from '../components/ReactionBar'
 import Comments from '../components/Comments'
 import { loadCommentCounts } from '../lib/social'
 import Modal from '../components/Modal'
+import EmptyState from '../components/EmptyState'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
 
@@ -106,10 +107,9 @@ export default function FriendProfile() {
           <Link to="/friends" className="btn primary">{tr('Đến trang Bạn bè')}</Link>
         </div>
       ) : entries.length === 0 ? (
-        <div className="card empty">
-          <div className="empty-emoji"><Emoji e="📖" play="loop" /></div>
-          <p>{person.display_name || person.username}{tr(' chưa chia sẻ kỷ niệm nào.')}</p>
-        </div>
+        <EmptyState emoji="📖" title={tr('Chưa có kỷ niệm')}>
+          {person.display_name || person.username}{tr(' chưa chia sẻ kỷ niệm nào.')}
+        </EmptyState>
       ) : (
         <JournalGrid entries={entries} urls={urls} likes={likes} comments={comments} onOpen={setViewing} />
       )}
