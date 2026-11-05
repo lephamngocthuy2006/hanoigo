@@ -5,7 +5,7 @@ import Logo from './Logo'
 import PushInvite from './PushInvite'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
-import { useNotifications, notiIcon, notiText, personName } from '../lib/social'
+import { useNotifications, notiIcon, notiLink, notiText, personName } from '../lib/social'
 import { useToast } from '../context/ToastContext'
 import Emoji, { emojify } from './Emoji'
 import { tr } from '../lib/i18n'
@@ -51,7 +51,7 @@ export default function Layout() {
   const pending = friendships.incoming.length
   // Thông báo mới tới (realtime): hiện toast, lời mời kết bạn thì tải lại danh sách bạn
   const notifications = useNotifications(user.id, (n) => {
-    toast(`${notiIcon(n)} ${personName(n.actor)} ${notiText(n)}`)
+    toast(`${notiIcon(n)} ${personName(n.actor)} ${notiText(n)}`, 'info', { onClick: () => navigate(notiLink(n, user.id)) })
     if (n.kind.startsWith('friend_')) friendships.reload()
   })
   const unread = notifications.unread

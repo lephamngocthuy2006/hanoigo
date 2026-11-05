@@ -46,10 +46,14 @@ export default function JournalPage() {
 
   // Mở thẳng một trang khi đi từ thông báo (/journal?entry=123)
   const openId = Number(params.get('entry'))
+  const [focusComment, setFocusComment] = useState(null) // bình luận cần cuộn tới (từ thông báo)
   useEffect(() => {
     if (!openId) return
     const found = entries.find((e) => e.id === openId)
-    if (found) setViewing(found)
+    if (found) {
+      setViewing(found)
+      setFocusComment(Number(params.get('comment')) || null)
+    }
     if (found || !loading) setParams({}, { replace: true })
   }, [openId, entries, loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -93,7 +97,7 @@ export default function JournalPage() {
         <JournalGrid entries={entries} urls={urls} likes={likes} comments={comments} onOpen={setViewing} />
       )}
 
-      <Modal open={!!viewing} onClose={() => setViewing(null)}>
+      <Modal open={!!viewing} onClose={() => { setViewing(null); setFocusComment(null) }}>
         {viewing && (
           <div className="entry-view">
             {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
@@ -106,7 +110,7 @@ export default function JournalPage() {
             <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} showPeople
               onChange={(like) => setLikes((m) => ({ ...m, [viewing.id]: like }))} />
             {!viewing.is_private && (
-              <Comments entryId={viewing.id} ownerId={user.id} userId={user.id}
+              <Comments entryId={viewing.id} ownerId={user.id} userId={user.id} highlightId={focusComment}
                 onCount={(n) => setComments((m) => ({ ...m, [viewing.id]: n }))} />
             )}
             <div className="row">
@@ -117,24 +121,37 @@ export default function JournalPage() {
         )}
       </Modal>
 
-      <EntryEditor entry={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />
+      <EntryEditor entry={editing} photoUrl={editing?.photo_path ? urls[editing.photo_path] : null} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load() }} />
     </div>
   )
 }
 
-function EntryEditor({ entry, onClose, onSaved }) {
+function EntryEditor({ entry, photoUrl, onClose, onSaved }) {
   const { user } = useAuth()
   const toast = useToast()
   const fileRef = useRef(null)
   const [form, setForm] = useState({ title: '', note: '', place_name: '', is_private: false })
   const [file, setFile] = useState(null)
+  const [removePhoto, setRemovePhoto] = useState(false) // gỡ ảnh cũ khi lưu
+  const [preview, setPreview] = useState(null)
   const [busy, setBusy] = useState(false)
   const isNew = entry && !entry.id
 
   useEffect(() => {
     if (entry) setForm({ title: entry.title || '', note: entry.note || '', place_name: entry.place_name || '', is_private: entry.is_private || false })
     setFile(null)
+    setRemovePhoto(false)
   }, [entry])
+
+  // Xem trước ảnh vừa chọn
+  useEffect(() => {
+    if (!file) return setPreview(null)
+    const url = URL.createObjectURL(file)
+    setPreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [file])
+
+  const shownPhoto = preview || (!removePhoto && photoUrl) || null
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
 
@@ -144,12 +161,13 @@ function EntryEditor({ entry, onClose, onSaved }) {
     let newPath = null
     try {
       if (file) newPath = await uploadPhoto(user.id, file)
-      const payload = { ...form, ...(newPath && { photo_path: newPath }) }
+      const dropOld = !isNew && entry.photo_path && (newPath || removePhoto)
+      const payload = { ...form, ...(newPath ? { photo_path: newPath } : removePhoto && !isNew ? { photo_path: null } : {}) }
       const { error } = isNew
         ? await supabase.from('journal_entries').insert({ ...payload, user_id: user.id })
         : await supabase.from('journal_entries').update(payload).eq('id', entry.id)
       if (error) throw error
-      if (newPath && !isNew && entry.photo_path && !entry.quest_id) deletePhoto(entry.photo_path)
+      if (dropOld && !entry.quest_id) deletePhoto(entry.photo_path)
       newPath = null
       toast(tr('Đã lưu vào Sổ hành trình 📖'), 'success')
       onSaved()
@@ -164,10 +182,20 @@ function EntryEditor({ entry, onClose, onSaved }) {
   return (
     <Modal open={!!entry} onClose={onClose} title={isNew ? tr('Thêm kỷ niệm') : tr('Sửa kỷ niệm')}>
       <form onSubmit={save}>
-        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <button type="button" className="photo-drop small" onClick={() => fileRef.current.click()}>
-          <span><Emoji e="📷" play="static" /></span>{file ? file.name : entry?.photo_path ? tr('Đổi ảnh khác') : tr('Thêm ảnh (tuỳ chọn)')}
-        </button>
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { setFile(e.target.files?.[0] || null); e.target.value = '' }} />
+        {shownPhoto ? (
+          <div className="photo-preview editor-photo">
+            <img src={shownPhoto} alt={tr('Ảnh đã chọn')} />
+            <div className="row tight">
+              <button type="button" className="ghost small" onClick={() => fileRef.current.click()}><Emoji e="🔄" play="static" />{tr(' Thay ảnh')}</button>
+              <button type="button" className="ghost small danger-text" onClick={() => { setFile(null); setRemovePhoto(true) }}><Emoji e="🗑️" play="static" />{tr(' Gỡ ảnh')}</button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" className="photo-drop small" onClick={() => fileRef.current.click()}>
+            <span><Emoji e="📷" play="static" /></span>{tr('Thêm ảnh (tuỳ chọn)')}
+          </button>
+        )}
         <label className="field"><span>{tr('Tiêu đề')}</span><input value={form.title} onChange={set('title')} maxLength={80} required /></label>
         <label className="field"><span>{tr('Địa điểm')}</span><input value={form.place_name} onChange={set('place_name')} maxLength={80} placeholder={tr('vd: Hồ Tây')} /></label>
         <label className="field"><span>{tr('Ghi chú')}</span><textarea rows={4} value={form.note} onChange={set('note')} maxLength={1000} /></label>

@@ -15,6 +15,7 @@ export function useFriendships(userId) {
       .select(`id, status, requester, addressee, created_at,
         requester_profile:profiles!friendships_requester_fkey(${PROFILE_COLS}),
         addressee_profile:profiles!friendships_addressee_fkey(${PROFILE_COLS})`)
+      .or(`requester.eq.${userId},addressee.eq.${userId}`)
       .order('created_at', { ascending: false })
     if (error) {
       // bảng chưa tạo (chưa chạy 002_friends.sql) → coi như chưa có bạn
@@ -82,7 +83,7 @@ export function summarizeReactions(rows, key, userId) {
     m.count += 1
     m.counts[r] = (m.counts[r] || 0) + 1
     if (l.user_id === userId) m.mine = r
-    else m.people.push({ name: l.profiles?.display_name || l.profiles?.username, reaction: r })
+    else m.people.push({ name: l.profiles?.display_name || l.profiles?.username, username: l.profiles?.username, reaction: r })
   })
   Object.values(map).forEach((m) => {
     m.top = Object.entries(m.counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([e]) => e)

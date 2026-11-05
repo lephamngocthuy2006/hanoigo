@@ -405,7 +405,7 @@ function VouchersTab() {
           <h2>{tr('Mã hợp lệ!')}</h2>
           <p><b>{verified?.voucher}</b></p>
           <p className="muted">{tr('Khách hàng: ')}{verified?.customer}</p>
-          <button className="btn primary" onClick={() => setVerified(null)}>Xong</button>
+          <button className="btn primary" onClick={() => setVerified(null)}>{tr('Xong')}</button>
         </div>
       </Modal>
     </>

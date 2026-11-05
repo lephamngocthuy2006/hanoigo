@@ -1058,3 +1058,20 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .pick-box:active:not(:disabled) { transform: scale(0.9); }
 .pick-box:disabled { opacity: 0.35; cursor: not-allowed; }
 .load-more { margin-top: 12px; }
+
+/* Bảng xếp hạng: thẻ hạng của mình khi không nằm trong top */
+.my-rank { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 8px; border-radius: 14px; background: var(--brand-soft); font-size: 0.92rem; }
+.my-rank b { color: var(--brand); font-size: 1.05rem; }
+.tour-next { margin-top: 14px; }
+/* Ảnh trong form sửa kỷ niệm: xem trước + nút thay / gỡ */
+.editor-photo { margin-bottom: 12px; }
+.editor-photo img { max-height: 240px; }
+.editor-photo .row { margin-top: 8px; justify-content: center; }
+.editor-photo button { position: static; }
+.comment.flash .comment-bubble { animation: comment-flash 2.4s ease-out; }
+@keyframes comment-flash { 0%, 35% { background: color-mix(in srgb, var(--gold) 45%, var(--card)); border-color: var(--gold-dark); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 35%, transparent); } }
+.reaction-people a { display: inline-flex; align-items: center; gap: 4px; color: inherit; text-decoration: none; }
+.reaction-people li:has(a):hover { border-color: var(--brand); color: var(--brand); }
+.toast-link { pointer-events: auto; cursor: pointer; border: 0; font: inherit; text-align: left; display: flex; align-items: center; gap: 10px; width: 100%; }
+.toast-link:hover { filter: brightness(1.08); }
+.toast-go { margin-left: auto; font-size: 1.3rem; line-height: 1; opacity: 0.8; }

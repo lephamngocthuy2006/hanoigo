@@ -15,7 +15,7 @@ const SHOW_REPLIES = 2
  * Bình luận dưới một trang Sổ hành trình, có trả lời 1 cấp (giống Facebook).
  * Người viết xoá được bình luận của mình; chủ trang xoá được mọi bình luận.
  */
-export default function Comments({ entryId, ownerId, userId, onCount }) {
+export default function Comments({ entryId, ownerId, userId, onCount, highlightId }) {
   const toast = useToast()
   const confirm = useConfirm()
   const [items, setItems] = useState(null)
@@ -42,6 +42,19 @@ export default function Comments({ entryId, ownerId, userId, onCount }) {
   }, [entryId])
 
   useEffect(() => { if (items) onCount?.(items.length) }, [items]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Mở từ thông báo: mở chuỗi chứa bình luận đó, cuộn tới và nháy sáng một lúc
+  const [flash, setFlash] = useState(null)
+  useEffect(() => {
+    if (!items || !highlightId) return
+    const c = items.find((x) => x.id === highlightId)
+    if (!c) return
+    if (c.parent_id) setExpanded((s) => new Set(s).add(c.parent_id))
+    setFlash(c.id)
+    const t1 = setTimeout(() => listRef.current?.querySelector(`[data-id="${c.id}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250)
+    const t2 = setTimeout(() => setFlash(null), 2600)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [items === null, highlightId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const startReply = (c) => {
     setReplyTo(c)
@@ -77,7 +90,7 @@ export default function Comments({ entryId, ownerId, userId, onCount }) {
     const tag = parent && c.reply_user && c.reply_to !== parent.user_id ? c.reply_user : null
     const react = reactions[c.id]
     return (
-      <div className={`comment${parent ? ' reply' : ''}`} data-id={c.id}>
+      <div className={`comment${parent ? ' reply' : ''}${flash === c.id ? ' flash' : ''}`} data-id={c.id}>
         <Link to={c.user_id === userId ? '/me' : `/u/${c.author?.username}`} className="comment-avatar">
           <Emoji e={c.author?.avatar || '🐢'} play="static" />
         </Link>

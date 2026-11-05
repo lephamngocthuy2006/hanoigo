@@ -27,7 +27,7 @@ export default function QuestDetail() {
 function QuestDetailInner({ id }) {
   const navigate = useNavigate()
   const { user, profile, refreshProfile } = useAuth()
-  const { tours } = useTours()
+  const { tours, claimed } = useTours()
   const [reviewSignal, setReviewSignal] = useState(0)
   const toast = useToast()
   const { quests, isDone, loading, reload } = useQuests()
@@ -52,6 +52,20 @@ function QuestDetailInner({ id }) {
   const done = isDone(quest)
   const inTours = tours.filter((t) => t.stops.some((s) => s.quest_id === quest.id))
   const needsLocation = quest.kind === 'checkin' || quest.require_location
+
+  // Sau khi hoàn thành: nhiệm vụ thuộc tour → gợi ý trạm tiếp theo, hoặc về tour nhận thưởng nếu đã đi hết
+  const tourStep = (() => {
+    const t = inTours[0]
+    if (!t) return null
+    const notDone = (s) => s.quest_id !== quest.id && !isDone(quests.find((q) => q.id === s.quest_id) || {})
+    const at = t.stops.findIndex((s) => s.quest_id === quest.id)
+    const next = t.stops.slice(at + 1).find(notDone) || t.stops.find(notDone)
+    if (next) {
+      const q = quests.find((x) => x.id === next.quest_id)
+      return q && { to: `/quest/${q.id}`, label: tr('Đi tiếp Trạm {0}: {1} →', t.stops.indexOf(next) + 1, q.title) }
+    }
+    return claimed.has(t.id) ? null : { to: `/tour/${t.id}`, label: tr('🎉 Đã đi hết tour! Nhận thưởng & chứng nhận →'), done: true }
+  })()
   const dist = pos && quest.lat != null ? distanceM(pos, quest) : null
 
   const pickFile = (e) => {
@@ -276,6 +290,11 @@ function QuestDetailInner({ id }) {
             <div><strong><Emoji e="🪙" play="once" /> +{reward?.coins}</strong><span>Coins</span></div>
             <div><strong><Emoji e="🔥" play="once" /> {reward?.streak}</strong><span>{tr('ngày liên tiếp')}</span></div>
           </div>
+          {tourStep && (
+            <button className={`btn ${tourStep.done ? 'gold' : 'primary'} block tour-next`} onClick={() => navigate(tourStep.to)}>
+              {emojify(tourStep.label)}
+            </button>
+          )}
           <div className="row">
             {quest.kind === 'photo' && <button className="btn" onClick={() => navigate('/journal')}>{tr('Xem Sổ hành trình')}</button>}
             {quest.kind !== 'quiz' && (

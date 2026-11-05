@@ -69,7 +69,7 @@ export function setCommentReaction(commentId, userId, reaction, previous) {
 }
 
 // ---------- Thông báo ----------
-const NOTI_COLS = `id, kind, entry_id, reaction, body, read_at, created_at,
+const NOTI_COLS = `id, kind, entry_id, comment_id, reaction, body, read_at, created_at,
   actor:profiles!notifications_actor_id_fkey(${ACTOR_COLS}),
   entry:journal_entries(id, title, user_id, owner:profiles!journal_entries_user_id_fkey(username))`
 
@@ -99,8 +99,10 @@ export function notiLink(n, userId) {
   if (n.kind === 'new_user') return '/admin?tab=users'
   if (n.kind === 'friend_accept') return `/u/${n.actor?.username}`
   if (!n.entry) return '/journal'
-  if (n.entry.user_id === userId) return `/journal?entry=${n.entry.id}`
-  return `/u/${n.entry.owner?.username}?entry=${n.entry.id}`
+  // có comment_id (trả lời / cảm xúc bình luận) → mở bài rồi cuộn tới đúng bình luận
+  const comment = n.comment_id ? `&comment=${n.comment_id}` : ''
+  if (n.entry.user_id === userId) return `/journal?entry=${n.entry.id}${comment}`
+  return `/u/${n.entry.owner?.username}?entry=${n.entry.id}${comment}`
 }
 
 export function useNotifications(userId, onNew) {
@@ -143,14 +145,14 @@ export function useNotifications(userId, onNew) {
   const markAllRead = useCallback(async () => {
     const now = new Date().toISOString()
     setState((s) => ({ ...s, items: s.items.map((n) => ({ ...n, read_at: n.read_at || now })) }))
-    await supabase.from('notifications').update({ read_at: now }).is('read_at', null)
-  }, [])
+    await supabase.from('notifications').update({ read_at: now }).eq('user_id', userId).is('read_at', null)
+  }, [userId])
 
   const markRead = useCallback(async (id) => {
     const now = new Date().toISOString()
     setState((s) => ({ ...s, items: s.items.map((n) => (n.id === id ? { ...n, read_at: n.read_at || now } : n)) }))
-    await supabase.from('notifications').update({ read_at: now }).eq('id', id).is('read_at', null)
-  }, [])
+    await supabase.from('notifications').update({ read_at: now }).eq('id', id).eq('user_id', userId).is('read_at', null)
+  }, [userId])
 
   const unread = state.items.filter((n) => !n.read_at).length
   return { ...state, unread, reload, markAllRead, markRead }

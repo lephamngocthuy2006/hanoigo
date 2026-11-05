@@ -749,4 +749,10 @@ export default {
   'Đang hiện {0} / {1} tài khoản': 'Showing {0} of {1} accounts',
   '{0} tài khoản': '{0} accounts',
   'Tải thêm {0} tài khoản': 'Load {0} more',
+  'Hạng của bạn: ': 'Your rank: ',
+  'Hoàn thành nhiệm vụ đầu tiên để lên bảng xếp hạng!': 'Complete your first quest to join the leaderboard!',
+  'Đi tiếp Trạm {0}: {1} →': 'Next: Stop {0} — {1} →',
+  '🎉 Đã đi hết tour! Nhận thưởng & chứng nhận →': '🎉 Tour complete! Claim your reward & certificate →',
+  ' Thay ảnh': ' Replace photo',
+  ' Gỡ ảnh': ' Remove photo',
 }

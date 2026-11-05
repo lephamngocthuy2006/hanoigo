@@ -126,19 +126,33 @@ function Collection() {
 }
 
 function Leaderboard() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const { friends } = useOutletContext()
   const [scope, setScope] = useState('all')
   const [rows, setRows] = useState(null)
+  const [myRank, setMyRank] = useState(null)
   const friendIds = friends.map((f) => f.other?.id).filter(Boolean)
   const friendKey = friendIds.join(',')
 
+  // Cùng XP thì ai đạt trước (tạo tài khoản trước) đứng trên; tài khoản 0 XP không lên bảng
   useEffect(() => {
     setRows(null)
-    let q = supabase.from('profiles').select('id, username, display_name, avatar, xp, is_demo').order('xp', { ascending: false }).limit(30)
-    if (scope === 'friends') q = q.in('id', [user.id, ...friendKey.split(',').filter(Boolean)])
+    setMyRank(null)
+    const ids = scope === 'friends' ? [user.id, ...friendKey.split(',').filter(Boolean)] : null
+    let q = supabase.from('profiles').select('id, username, display_name, avatar, xp, is_demo')
+      .gt('xp', 0).order('xp', { ascending: false }).order('created_at', { ascending: true }).limit(30)
+    if (ids) q = q.in('id', ids)
     q.then(({ data }) => setRows(data || []))
-  }, [scope, friendKey, user.id])
+
+    // Hạng của mình = số người xếp trên + 1
+    const xp = profile?.xp ?? 0
+    if (xp > 0 && profile?.created_at) {
+      let c = supabase.from('profiles').select('id', { count: 'exact', head: true })
+        .or(`xp.gt.${xp},and(xp.eq.${xp},created_at.lt."${profile.created_at}")`)
+      if (ids) c = c.in('id', ids)
+      c.then(({ count }) => count != null && setMyRank(count + 1))
+    }
+  }, [scope, friendKey, user.id, profile?.xp, profile?.created_at])
 
   const isFriend = (id) => friendIds.includes(id)
 
@@ -148,6 +162,14 @@ function Leaderboard() {
         <button className={`chip${scope === 'all' ? ' active' : ''}`} onClick={() => setScope('all')}><Emoji e="🌏" play="static" />{tr(' Tất cả')}</button>
         <button className={`chip${scope === 'friends' ? ' active' : ''}`} onClick={() => setScope('friends')}><Emoji e="👥" play="static" />{tr(' Bạn bè')}</button>
       </div>
+      {rows && !rows.some((r) => r.id === user.id) && (
+        <div className="my-rank">
+          <span className="rank-avatar"><Emoji e={profile?.avatar || '🐢'} play="static" /></span>
+          {(profile?.xp ?? 0) > 0
+            ? <span>{tr('Hạng của bạn: ')}<b>#{myRank ?? '…'}</b> · {profile.xp} XP</span>
+            : <span>{tr('Hoàn thành nhiệm vụ đầu tiên để lên bảng xếp hạng!')}</span>}
+        </div>
+      )}
       {!rows ? <div className="spinner" /> : rows.map((r, i) => (
         <Link key={r.id} to={isFriend(r.id) ? `/u/${r.username}` : r.id === user.id ? '/me' : '#'}
           onClick={(e) => !isFriend(r.id) && r.id !== user.id && e.preventDefault()}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { REACTIONS, reactionLabel, setReaction } from '../lib/friends'
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
@@ -140,7 +141,11 @@ export default function ReactionBar({ entryId, userId, like, onChange, showPeopl
       {showPeople && like?.people?.length > 0 && (
         <ul className="reaction-people">
           {like.people.map((p, i) => (
-            <li key={i}><Emoji e={p.reaction} play="static" /> {p.name}</li>
+            <li key={i}>
+              {p.username
+                ? <Link to={`/u/${p.username}`}><Emoji e={p.reaction} play="static" /> {p.name}</Link>
+                : <><Emoji e={p.reaction} play="static" /> {p.name}</>}
+            </li>
           ))}
         </ul>
       )}

@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { CRITERIA, fmtScore, summarize } from '../lib/reviews'
 import Stars from '../components/Stars'
 import Emoji, { emojify } from '../components/Emoji'
-import { tr, localize } from '../lib/i18n'
+import { tr, localize, isEn } from '../lib/i18n'
 
 // Gợi ý hành động cho tiêu chí có điểm thấp nhất
 const ADVICE = {
@@ -18,9 +18,14 @@ export default function InsightsPage() {
   const navigate = useNavigate()
   const [stats, setStats] = useState(null)
   const [reviews, setReviews] = useState(null)
+  const [enTitles, setEnTitles] = useState({}) // tên tiếng Việt → tiếng Anh (top_quests chỉ có tên, không có id)
 
   useEffect(() => {
     supabase.rpc('app_stats').then(({ data }) => setStats(data || {}))
+    if (isEn) {
+      supabase.from('quests').select('title, title_en').then(({ data }) =>
+        setEnTitles(Object.fromEntries((data || []).filter((q) => q.title_en).map((q) => [q.title, q.title_en]))))
+    }
     supabase
       .from('reviews')
       .select('*, profiles(username, display_name, avatar), quests(*), tours(*)')
@@ -129,7 +134,7 @@ export default function InsightsPage() {
             const max = stats.top_quests[0].n
             return (
               <div key={q.title} className="crit-bar wide">
-                <span>{emojify(q.emoji)} {q.title}</span>
+                <span>{emojify(q.emoji)} {enTitles[q.title] || q.title}</span>
                 <div className="bar"><div style={{ width: `${(q.n / max) * 100}%` }} /></div>
                 <b>{q.n}</b>
               </div>

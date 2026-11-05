@@ -56,10 +56,14 @@ export default function FriendProfile() {
 
   // Mở thẳng một trang khi đi từ thông báo (/u/ten?entry=123)
   const openId = Number(params.get('entry'))
+  const [focusComment, setFocusComment] = useState(null) // bình luận cần cuộn tới (từ thông báo)
   useEffect(() => {
     if (!openId || person === undefined) return
     const found = entries.find((e) => e.id === openId)
-    if (found) setViewing(found)
+    if (found) {
+      setViewing(found)
+      setFocusComment(Number(params.get('comment')) || null)
+    }
     // trang đã bị xoá / chuyển riêng tư → chỉ bỏ tham số
     if (found || entries.length || !person) setParams({}, { replace: true })
   }, [openId, entries, person]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -112,7 +116,7 @@ export default function FriendProfile() {
 
       {friendship && <button className="ghost small danger-text" style={{ alignSelf: 'center' }} onClick={unfriend}>{tr('Huỷ kết bạn')}</button>}
 
-      <Modal open={!!viewing} onClose={() => setViewing(null)}>
+      <Modal open={!!viewing} onClose={() => { setViewing(null); setFocusComment(null) }}>
         {viewing && (
           <div className="entry-view">
             {viewing.photo_path && <img src={urls[viewing.photo_path]} alt={viewing.title} />}
@@ -122,7 +126,7 @@ export default function FriendProfile() {
             <div className="row">
               <ReactionBar entryId={viewing.id} userId={user.id} like={likes[viewing.id]} onChange={setLike(viewing.id)} />
             </div>
-            <Comments entryId={viewing.id} ownerId={person.id} userId={user.id}
+            <Comments entryId={viewing.id} ownerId={person.id} userId={user.id} highlightId={focusComment}
               onCount={(n) => setComments((m) => ({ ...m, [viewing.id]: n }))} />
           </div>
         )}
