@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
+import Icon from './Icon'
 import PushInvite from './PushInvite'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
@@ -18,27 +19,29 @@ const TABS = [
   { to: '/me', label: tr('Tôi'), icon: null },
 ]
 
-// Menu bên trái trên máy tính: thứ tự ưu tiên khác điện thoại + thêm các mục phụ
-const SIDE_MAIN = [TABS[2], TABS[1], TABS[0], TABS[3]]
+// Menu bên trái trên máy tính: icon nét mảnh trong ô màu (cùng bộ với menu trang Tôi).
+// Thanh dưới cùng trên điện thoại vẫn giữ emoji động.
+const SIDE_MAIN = [
+  { to: '/', label: tr('Nhiệm vụ'), icon: 'target', tone: 'rose', end: true },
+  { to: '/map', label: tr('Bản đồ'), icon: 'map', tone: 'teal' },
+  { to: '/journal', label: tr('Sổ hành trình'), icon: 'journal', tone: 'amber' },
+  { to: '/events', label: tr('Thẻ & Quà'), icon: 'gift', tone: 'plum' },
+]
 const SIDE_MORE = [
-  { to: '/notifications', label: tr('Thông báo'), icon: '🔔', badge: 'unread' },
-  { to: '/tours', label: tr('Tour theo chủ đề'), icon: '🧭' },
-  { to: '/friends', label: tr('Bạn bè'), icon: '🤝', badge: 'pending' },
-  { to: '/insights', label: tr('Thống kê trải nghiệm'), icon: '📊' },
-  { to: '/partner', label: tr('Cổng đối tác'), icon: '🏪' },
-  { to: '/settings', label: tr('Cài đặt'), icon: '⚙️' },
+  { to: '/notifications', label: tr('Thông báo'), icon: 'bell', tone: 'gold', badge: 'unread' },
+  { to: '/tours', label: tr('Tour theo chủ đề'), icon: 'compass', tone: 'teal' },
+  { to: '/friends', label: tr('Bạn bè'), icon: 'users', tone: 'rose', badge: 'pending' },
+  { to: '/insights', label: tr('Thống kê trải nghiệm'), icon: 'chart', tone: 'blue' },
+  { to: '/partner', label: tr('Cổng đối tác'), icon: 'store', tone: 'amber' },
+  { to: '/settings', label: tr('Cài đặt'), icon: 'settings', tone: 'slate' },
 ]
 
-function SideLink({ to, label, icon, end, badge }) {
+function SideLink({ to, label, icon, tone, end, badge }) {
   return (
     <NavLink to={to} end={end} className={({ isActive }) => `side-link${isActive ? ' active' : ''}`}>
-      {({ isActive }) => (
-        <>
-          <Emoji e={icon} play={isActive ? 'loop' : 'hover'} />
-          <span>{label}</span>
-          {badge > 0 && <span className="badge static">{badge}</span>}
-        </>
-      )}
+      <span className={`side-ico tone-${tone}`}><Icon name={icon} size={19} /></span>
+      <span>{label}</span>
+      {badge > 0 && <span className="badge static">{badge > 9 ? '9+' : badge}</span>}
     </NavLink>
   )
 }
@@ -70,7 +73,7 @@ export default function Layout() {
           {SIDE_MAIN.map((t) => <SideLink key={t.to} {...t} />)}
           <div className="side-sep">{tr('Khám phá thêm')}</div>
           {SIDE_MORE.map((t) => <SideLink key={t.to} {...t} badge={{ pending, unread }[t.badge] || 0} />)}
-          {profile?.is_admin && <SideLink to="/admin" label={tr('Trang quản trị')} icon="🛡️" />}
+          {profile?.is_admin && <SideLink to="/admin" label={tr('Trang quản trị')} icon="shield" tone="plum" />}
         </nav>
         <button className="side-profile" onClick={() => navigate('/me')}>
           <span className="side-avatar"><Emoji e={profile?.avatar || '🐢'} play="hover" /></span>

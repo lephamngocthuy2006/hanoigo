@@ -62,6 +62,36 @@ const PATHS = {
       <path d="M6 12h10" />
     </>
   ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.8" />
+      <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+    </>
+  ),
+  map: (
+    <>
+      <path d="M3.5 6.5l5.5-2.5 6 2.5 5.5-2.5v13.5l-5.5 2.5-6-2.5-5.5 2.5z" />
+      <path d="M9 4v13.5" />
+      <path d="M15 6.5V20" />
+    </>
+  ),
+  journal: (
+    <>
+      <path d="M5.5 4.5A1.5 1.5 0 0 1 7 3h11.5v15H7a1.5 1.5 0 0 0-1.5 1.5z" />
+      <path d="M5.5 19.5A1.5 1.5 0 0 0 7 21h11.5v-3" />
+      <circle cx="12" cy="10" r="2.6" />
+      <path d="M9.5 6.6h1.2l.6-.9h1.4l.6.9h1.2" />
+    </>
+  ),
+  gift: (
+    <>
+      <rect x="3.5" y="8" width="17" height="4" rx="1.2" />
+      <path d="M5 12v7.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V12" />
+      <path d="M12 8v12.5" />
+      <path d="M12 8C10.5 4.5 7 4 6.6 6s2.4 2 5.4 2c3 0 5.8 0 5.4-2S13.5 4.5 12 8z" />
+    </>
+  ),
   chevron: <path d="M9.5 6l6 6-6 6" />,
 }
 

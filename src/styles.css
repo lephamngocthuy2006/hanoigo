@@ -1116,3 +1116,18 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   color: var(--danger); font: inherit; font-weight: 700; transition: background 0.15s;
 }
 .logout-btn:hover { background: color-mix(in srgb, var(--danger) 8%, var(--card)); }
+
+/* ---------- Thanh bên trái (máy tính): icon nét mảnh trong ô màu ---------- */
+@media (min-width: 1024px) {
+  .side-link { gap: 12px; padding: 7px 10px; font-weight: 600; }
+  .side-ico {
+    width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px; display: grid; place-items: center;
+    color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, var(--card));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tone) 16%, transparent); transition: background 0.15s, color 0.15s;
+  }
+  .side-link:hover .side-ico { background: color-mix(in srgb, var(--tone) 20%, var(--card)); }
+  /* đang mở: nền thẻ trắng nổi lên, ô icon tô đặc màu */
+  .side-link.active, [data-theme="dark"] .side-link.active { background: var(--card); color: var(--ink); border-color: transparent; box-shadow: var(--shadow), inset 0 0 0 1px var(--line); }
+  .side-link.active .side-ico { background: var(--tone); color: #fff; box-shadow: 0 4px 10px color-mix(in srgb, var(--tone) 35%, transparent); }
+  .side-link.active > span:not(.side-ico):not(.badge) { font-weight: 800; }
+}
