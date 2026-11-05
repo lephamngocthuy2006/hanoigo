@@ -8,7 +8,9 @@ import { tr } from '../lib/i18n'
 export default function NotificationsPage() {
   const { user } = useAuth()
   const { notifications } = useOutletContext()
-  const { items, loaded, markAllRead } = notifications
+  const { items, loaded, markAllRead, reload } = notifications
+  // Tải lại mỗi lần mở trang: thông báo bị xoá (bình luận / cảm xúc đã gỡ) không được báo qua realtime
+  useEffect(() => { reload() }, [reload])
   // Giữ nền "chưa đọc" cho những thông báo mới trong lúc đang xem, dù đã đánh dấu đọc
   const [fresh, setFresh] = useState(null)
 
