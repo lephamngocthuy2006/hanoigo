@@ -1131,3 +1131,32 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
   .side-link.active .side-ico { background: var(--tone); color: #fff; box-shadow: 0 4px 10px color-mix(in srgb, var(--tone) 35%, transparent); }
   .side-link.active > span:not(.side-ico):not(.badge) { font-weight: 800; }
 }
+
+/* ---------- Hiệu ứng chuyển trang & xuất hiện lần lượt ---------- */
+/* fill-mode backwards: chỉ giữ trạng thái đầu trong lúc chờ, chạy xong không đè lên hover/active */
+.page-enter { animation: page-enter 0.32s cubic-bezier(0.22, 0.8, 0.3, 1) backwards; }
+@keyframes page-enter { from { opacity: 0; transform: translateY(10px); } }
+
+.journal-grid > *, .tour-scroller > *, .stat-grid > *, .kpi-grid > *, .card-grid > *,
+.menu-group, .quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li {
+  animation: rise-in 0.42s cubic-bezier(0.22, 0.8, 0.3, 1) backwards;
+}
+@keyframes rise-in { from { opacity: 0; transform: translateY(12px) scale(0.985); } }
+:is(.journal-grid, .tour-scroller, .stat-grid, .kpi-grid, .card-grid) > :nth-child(2),
+:is(.quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li):nth-child(2), .menu-group:nth-of-type(2) { animation-delay: 0.04s; }
+:is(.journal-grid, .tour-scroller, .stat-grid, .kpi-grid, .card-grid) > :nth-child(3),
+:is(.quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li):nth-child(3), .menu-group:nth-of-type(3) { animation-delay: 0.08s; }
+:is(.journal-grid, .tour-scroller, .stat-grid, .kpi-grid, .card-grid) > :nth-child(4),
+:is(.quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li):nth-child(4), .menu-group:nth-of-type(4) { animation-delay: 0.12s; }
+:is(.journal-grid, .tour-scroller, .stat-grid, .kpi-grid, .card-grid) > :nth-child(5),
+:is(.quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li):nth-child(5) { animation-delay: 0.16s; }
+:is(.journal-grid, .tour-scroller, .stat-grid, .kpi-grid, .card-grid) > :nth-child(6),
+:is(.quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li):nth-child(6) { animation-delay: 0.2s; }
+:is(.journal-grid, .tour-scroller, .stat-grid, .kpi-grid, .card-grid) > :nth-child(n+7),
+:is(.quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li):nth-child(n+7) { animation-delay: 0.24s; }
+
+/* Người dùng bật "Giảm chuyển động" trong máy → tắt hết hiệu ứng trượt */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .journal-grid > *, .tour-scroller > *, .stat-grid > *, .kpi-grid > *, .card-grid > *,
+  .menu-group, .quest-row, .rank-row, .noti-list > li, .timeline > li, .comment-list > li { animation: none; }
+}

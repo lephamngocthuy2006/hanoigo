@@ -1,5 +1,5 @@
-import { Suspense } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Suspense, useEffect } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 import Icon from './Icon'
@@ -58,6 +58,13 @@ export default function Layout() {
     if (n.kind.startsWith('friend_')) friendships.reload()
   })
   const unread = notifications.unread
+
+  // Sang trang mới thì về đầu trang (bấm Quay lại thì giữ nguyên vị trí)
+  const location = useLocation()
+  const navType = useNavigationType()
+  useEffect(() => {
+    if (navType !== 'POP') window.scrollTo(0, 0)
+  }, [location.pathname]) // eslint-disable-line react-hooks/exhaustive-deps
   const lv = levelInfo(profile?.xp || 0)
   return (
     <div className="app">
@@ -113,7 +120,10 @@ export default function Layout() {
       </header>
       <main className="content">
         <Suspense fallback={<div className="page"><div className="spinner" /></div>}>
-          <Outlet context={{ ...friendships, notifications }} />
+          {/* key theo đường dẫn → mỗi lần đổi trang chạy lại hiệu ứng trượt vào */}
+          <div key={location.pathname} className="page-enter">
+            <Outlet context={{ ...friendships, notifications }} />
+          </div>
         </Suspense>
       </main>
       <nav className="bottomnav">
