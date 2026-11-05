@@ -54,6 +54,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
   17. [`supabase/017_comment_replies.sql`](supabase/017_comment_replies.sql) — trả lời bình luận (1 cấp như Facebook) + thông báo "đã trả lời bình luận của bạn"
   18. [`supabase/018_signup_alerts.sql`](supabase/018_signup_alerts.sql) — báo quản trị viên khi có người đăng ký mới (tự bật trong Cài đặt)
   19. [`supabase/019_bulk_delete_users.sql`](supabase/019_bulk_delete_users.sql) — xoá nhiều tài khoản cùng lúc để dọn spam (Trang quản trị → Người dùng → Chọn nhiều)
+  20. [`supabase/020_comment_notification_links.sql`](supabase/020_comment_notification_links.sql) — thông báo bình luận mở thẳng tới đúng bình luận
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.
