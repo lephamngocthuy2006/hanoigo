@@ -166,6 +166,8 @@ const SORTS = [
   { id: 'xp', label: tr('Nhiều XP'), col: 'xp' },
 ]
 
+const PAGE = 200
+
 function UsersTab() {
   const { user, profile } = useAuth()
   const toast = useToast()
@@ -187,18 +189,39 @@ function UsersTab() {
     supabase.rpc('admin_user_stats').then(({ data }) => setStats(data))
   }, [])
 
-  const load = useCallback(async () => {
+  // Tải theo trang 200 dòng; total = tổng số khớp tìm kiếm (không chỉ số dòng đang hiện)
+  const [total, setTotal] = useState(0)
+  const [pages, setPages] = useState(1)
+  const [moreBusy, setMoreBusy] = useState(false)
+  const fetchPage = useCallback(async (page) => {
     const col = SORTS.find((x) => x.id === sort).col
     let q = supabase
       .from('profiles')
-      .select('id, username, display_name, avatar, xp, coins, is_demo, is_admin, is_super_admin, created_at, last_active_date')
+      .select('id, username, display_name, avatar, xp, coins, is_demo, is_admin, is_super_admin, created_at, last_active_date', { count: 'exact' })
       .order(col, { ascending: false, nullsFirst: false })
-      .limit(200)
+      .order('id')
+      .range(page * PAGE, page * PAGE + PAGE - 1)
     const term = query.trim().toLowerCase().replace(/[^a-z0-9_]/g, '')
     if (term) q = q.ilike('username', `%${term}%`)
-    const { data } = await q
-    setRows(localize(data || []))
+    return q
   }, [query, sort])
+
+  const load = useCallback(async () => {
+    const { data, count } = await fetchPage(0)
+    setRows(localize(data || []))
+    setTotal(count ?? (data || []).length)
+    setPages(1)
+  }, [fetchPage])
+
+  const loadMore = async () => {
+    setMoreBusy(true)
+    const { data, count, error } = await fetchPage(pages)
+    setMoreBusy(false)
+    if (error) return toast(friendlyError(error), 'error')
+    setRows((r) => [...r, ...localize(data || [])])
+    if (count != null) setTotal(count)
+    setPages((n) => n + 1)
+  }
 
   useEffect(() => {
     const t = setTimeout(load, 250)
@@ -318,11 +341,21 @@ function UsersTab() {
       {!rows ? <div className="spinner" /> : (
         <section className="card">
           <div className="section-head">
-            <h3>{tr('Người dùng')}</h3>
-            <span className="row tight section-actions">
-              <span className="muted small">{rows.length}{tr(' tài khoản')}</span>
+            <div className="section-title">
+              <h3>{tr('Người dùng')}</h3>
+              <span className="muted small">
+                {rows.length < total ? tr('Đang hiện {0} / {1} tài khoản', rows.length, total) : tr('{0} tài khoản', total)}
+              </span>
+            </div>
+            <span className="section-actions">
               {isSuper && !selecting && (
-                <button className="ghost small" onClick={() => setSelecting(true)}><Emoji e="☑️" play="static" />{tr(' Chọn nhiều')}</button>
+                <button className="select-btn" onClick={() => setSelecting(true)}>
+                  <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+                    <rect x="2.5" y="2.5" width="15" height="15" rx="4.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                    <path d="M6.4 10.2l2.5 2.5 4.8-5.2" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {tr('Chọn nhiều')}
+                </button>
               )}
             </span>
           </div>
@@ -372,6 +405,11 @@ function UsersTab() {
               </div>
             </div>
           ))}
+          {rows.length < total && (
+            <button className="btn block load-more" onClick={loadMore} disabled={moreBusy}>
+              {moreBusy ? tr('Đang tải…') : tr('Tải thêm {0} tài khoản', Math.min(PAGE, total - rows.length))}
+            </button>
+          )}
         </section>
       )}
 

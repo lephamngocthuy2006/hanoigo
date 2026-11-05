@@ -1027,10 +1027,34 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 }
 
 /* ---------- Xoá nhiều tài khoản ---------- */
-.section-actions { margin: 0; align-items: center; }
+.section-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.section-actions { display: flex; align-items: center; flex-shrink: 0; }
 .bulk-bar { position: sticky; top: calc(var(--top-h) + 6px); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; margin: 4px 0 8px; border-radius: 14px; background: var(--brand-soft); }
 .bulk-bar .chip { background: var(--card); }
 .bulk-bar-end { margin-left: auto; display: flex; gap: 6px; }
 .admin-user.picked { background: var(--brand-soft); border-radius: 12px; }
-.pick-box { width: 20px; height: 20px; margin: 10px 2px 0; flex-shrink: 0; accent-color: var(--danger); }
 @media (min-width: 1024px) { .bulk-bar { top: 12px; } }
+
+/* Nút "Chọn nhiều" + ô chọn tự vẽ (thay emoji ☑️ và checkbox mặc định) */
+.select-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px 7px 11px; border-radius: 999px; white-space: nowrap;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 0.8rem; font-weight: 700;
+  box-shadow: 0 1px 2px rgba(60, 30, 20, 0.06); transition: border-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+.select-btn svg { color: var(--brand); }
+.select-btn:hover { border-color: var(--brand); color: var(--brand); box-shadow: 0 4px 12px rgba(143, 45, 58, 0.12); }
+.select-btn:active { transform: scale(0.97); }
+.pick-box {
+  appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin: 10px 2px 0; flex-shrink: 0;
+  border: 1.8px solid color-mix(in srgb, var(--muted) 60%, transparent); border-radius: 7px; background: var(--card);
+  display: grid; place-items: center; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.pick-box::after {
+  content: ''; width: 10px; height: 6px; border: solid #fff; border-width: 0 0 2.2px 2.2px;
+  transform: rotate(-45deg) translate(1px, -1px) scale(0); transition: transform 0.15s ease-out;
+}
+.pick-box:checked { background: var(--brand); border-color: var(--brand); }
+.pick-box:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+.pick-box:active:not(:disabled) { transform: scale(0.9); }
+.pick-box:disabled { opacity: 0.35; cursor: not-allowed; }
+.load-more { margin-top: 12px; }

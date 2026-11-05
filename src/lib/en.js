@@ -734,7 +734,7 @@ export default {
   'Xoá vĩnh viễn {0} tài khoản: {1}? Toàn bộ nhật ký, ảnh, bình luận của họ cũng bị xoá, không thể hoàn tác.': 'Permanently delete {0} accounts: {1}? All their journal entries, photos and comments will be deleted too. This cannot be undone.',
   'Xoá {0} tài khoản': 'Delete {0} accounts',
   'Đã xoá {0} tài khoản': 'Deleted {0} accounts',
-  ' Chọn nhiều': ' Select',
+  'Chọn nhiều': 'Select',
   ' đã chọn': ' selected',
   ' Chọn tài khoản mới (24 giờ)': ' Select new accounts (24h)',
   'Bỏ chọn': 'Clear',
@@ -746,4 +746,7 @@ export default {
   'Không có tài khoản mới nào trong 24 giờ qua': 'No new accounts in the last 24 hours',
   'Hãy chạy file supabase/019_bulk_delete_users.sql trong Supabase SQL Editor để bật tính năng xoá nhiều tài khoản': 'Run supabase/019_bulk_delete_users.sql in the Supabase SQL Editor to enable bulk delete',
   'Đã xoá {0} tài khoản, phần còn lại bị lỗi: {1}': 'Deleted {0} accounts; the rest failed: {1}',
+  'Đang hiện {0} / {1} tài khoản': 'Showing {0} of {1} accounts',
+  '{0} tài khoản': '{0} accounts',
+  'Tải thêm {0} tài khoản': 'Load {0} more',
 }
