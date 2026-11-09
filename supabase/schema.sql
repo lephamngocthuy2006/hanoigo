@@ -346,7 +346,7 @@ insert into public.quests
   (title, description, kind, place_name, area, lat, lng, radius_m, require_location, is_daily, xp_reward, coin_reward, emoji, tip, sort_order)
 select * from (values
   ('Khoảnh khắc Hà Nội hôm nay', 'Chụp một bức ảnh bất kỳ về Hà Nội hôm nay — con phố, ly cà phê, gánh hàng rong…', 'photo', 'Bất kỳ đâu ở Hà Nội', 'Hà Nội', null::float8, null::float8, 200, false, true, 30, 15, '📸', 'Mỗi ngày làm 1 lần để giữ chuỗi streak 🔥', 1),
-  ('Check-in Đại học Văn hóa Hà Nội', 'Đến cổng trường, giơ 2 ngón tay ✌️ và lưu lại khoảnh khắc của bạn!', 'photo', 'Đại học Văn hóa Hà Nội', 'Đống Đa', 21.0226, 105.8212, 300, false, false, 120, 80, '🎓', 'Chọn góc có bảng tên trường để ảnh đẹp hơn.', 2),
+  ('Check-in Đại học Văn hóa Hà Nội', 'Đến cổng trường, giơ 2 ngón tay ✌️ và lưu lại khoảnh khắc của bạn!', 'photo', 'Đại học Văn hóa Hà Nội', 'Đống Đa', 21.02392, 105.82280, 300, false, false, 120, 80, '🎓', 'Chọn góc có bảng tên trường để ảnh đẹp hơn.', 2),
   ('Tháp Rùa giữa lòng hồ', 'Chụp Tháp Rùa từ bờ Hồ Hoàn Kiếm.', 'photo', 'Hồ Hoàn Kiếm', 'Hoàn Kiếm', 21.0287, 105.8524, 300, false, false, 100, 50, '🐢', 'Buổi sáng sớm hoặc lúc hoàng hôn là đẹp nhất.', 3),
   ('Qua cầu Thê Húc', 'Check-in tại Đền Ngọc Sơn — cây cầu son đỏ nổi tiếng.', 'checkin', 'Đền Ngọc Sơn', 'Hoàn Kiếm', 21.0307, 105.8524, 200, true, false, 80, 40, '🌉', 'Bật định vị trên điện thoại khi đến nơi.', 4),
   ('Khuê Văn Các', 'Ghé Văn Miếu – Quốc Tử Giám, trường đại học đầu tiên của Việt Nam, và chụp Khuê Văn Các.', 'photo', 'Văn Miếu – Quốc Tử Giám', 'Đống Đa', 21.0293, 105.8355, 300, false, false, 120, 60, '🏯', 'Khuê Văn Các có trên tờ tiền 100.000đ đó!', 5),
