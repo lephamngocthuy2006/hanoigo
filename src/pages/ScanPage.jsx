@@ -4,7 +4,7 @@ import { scanQr } from '../lib/qr'
 import { friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
 import Emoji from '../components/Emoji'
-import { tr } from '../lib/i18n'
+import { tr, trMsg } from '../lib/i18n'
 
 // Mở từ link trong mã QR (quét bằng ứng dụng Camera): xác nhận rồi chuyển tới nhiệm vụ của điểm đó
 export default function ScanPage() {
@@ -19,7 +19,7 @@ export default function ScanPage() {
     started.current = true
     scanQr(token).then(({ data, error: err }) => {
       if (err) return setError(friendlyError(err))
-      if (!data.ok) return setError(data.message)
+      if (!data.ok) return setError(trMsg(data.message))
       toast(tr('Đã xác nhận bạn đang ở điểm này bằng mã QR!'), 'success')
       navigate(`/quest/${data.quest_id}`, { replace: true })
     })

@@ -785,4 +785,10 @@ export default {
   'Đã bật! Tài khoản mới sẽ hiện trong 🔔 Thông báo.': 'Done! New sign-ups will show in 🔔 Notifications.',
   'Bạn có quyền quản trị': 'You have admin access',
   'Bật thông báo để biết ngay mỗi khi có người đăng ký tài khoản mới (giúp phát hiện spam sớm) — kèm tương tác của bạn bè.': 'Turn on notifications to know right away when someone signs up (great for spotting spam early) — plus your friends\' activity.',
+  'Chưa đúng rồi, thử lại nhé!': 'Not quite — try again!',
+  'Mã QR không hợp lệ hoặc đã được thay mới': 'This QR code is invalid or has been replaced',
+  'Cần bật định vị (GPS) hoặc quét mã QR tại điểm để check-in': 'Turn on location (GPS) or scan the QR code at the spot to check in',
+  'Ối, có chút trục trặc': 'Oops, something went wrong',
+  'Có thể web vừa được cập nhật. Tải lại trang để tiếp tục nhé!': 'The site may have just been updated. Reload the page to continue!',
+  'Tải lại trang': 'Reload page',
 }

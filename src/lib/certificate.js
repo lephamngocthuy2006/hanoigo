@@ -44,7 +44,14 @@ async function loadImage(url) {
 
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath()
-  ctx.roundRect(x, y, w, h, r)
+  if (ctx.roundRect) return ctx.roundRect(x, y, w, h, r)
+  // Safari cũ (iOS 15) chưa có roundRect → tự vẽ góc bo
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w, y, r)
+  ctx.closePath()
 }
 
 // Vẽ ảnh phủ kín ô (giống object-fit: cover)

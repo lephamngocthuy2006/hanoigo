@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { emojify } from './Emoji'
 import { tr } from '../lib/i18n'
 
@@ -7,6 +8,7 @@ const CLOSE_MS = 220 // khớp với animation modal-out / sheet-down trong CSS
 /**
  * Cửa sổ nổi. Trên điện thoại là bảng trượt từ dưới lên, có thanh nắm để vuốt xuống đóng.
  * Khi đóng vẫn giữ nội dung cũ thêm một nhịp để chạy hiệu ứng trượt xuống / mờ đi.
+ * Gắn thẳng vào <body> (portal) để không bị lệch khi trang đang chạy hiệu ứng trượt vào.
  */
 export default function Modal({ open, onClose, children, title }) {
   const [shown, setShown] = useState(open)
@@ -63,7 +65,7 @@ export default function Modal({ open, onClose, children, title }) {
 
   if (!shown) return null
   const view = open ? { children, title } : last.current
-  return (
+  return createPortal(
     <div className={`modal-backdrop${closing ? ' closing' : ''}`} onClick={onClose}>
       <div ref={sheetRef} className="modal" role="dialog" aria-modal="true" aria-label={view.title} onClick={(e) => e.stopPropagation()}>
         {onClose && (
@@ -77,6 +79,7 @@ export default function Modal({ open, onClose, children, title }) {
         {view.title && <h3 className="modal-title">{emojify(view.title)}</h3>}
         {view.children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

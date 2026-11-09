@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
 import Icon from './Icon'
 import PushInvite from './PushInvite'
+import ErrorBoundary from './ErrorBoundary'
 import { levelInfo, levelTitle, liveStreak } from '../lib/game'
 import { useFriendships } from '../lib/friends'
 import { useNotifications, notiIcon, notiLink, notiText, personName } from '../lib/social'
@@ -123,7 +124,9 @@ export default function Layout() {
         <Suspense fallback={<div className="page"><div className="spinner" /></div>}>
           {/* key theo đường dẫn → mỗi lần đổi trang chạy lại hiệu ứng trượt vào */}
           <div key={location.pathname} className="page-enter">
-            <Outlet context={{ ...friendships, notifications }} />
+            <ErrorBoundary>
+              <Outlet context={{ ...friendships, notifications }} />
+            </ErrorBoundary>
           </div>
         </Suspense>
       </main>

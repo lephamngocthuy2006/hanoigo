@@ -16,7 +16,7 @@ import QrScanner from '../components/QrScanner'
 import { parseQrToken, scanQr, useQrVerified } from '../lib/qr'
 import { useTours } from '../lib/tours'
 import Emoji, { emojify } from '../components/Emoji'
-import { tr } from '../lib/i18n'
+import { tr, trMsg } from '../lib/i18n'
 
 // key theo id để mỗi nhiệm vụ có state riêng (ảnh, đáp án, popup thưởng…)
 export default function QuestDetail() {
@@ -94,7 +94,7 @@ function QuestDetailInner({ id }) {
     if (!token) return toast(tr('Đây không phải mã QR của HANOI GO!'), 'error')
     const { data, error } = await scanQr(token)
     if (error) return toast(friendlyError(error), 'error')
-    if (!data.ok) return toast(data.message, 'error')
+    if (!data.ok) return toast(trMsg(data.message), 'error')
     toast(tr('Đã xác nhận bạn đang ở điểm này bằng mã QR!'), 'success')
     if (data.quest_id === quest.id) setQrOk(true)
     else navigate(`/quest/${data.quest_id}`)
@@ -106,8 +106,11 @@ function QuestDetailInner({ id }) {
     try {
       let p = pos
       if (needsLocation && !p && !qrOk) {
-        // tài khoản demo vẫn thử lấy vị trí nhưng không bắt buộc
-        p = profile?.is_demo ? await getPosition().catch(() => null) : await locate()
+        // Tài khoản demo không cần vị trí: chỉ thử lấy nhanh tối đa 3 giây rồi gửi luôn
+        // (trên laptop khi thuyết trình, hộp hỏi quyền vị trí có thể bị bỏ qua → không được treo nút)
+        p = profile?.is_demo
+          ? await Promise.race([getPosition({ timeout: 3000 }).catch(() => null), new Promise((r) => setTimeout(() => r(null), 3000))])
+          : await locate()
         if (!p && !profile?.is_demo) return
       }
       if (quest.kind === 'photo') {
@@ -124,7 +127,7 @@ function QuestDetailInner({ id }) {
       })
       if (error) throw error
       if (!data.ok) {
-        toast(data.message, 'error')
+        toast(trMsg(data.message), 'error')
         return
       }
       photoPath = null // đã lưu thành công, không xoá
@@ -206,7 +209,7 @@ function QuestDetailInner({ id }) {
         <section className="card action-card">
           {quest.kind === 'photo' && (
             <>
-              <input ref={fileRef} type="file" accept="image/*" capture="environment" hidden onChange={pickFile} />
+              <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickFile} />
               {preview ? (
                 <div className="photo-preview">
                   <img src={preview} alt={tr('Ảnh đã chọn')} />
