@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Logo from './Logo'
 import Emoji from './Emoji'
 import LangSwitch from './LangSwitch'
+import PraiseWords from './PraiseWords'
 import { ADMIN_CONTACTS } from '../lib/site'
 import { tr } from '../lib/i18n'
 
@@ -76,6 +77,7 @@ export default function SitePaused({ mode = 'guest' }) {
             <img src={`${import.meta.env.BASE_URL}award.jpg`} alt={tr('Khoảnh khắc nhận Giải Quán quân NextGen Tourism Leader 2026')} />
             <span className="photo-shine" aria-hidden="true" />
           </span>
+          <PraiseWords />
           <span className="photo-tag"><Emoji e="🎉" play="loop" /> {tr('Khoảnh khắc nhận giải')}</span>
         </button>
 
