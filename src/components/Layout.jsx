@@ -48,7 +48,7 @@ function SideLink({ to, label, icon, tone, end, badge }) {
 }
 
 export default function Layout() {
-  const { user, profile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
   const navigate = useNavigate()
   const toast = useToast()
   const friendships = useFriendships(user.id)
@@ -57,6 +57,7 @@ export default function Layout() {
   const notifications = useNotifications(user.id, (n) => {
     toast(`${notiIcon(n)} ${personName(n.actor)} ${notiText(n)}`, 'info', { onClick: () => navigate(notiLink(n, user.id)) })
     if (n.kind.startsWith('friend_')) friendships.reload()
+    if (n.kind === 'premium_granted') refreshProfile() // mở khoá Sổ hành trình ngay, không cần tải lại trang
   })
   const unread = notifications.unread
 

@@ -56,6 +56,7 @@ Mỗi người có tài khoản riêng (tên đăng nhập + mật khẩu), dữ
   19. [`supabase/019_bulk_delete_users.sql`](supabase/019_bulk_delete_users.sql) — xoá nhiều tài khoản cùng lúc để dọn spam (Trang quản trị → Người dùng → Chọn nhiều)
   20. [`supabase/020_comment_notification_links.sql`](supabase/020_comment_notification_links.sql) — thông báo bình luận mở thẳng tới đúng bình luận
   21. [`supabase/021_fix_huc_pin.sql`](supabase/021_fix_huc_pin.sql) — dời ghim "Check-in Đại học Văn hóa Hà Nội" vào đúng khuôn viên trường
+  22. [`supabase/022_premium_journal.sql`](supabase/022_premium_journal.sql) — gói Premium cho Sổ hành trình (bật/tắt, giá, thông tin chuyển khoản ở Trang quản trị → Premium)
 3. Vào **Authentication → Sign In / Providers → Email**:
    - **Tắt "Confirm email"** (bắt buộc, vì app dùng tên đăng nhập, không gửi email).
    - Bấm **Save**.

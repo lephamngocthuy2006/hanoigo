@@ -12,6 +12,8 @@ import { loadCommentCounts } from '../lib/social'
 import Modal from '../components/Modal'
 import JournalGrid, { fmtDate } from '../components/JournalGrid'
 import EmptyState from '../components/EmptyState'
+import PremiumPaywall from '../components/PremiumPaywall'
+import { journalLocked, journalPending, useAppSettings } from '../lib/premium'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
 
@@ -28,6 +30,7 @@ export default function JournalPage() {
   const [editing, setEditing] = useState(null) // {} = mới, entry = sửa
   const [viewing, setViewing] = useState(null)
   const [params, setParams] = useSearchParams()
+  const { settings } = useAppSettings()
 
   const load = useCallback(async () => {
     const { data, error } = await supabase.from('journal_entries').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
@@ -67,6 +70,10 @@ export default function JournalPage() {
     setViewing(null)
     load()
   }
+
+  // Đang bật gói Premium mà chưa mua → hiện trang mời mua thay cho Sổ hành trình
+  if (journalPending(profile, settings)) return <div className="page"><div className="spinner" /></div>
+  if (journalLocked(profile, settings)) return <div className="page narrow"><PremiumPaywall settings={settings} /></div>
 
   const places = new Set(entries.map((e) => e.place_name).filter(Boolean)).size
   const photos = entries.filter((e) => e.photo_path).length

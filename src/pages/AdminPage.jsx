@@ -9,6 +9,7 @@ import { levelInfo } from '../lib/game'
 import Modal from '../components/Modal'
 import Stars from '../components/Stars'
 import AdminQrTab from '../components/AdminQrTab'
+import AdminPremiumTab from '../components/AdminPremiumTab'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr, locale, localize } from '../lib/i18n'
 
@@ -23,7 +24,7 @@ export default function AdminPage() {
   const { profile } = useAuth()
   // ?tab=users: mở thẳng tab Người dùng (từ thông báo "vừa đăng ký")
   const [params] = useSearchParams()
-  const [tab, setTab] = useState(() => (['partners', 'users', 'reviews', 'qr'].includes(params.get('tab')) ? params.get('tab') : 'partners'))
+  const [tab, setTab] = useState(() => (['partners', 'users', 'reviews', 'qr', 'premium'].includes(params.get('tab')) ? params.get('tab') : 'partners'))
   const [pending, setPending] = useState(0)
 
   if (!profile) return <div className="page"><div className="spinner" /></div>
@@ -44,11 +45,15 @@ export default function AdminPage() {
         <button className={tab === 'users' ? 'active' : ''} onClick={() => setTab('users')}><Emoji e="👤" play="static" />{tr(' Người dùng')}</button>
         <button className={tab === 'reviews' ? 'active' : ''} onClick={() => setTab('reviews')}><Emoji e="💬" play="static" />{tr(' Đánh giá')}</button>
         <button className={tab === 'qr' ? 'active' : ''} onClick={() => setTab('qr')}><Emoji e="📱" play="static" />{tr(' Mã QR')}</button>
+        {profile.is_super_admin && (
+          <button className={tab === 'premium' ? 'active' : ''} onClick={() => setTab('premium')}><Emoji e="👑" play="static" /> Premium</button>
+        )}
       </div>
       {tab === 'partners' && <PartnersTab onPendingCount={setPending} />}
       {tab === 'users' && <UsersTab />}
       {tab === 'reviews' && <ReviewsTab />}
       {tab === 'qr' && <AdminQrTab />}
+      {tab === 'premium' && profile.is_super_admin && <AdminPremiumTab />}
     </div>
   )
 }
@@ -197,7 +202,7 @@ function UsersTab() {
     const col = SORTS.find((x) => x.id === sort).col
     let q = supabase
       .from('profiles')
-      .select('id, username, display_name, avatar, xp, coins, is_demo, is_admin, is_super_admin, created_at, last_active_date', { count: 'exact' })
+      .select('id, username, display_name, avatar, xp, coins, is_demo, is_admin, is_super_admin, is_premium, created_at, last_active_date', { count: 'exact' })
       .order(col, { ascending: false, nullsFirst: false })
       .order('id')
       .range(page * PAGE, page * PAGE + PAGE - 1)
@@ -229,6 +234,15 @@ function UsersTab() {
   }, [load])
 
   useEffect(() => { loadStats() }, [loadStats])
+
+  const togglePremium = async (u) => {
+    const name = u.display_name || u.username
+    if (u.is_premium && !(await confirm(tr('Tắt gói Premium của {0}?', name), { ok: tr('Tắt Premium'), danger: true }))) return
+    const { error } = await supabase.rpc('admin_set_premium', { p_user_id: u.id, p_on: !u.is_premium })
+    if (error) return toast(friendlyError(error), 'error')
+    toast(!u.is_premium ? tr('Đã mở Premium cho {0} 👑', name) : tr('Đã tắt Premium của {0}', name), 'success')
+    setRows((list) => list.map((x) => (x.id === u.id ? { ...x, is_premium: !u.is_premium } : x)))
+  }
 
   const toggleDemo = async (u) => {
     const { error } = await supabase.rpc('admin_set_demo', { p_user_id: u.id, p_on: !u.is_demo })
@@ -395,6 +409,11 @@ function UsersTab() {
                   <button className={`chip${u.is_demo ? ' active' : ''}`} onClick={() => toggleDemo(u)} title={tr('Chế độ demo: check-in được ở bất kỳ đâu')}>
                     <Emoji e="🎤" play="static" /> Demo {u.is_demo ? tr('bật') : tr('tắt')}
                   </button>
+                  {isSuper && (
+                    <button className={`chip${u.is_premium ? ' active premium-chip' : ''}`} onClick={() => togglePremium(u)} title={tr('Gói Premium cho Sổ hành trình')}>
+                      <Emoji e="👑" play="static" /> Premium {u.is_premium ? tr('bật') : tr('tắt')}
+                    </button>
+                  )}
                   {isSuper && u.id !== user.id && (
                     <button className="chip" onClick={() => setEditing(u)}><Emoji e="🔑" play="static" />{tr(' Phân quyền')}</button>
                   )}

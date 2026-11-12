@@ -13,15 +13,18 @@ import Comments from '../components/Comments'
 import { loadCommentCounts } from '../lib/social'
 import Modal from '../components/Modal'
 import EmptyState from '../components/EmptyState'
+import PremiumPaywall from '../components/PremiumPaywall'
+import { journalLocked, journalPending, useAppSettings } from '../lib/premium'
 import Emoji, { emojify } from '../components/Emoji'
 import { tr } from '../lib/i18n'
 
 export default function FriendProfile() {
   const { username } = useParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const toast = useToast()
   const confirm = useConfirm()
+  const { settings } = useAppSettings()
   const { friends, reload: reloadFriends } = useOutletContext()
   const [person, setPerson] = useState(undefined)
   const [entries, setEntries] = useState([])
@@ -69,7 +72,7 @@ export default function FriendProfile() {
     if (found || entries.length || !person) setParams({}, { replace: true })
   }, [openId, entries, person]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (person === undefined) return <div className="page"><div className="spinner" /></div>
+  if (person === undefined || journalPending(profile, settings)) return <div className="page"><div className="spinner" /></div>
   if (!person) return <div className="page"><p className="muted">{tr('Không tìm thấy người dùng @')}{username}.</p></div>
   if (person.id === user.id) return <Navigate to="/journal" replace />
 
@@ -101,7 +104,9 @@ export default function FriendProfile() {
         </div>
       </section>
 
-      {!friendship ? (
+      {journalLocked(profile, settings) ? (
+        <PremiumPaywall settings={settings} friendName={person.display_name || person.username} />
+      ) : !friendship ? (
         <div className="card center">
           <p>{tr('Hai bạn chưa là bạn bè, nên chưa xem được Sổ hành trình của @')}{person.username}.</p>
           <Link to="/friends" className="btn primary">{tr('Đến trang Bạn bè')}</Link>

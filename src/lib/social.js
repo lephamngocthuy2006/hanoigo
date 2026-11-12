@@ -83,6 +83,8 @@ export function notiText(n) {
     case 'comment_reaction': return tr('đã bày tỏ cảm xúc về bình luận của bạn')
     case 'comment_reply': return tr('đã trả lời bình luận của bạn')
     case 'new_user': return tr('vừa đăng ký tài khoản HANOI GO!')
+    case 'premium_request': return tr('đã báo chuyển khoản gói Premium — vào xác nhận nhé')
+    case 'premium_granted': return tr('đã mở gói Premium cho bạn — Sổ hành trình đã sẵn sàng!')
     case 'friend_request': return tr('đã gửi lời mời kết bạn')
     case 'friend_accept': return tr('đã chấp nhận lời mời kết bạn')
     default: return ''
@@ -91,12 +93,15 @@ export function notiText(n) {
 
 export const notiIcon = (n) =>
   n.kind === 'new_user' ? '🆕' :
+  n.kind.startsWith('premium_') ? '👑' :
   n.kind === 'reaction' || n.kind === 'comment_reaction' ? n.reaction || '❤️' : n.kind === 'friend_request' || n.kind === 'friend_accept' ? '🤝' : '💬'
 
 // Mở đúng chỗ khi bấm vào thông báo
 export function notiLink(n, userId) {
   if (n.kind === 'friend_request') return '/friends'
   if (n.kind === 'new_user') return '/admin?tab=users'
+  if (n.kind === 'premium_request') return '/admin?tab=premium'
+  if (n.kind === 'premium_granted') return '/journal'
   if (n.kind === 'friend_accept') return `/u/${n.actor?.username}`
   if (!n.entry) return '/journal'
   // có comment_id (trả lời / cảm xúc bình luận) → mở bài rồi cuộn tới đúng bình luận

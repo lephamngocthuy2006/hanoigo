@@ -75,6 +75,7 @@ export default function MePage() {
         <div className="profile-avatar"><Emoji e={profile.avatar} play="loop" /></div>
         <h1>{profile.display_name || profile.username}</h1>
         <div className="muted">@{profile.username}</div>
+        {profile.is_premium && <span className="tag gold premium-tag"><Emoji e="👑" play="static" /> Premium</span>}
         {profile.is_demo && <span className="tag ok" title={tr('Check-in được ở bất kỳ đâu khi thuyết trình')}><Emoji e="🎤" play="static" />{tr(' Chế độ demo')}</span>}
         {profile.bio && <p className="bio">{profile.bio}</p>}
         <button className="ghost small" onClick={() => setEditOpen(true)}><Emoji e="✏️" play="static" />{tr(' Chỉnh sửa hồ sơ')}</button>
