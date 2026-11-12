@@ -11,6 +11,9 @@ const WORDS = {
     'Quá dữ', 'Nhất rồi 🥇', 'Iu quá 💖', 'Đỉnh nóc kịch trần', 'Đỉnh nóc, kịch trần, bay phấp phới 🚀',
     'Số 1 luôn ☝️', 'Đẹp quá trời 🌸', 'Ngầu xỉu', 'Trên cả tuyệt vời', 'Quá là xịn', 'Vỗ tay! 👏👏',
     'Chiến thần 💪', 'Huyền thoại', '100 điểm 💯', 'Đỉnh thật sự', 'Ghê chưa 😤', 'Ối dồi ôi đỉnh',
+    // mấy từ bạn ấy hay dùng
+    'Nổ! 💥', 'Nổ quá', 'Nổ banh nóc 💥', 'Nổ tung trời', 'Phê!', 'Phê vãi', 'Phê quá 🤤', 'Phê pha',
+    'Phê lòi', 'Nổ vãi', 'Vừa nổ vừa phê 🔥',
   ],
   en: [
     'So cool!', 'Iconic 😎', 'Legend!', 'GOAT 🐐', '10/10!', 'Champion 🏆', 'Slay 💅', 'Unstoppable',
