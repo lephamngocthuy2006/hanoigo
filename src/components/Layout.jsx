@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Logo from './Logo'
@@ -11,6 +11,8 @@ import { useNotifications, notiIcon, notiLink, notiText, personName } from '../l
 import { useToast } from '../context/ToastContext'
 import Emoji, { emojify } from './Emoji'
 import { tr } from '../lib/i18n'
+import { useSiteStatus, setSitePaused } from '../lib/site'
+import { friendlyError } from '../lib/supabase'
 
 const TABS = [
   { to: '/journal', label: tr('Sổ hành trình'), icon: '📸' },
@@ -60,6 +62,21 @@ export default function Layout() {
     if (n.kind === 'premium_granted') refreshProfile() // mở khoá Sổ hành trình ngay, không cần tải lại trang
   })
   const unread = notifications.unread
+
+  // Chủ web: web đang tạm ngưng thì hiện thanh nhắc + nút mở lại
+  const site = useSiteStatus()
+  const [reopening, setReopening] = useState(false)
+  const reopen = async () => {
+    setReopening(true)
+    try {
+      await setSitePaused(false)
+      toast(tr('Đã mở lại web cho mọi người 🎉'), 'success')
+    } catch (e) {
+      toast(friendlyError(e), 'error')
+    } finally {
+      setReopening(false)
+    }
+  }
 
   // Sang trang mới thì về đầu trang (bấm Quay lại thì giữ nguyên vị trí)
   const location = useLocation()
@@ -122,6 +139,12 @@ export default function Layout() {
         </div>
       </header>
       <main className="content">
+        {profile?.is_owner && site.status?.paused && (
+          <div className="owner-bar">
+            <span>{tr('⏸️ Web đang tạm ngưng — chỉ bạn (chủ web) thấy nội dung này')}</span>
+            <button className="btn small primary" disabled={reopening} onClick={reopen}>{tr('Mở lại web')}</button>
+          </div>
+        )}
         <Suspense fallback={<div className="page"><div className="spinner" /></div>}>
           {/* key theo đường dẫn → mỗi lần đổi trang chạy lại hiệu ứng trượt vào */}
           <div key={location.pathname} className="page-enter">

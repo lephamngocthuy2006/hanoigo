@@ -10,6 +10,8 @@ import JournalPage from './pages/JournalPage'
 import EventsPage from './pages/EventsPage'
 import MePage from './pages/MePage'
 import Splash from './components/Splash'
+import SitePaused from './components/SitePaused'
+import { useSiteStatus } from './lib/site'
 import FriendsPage from './pages/FriendsPage'
 import FriendProfile from './pages/FriendProfile'
 import NotificationsPage from './pages/NotificationsPage'
@@ -24,9 +26,26 @@ const PartnerPage = lazy(() => import('./pages/PartnerPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 export default function App() {
-  const { session, loading } = useAuth()
+  const { session, profile, loading, signOut } = useAuth()
   const location = useLocation()
-  if (loading) return <Splash />
+  const site = useSiteStatus()
+  if (loading || site.loading) return <Splash />
+
+  // Chủ web đã tạm ngưng web: ai cũng chỉ thấy trang thông báo, riêng chủ web vẫn dùng bình thường
+  if (site.status.paused && !profile?.is_owner) {
+    if (!session) {
+      return (
+        <Routes>
+          <Route path="/login" element={<AuthPage mode="login" />} />
+          <Route path="*" element={<SitePaused mode="guest" />} />
+        </Routes>
+      )
+    }
+    // vừa đăng nhập, hồ sơ chưa tải xong → chờ (có thể là chủ web)
+    if (!profile) return <Splash />
+    return <SitePaused mode="user" onSignOut={signOut} />
+  }
+
   if (!session) {
     return (
       <Routes>
@@ -64,6 +83,7 @@ export default function App() {
         <Route path="/scan/:token" element={<ScanPage />} />
         <Route path="/cert/:code" element={<CertPage signedIn />} />
       </Route>
+      {profile?.is_owner && <Route path="/paused-preview" element={<SitePaused mode="preview" />} />}
       <Route path="*" element={<Navigate to={backTo} state={backState} replace />} />
     </Routes>
   )

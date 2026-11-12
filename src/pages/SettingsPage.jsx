@@ -8,6 +8,8 @@ import Emoji from '../components/Emoji'
 import LangSwitch from '../components/LangSwitch'
 import ThemeSwitch from '../components/ThemeSwitch'
 import { tr } from '../lib/i18n'
+import { useConfirm } from '../context/ConfirmContext'
+import { useSiteStatus, setSitePaused } from '../lib/site'
 
 // Cài đặt: ngôn ngữ, giao diện Sáng / Tối / Theo máy, thông báo đẩy, cài app
 export default function SettingsPage() {
@@ -17,6 +19,24 @@ export default function SettingsPage() {
   const toast = useToast()
   const push = usePush(user.id)
   const app = useInstall()
+  const confirm = useConfirm()
+  const site = useSiteStatus()
+  const [siteBusy, setSiteBusy] = useState(false)
+
+  // Chỉ chủ web: tạm ngưng / mở lại web cho mọi người
+  const toggleSite = async () => {
+    const pause = !site.status?.paused
+    if (pause && !(await confirm(tr('Tạm ngưng web? Mọi người (kể cả quản trị viên) sẽ chỉ thấy trang thông báo, riêng bạn vẫn dùng bình thường.'), { ok: tr('Tạm ngưng'), danger: true }))) return
+    setSiteBusy(true)
+    try {
+      await setSitePaused(pause)
+      toast(pause ? tr('Đã tạm ngưng web ⏸️') : tr('Đã mở lại web cho mọi người 🎉'), pause ? 'info' : 'success')
+    } catch (e) {
+      toast(friendlyError(e), 'error')
+    } finally {
+      setSiteBusy(false)
+    }
+  }
 
   const togglePush = async () => {
     try {
@@ -59,6 +79,26 @@ export default function SettingsPage() {
         <h1>{tr('Cài đặt')}</h1>
         <p className="muted small">{tr('Tuỳ chỉnh HANOI GO! theo cách bạn thích. Lựa chọn được lưu trên thiết bị này.')}</p>
       </header>
+
+      {profile?.is_owner && (
+        <section className="card settings owner-card">
+          <div className="setting-row">
+            <span className="setting-icon"><Emoji e={site.status?.paused ? '⏸️' : '🟢'} play="static" /></span>
+            <div className="setting-text">
+              <strong>{tr('Trạng thái web')} <span className="tag gold">{tr('Chủ web')}</span></strong>
+              <span className="muted small">
+                {site.status?.paused
+                  ? tr('Đang tạm ngưng — mọi người chỉ thấy trang thông báo đạt giải và liên hệ admin.')
+                  : tr('Đang mở cho mọi người. Tạm ngưng thì ai vào web cũng chỉ thấy trang thông báo.')}{' '}
+                <button type="button" className="link-btn" onClick={() => navigate('/paused-preview')}>{tr('Xem trước trang thông báo')}</button>
+              </span>
+            </div>
+            <button className={`btn ${site.status?.paused ? 'primary' : 'danger-fill'} setting-btn`} disabled={siteBusy || site.loading} onClick={toggleSite}>
+              {siteBusy ? tr('Đang xử lý…') : site.status?.paused ? tr('Mở lại web') : tr('Tạm ngưng')}
+            </button>
+          </div>
+        </section>
+      )}
 
       <section className="card settings">
         <div className="setting-row">
