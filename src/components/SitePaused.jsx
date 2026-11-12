@@ -27,10 +27,10 @@ function makeConfetti(n, burst = false) {
 
 /**
  * Trang "Web tạm ngưng" — hiện cho mọi người khi chủ web bật tạm ngưng.
- * mode: 'guest' (chưa đăng nhập → có link Đăng nhập nhỏ), 'user' (đã đăng nhập → Đăng xuất),
- *       'preview' (chủ web xem thử → nút quay lại web)
+ * Không có nút đăng nhập / đăng xuất: chủ web vào thẳng đường dẫn #/login để đăng nhập.
+ * mode: 'preview' (chủ web xem thử → nút quay lại web), còn lại hiện như mọi người
  */
-export default function SitePaused({ mode = 'guest', onSignOut }) {
+export default function SitePaused({ mode = 'guest' }) {
   const navigate = useNavigate()
   const rain = useMemo(() => makeConfetti(46), [])
   const sparkles = useMemo(() => Array.from({ length: 22 }, (_, i) => ({ id: i, x: rand(2, 98), y: rand(2, 98), d: rand(1.8, 4), delay: rand(0, 4), s: rand(0.5, 1.2) })), [])
@@ -106,8 +106,6 @@ export default function SitePaused({ mode = 'guest', onSignOut }) {
 
         <footer className="paused-foot">
           <span>{tr('Hẹn gặp lại bạn ở những hành trình tiếp theo')} <Emoji e="💛" play="loop" /></span>
-          {mode === 'guest' && <button type="button" className="paused-login" onClick={() => navigate('/login')}>{tr('Đăng nhập')}</button>}
-          {mode === 'user' && <button type="button" className="paused-login" onClick={onSignOut}>{tr('Đăng xuất')}</button>}
           {mode === 'preview' && <button type="button" className="btn small" onClick={() => navigate('/settings')}>{tr('← Quay lại web')}</button>}
         </footer>
       </main>

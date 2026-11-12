@@ -26,12 +26,13 @@ const PartnerPage = lazy(() => import('./pages/PartnerPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 
 export default function App() {
-  const { session, profile, loading, signOut } = useAuth()
+  const { session, profile, loading } = useAuth()
   const location = useLocation()
   const site = useSiteStatus()
   if (loading || site.loading) return <Splash />
 
-  // Chủ web đã tạm ngưng web: ai cũng chỉ thấy trang thông báo, riêng chủ web vẫn dùng bình thường
+  // Chủ web đã tạm ngưng web: ai cũng chỉ thấy trang thông báo, riêng chủ web vẫn dùng bình thường.
+  // Trang thông báo không có nút đăng nhập — chủ web gõ thẳng .../#/login
   if (site.status.paused && !profile?.is_owner) {
     if (!session) {
       return (
@@ -43,7 +44,7 @@ export default function App() {
     }
     // vừa đăng nhập, hồ sơ chưa tải xong → chờ (có thể là chủ web)
     if (!profile) return <Splash />
-    return <SitePaused mode="user" onSignOut={signOut} />
+    return <SitePaused mode="user" />
   }
 
   if (!session) {
