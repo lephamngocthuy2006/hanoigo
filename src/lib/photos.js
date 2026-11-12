@@ -36,6 +36,15 @@ export async function uploadPhoto(userId, file) {
   return path
 }
 
+// Ảnh bill chuyển khoản (gói Premium): tên bắt đầu bằng bill- để quản trị viên tối cao xem được khi đối soát
+export async function uploadBill(userId, file) {
+  const blob = await compressImage(file, 2000, 0.85)
+  const path = `${userId}/bill-${Date.now()}-${Math.random().toString(36).slice(2, 6)}.jpg`
+  const { error } = await supabase.storage.from('photos').upload(path, blob, { contentType: 'image/jpeg' })
+  if (error) throw error
+  return path
+}
+
 // Ảnh để private → cần signed URL (hết hạn sau 1 giờ). Cache trong phiên nhưng chỉ dùng lại
 // link còn hạn ít nhất 10 phút — để tab mở lâu không bị ảnh vỡ (link cũ đã hết hạn).
 const TTL = 3600

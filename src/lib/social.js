@@ -85,6 +85,7 @@ export function notiText(n) {
     case 'new_user': return tr('vừa đăng ký tài khoản HANOI GO!')
     case 'premium_request': return tr('đã báo chuyển khoản gói Premium — vào xác nhận nhé')
     case 'premium_granted': return tr('đã mở gói Premium cho bạn — Sổ hành trình đã sẵn sàng!')
+    case 'premium_auto': return tr('đã gửi bill và được mở Premium tự động — kiểm tra lại khi rảnh nhé')
     case 'friend_request': return tr('đã gửi lời mời kết bạn')
     case 'friend_accept': return tr('đã chấp nhận lời mời kết bạn')
     default: return ''
@@ -100,7 +101,7 @@ export const notiIcon = (n) =>
 export function notiLink(n, userId) {
   if (n.kind === 'friend_request') return '/friends'
   if (n.kind === 'new_user') return '/admin?tab=users'
-  if (n.kind === 'premium_request') return '/admin?tab=premium'
+  if (n.kind === 'premium_request' || n.kind === 'premium_auto') return '/admin?tab=premium'
   if (n.kind === 'premium_granted') return '/journal'
   if (n.kind === 'friend_accept') return `/u/${n.actor?.username}`
   if (!n.entry) return '/journal'

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { fmtVnd, transferNote } from '../lib/premium'
 import { findBank, vietQrPayload } from '../lib/vietqr'
+import { uploadBill } from '../lib/photos'
+import { scanBill } from '../lib/billScan'
 import Emoji from './Emoji'
 import { tr } from '../lib/i18n'
 
@@ -33,10 +35,11 @@ function CopyRow({ label, value, copy: copyValue = value, mono }) {
  * friendName: đang xem Sổ của bạn bè thì ghi tên người đó.
  */
 export default function PremiumPaywall({ settings, friendName }) {
-  const { user, profile } = useAuth()
+  const { user, profile, refreshProfile } = useAuth()
   const toast = useToast()
   const [pending, setPending] = useState(null) // null: đang kiểm tra, false: chưa báo, object: đang chờ
-  const [busy, setBusy] = useState(false)
+  const [step, setStep] = useState(null) // null | 'upload' | số % đang đọc bill | 'save'
+  const billRef = useRef(null)
 
   useEffect(() => {
     supabase.from('premium_requests').select('id, created_at').eq('user_id', user.id).eq('status', 'pending').maybeSingle()
@@ -55,13 +58,33 @@ export default function PremiumPaywall({ settings, friendName }) {
     QRCode.toDataURL(payload, { width: 520, margin: 1, errorCorrectionLevel: 'M', color: { dark: '#1f1815', light: '#ffffff' } }).then(setQr)
   }, [payload])
 
-  const report = async () => {
-    setBusy(true)
-    const { data, error } = await supabase.rpc('request_premium', { p_note: note })
-    setBusy(false)
-    if (error) return toast(friendlyError(error), 'error')
-    setPending({ id: data.id, created_at: new Date().toISOString() })
-    toast(tr('Đã báo cho quản trị viên — gói Premium sẽ được mở sau khi xác nhận nhé!'), 'success')
+  // Tải bill lên → đọc chữ trên bill ngay trên máy → đúng số tiền + nội dung thì mở Premium luôn
+  const onBill = async (e) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    if (!file.type.startsWith('image/')) return toast(tr('Vui lòng chọn ảnh chụp bill'), 'error')
+    try {
+      setStep('upload')
+      const [path, check] = await Promise.all([
+        uploadBill(user.id, file),
+        scanBill(file, { amount: price, note, onProgress: (p) => setStep(p) }).catch(() => ({ ok: false, summary: 'Bill: không đọc được ảnh' })),
+      ])
+      setStep('save')
+      const { data, error } = await supabase.rpc('submit_premium_bill', { p_bill_path: path, p_auto: check.ok, p_ocr: check.summary })
+      if (error) throw error
+      if (data.granted) {
+        toast(tr('Đã kiểm tra bill — gói Premium đã mở! 👑'), 'success')
+        await refreshProfile() // trang tự mở khoá Sổ hành trình
+      } else {
+        setPending({ id: data.id, created_at: new Date().toISOString() })
+        toast(tr('Chưa đọc rõ số tiền hoặc nội dung trên bill — đã gửi cho quản trị viên kiểm tra nhé.'), 'info')
+      }
+    } catch (err) {
+      toast(friendlyError(err), 'error')
+    } finally {
+      setStep(null)
+    }
   }
 
   return (
@@ -108,15 +131,25 @@ export default function PremiumPaywall({ settings, friendName }) {
             <CopyRow label={tr('Số tiền')} value={fmtVnd(price)} copy={price} mono />
             <CopyRow label={tr('Nội dung chuyển khoản')} value={note} mono />
             <p className="muted small">{tr('Ghi đúng nội dung để quản trị viên nhận ra tài khoản của bạn. Bấm vào từng dòng để sao chép.')}</p>
-            {pending === null ? <div className="spinner small" /> : pending ? (
+            <input ref={billRef} type="file" accept="image/*" hidden onChange={onBill} />
+            {pending === null ? <div className="spinner small" /> : pending && step === null ? (
               <div className="paywall-pending">
                 <Emoji e="⏳" play="loop" />
-                <span>{tr('Đã báo chuyển khoản — đang chờ quản trị viên xác nhận. Bạn sẽ nhận thông báo khi gói được mở.')}</span>
+                <span>
+                  {tr('Bill đã gửi — đang chờ quản trị viên kiểm tra. Bạn sẽ nhận thông báo khi gói được mở.')}{' '}
+                  <button type="button" className="link-btn" onClick={() => billRef.current.click()}>{tr('Gửi lại ảnh bill rõ hơn')}</button>
+                </span>
               </div>
             ) : (
-              <button className="btn gold block big" disabled={busy} onClick={report}>
-                {busy ? tr('Đang gửi…') : tr('Tôi đã chuyển khoản')}
-              </button>
+              <div className="bill-step">
+                <button className="btn gold block big" disabled={step !== null} onClick={() => billRef.current.click()}>
+                  {step === null ? tr('📸 Tải ảnh bill chuyển khoản')
+                    : step === 'upload' ? tr('Đang tải bill lên…')
+                    : step === 'save' ? tr('Đang mở gói…')
+                    : tr('Đang kiểm tra bill… {0}%', step)}
+                </button>
+                <p className="muted small center">{tr('Chuyển khoản xong, chụp màn hình giao dịch thành công rồi tải lên — web tự kiểm tra số tiền và nội dung, đúng là mở Premium ngay.')}</p>
+              </div>
             )}
           </>
         ) : (

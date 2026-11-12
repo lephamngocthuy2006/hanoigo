@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext'
 import { useConfirm } from '../context/ConfirmContext'
 import { fmtVnd, useAppSettings } from '../lib/premium'
 import { BANKS, findBank, vietQrPayload } from '../lib/vietqr'
+import { signedUrls } from '../lib/photos'
 import Emoji from './Emoji'
 import { tr, locale } from '../lib/i18n'
 
@@ -16,6 +17,16 @@ export function Toggle({ checked, onChange, disabled, label }) {
       <span className="toggle-track" aria-hidden="true"><span className="toggle-thumb" /></span>
       {label && <span className="toggle-label">{label}</span>}
     </label>
+  )
+}
+
+// Ảnh bill thu nhỏ, bấm để mở to ở tab mới
+function BillThumb({ url }) {
+  if (!url) return null
+  return (
+    <a className="bill-thumb" href={url} target="_blank" rel="noreferrer" title={tr('Xem ảnh bill')}>
+      <img src={url} alt={tr('Ảnh bill')} loading="lazy" />
+    </a>
   )
 }
 
@@ -33,6 +44,8 @@ export default function AdminPremiumTab() {
   const [saving, setSaving] = useState(false)
   const [requests, setRequests] = useState(null)
   const [members, setMembers] = useState(null)
+  const [approved, setApproved] = useState([]) // yêu cầu đã duyệt (tự động / tay) — để đối soát
+  const [bills, setBills] = useState({}) // bill_path -> signed url
   const [busyId, setBusyId] = useState(null)
 
   useEffect(() => { if (settings && !form) setForm({ ...settings }) }, [settings, form])
@@ -46,16 +59,18 @@ export default function AdminPremiumTab() {
   }, [previewPayload])
 
   const loadLists = useCallback(async () => {
-    const [r, m] = await Promise.all([
-      supabase.from('premium_requests')
-        .select('id, user_id, amount, note, status, created_at, profiles!premium_requests_user_id_fkey(username, display_name, avatar, is_premium)')
-        .eq('status', 'pending').order('created_at', { ascending: false }),
+    const cols = 'id, user_id, amount, note, status, created_at, decided_at, bill_path, auto, profiles!premium_requests_user_id_fkey(username, display_name, avatar, is_premium)'
+    const [r, m, a] = await Promise.all([
+      supabase.from('premium_requests').select(cols).eq('status', 'pending').order('created_at', { ascending: false }),
       supabase.from('profiles').select('id, username, display_name, avatar, premium_since')
         .eq('is_premium', true).order('premium_since', { ascending: false }),
+      supabase.from('premium_requests').select(cols).eq('status', 'approved').order('decided_at', { ascending: false }).limit(500),
     ])
     if (r.error) toast(friendlyError(r.error), 'error')
     setRequests(r.data || [])
     setMembers(m.data || [])
+    setApproved(a.data || [])
+    setBills(await signedUrls([...(r.data || []), ...(a.data || [])].map((x) => x.bill_path).filter(Boolean)))
   }, [toast])
   useEffect(() => { loadLists() }, [loadLists])
 
@@ -164,6 +179,7 @@ export default function AdminPremiumTab() {
                 <span className="muted small">@{p.username} · {fmtTime(r.created_at)} · {fmtVnd(r.amount)}</span>
                 {r.note && <span className="small mono">{r.note}</span>}
               </div>
+              <BillThumb url={bills[r.bill_path]} />
               <div className="premium-req-actions">
                 <button className="btn small primary" disabled={busyId === r.user_id} onClick={() => setPremium(r.user_id, true, name)}>{tr('Mở Premium')}</button>
                 <button className="btn small" disabled={busyId === r.user_id} onClick={() => setPremium(r.user_id, false, name)}>{tr('Từ chối')}</button>
@@ -173,6 +189,24 @@ export default function AdminPremiumTab() {
         })}
       </section>
 
+      {(() => {
+        const autoN = approved.filter((x) => x.auto).length
+        const manualN = approved.length - autoN
+        const expected = approved.reduce((s, x) => s + (x.amount || 0), 0)
+        return (
+          <section className="card reconcile">
+            <h3><Emoji e="🧾" play="static" />{tr(' Đối soát')}</h3>
+            <div className="kpi-grid">
+              <div className="kpi"><strong>{members?.length ?? '…'}</strong><span>{tr('Đang có Premium')}</span></div>
+              <div className="kpi"><strong>{autoN}</strong><span>{tr('Mở tự động bằng bill')}</span></div>
+              <div className="kpi"><strong>{manualN}</strong><span>{tr('Duyệt tay')}</span></div>
+              <div className="kpi"><strong>{fmtVnd(expected)}</strong><span>{tr('Tổng tiền lẽ ra đã nhận')}</span></div>
+            </div>
+            <p className="muted small">{tr('So con số này với tổng tiền thực nhận trong sao kê ngân hàng. Nếu thiếu, soi ảnh bill ở danh sách bên dưới rồi gạt tắt Premium (và xoá tài khoản ở tab Người dùng nếu cần).')}</p>
+          </section>
+        )
+      })()}
+
       <section className="card">
         <div className="section-head">
           <h3><Emoji e="👑" play="static" />{tr(' Thành viên Premium')}</h3>
@@ -180,16 +214,24 @@ export default function AdminPremiumTab() {
         </div>
         {!members ? <div className="spinner" /> : members.length === 0 ? (
           <p className="muted small">{tr('Chưa có ai. Bạn cũng có thể mở Premium cho từng người ở tab Người dùng.')}</p>
-        ) : members.map((m) => (
-          <div key={m.id} className="premium-req">
-            <span className="rank-avatar"><Emoji e={m.avatar || '🐢'} play="static" /></span>
-            <div className="premium-req-body">
-              <strong>{m.display_name || m.username}</strong>
-              <span className="muted small">@{m.username}{m.premium_since && tr(' · từ {0}', fmtTime(m.premium_since))}</span>
+        ) : members.map((m) => {
+          const req = approved.find((x) => x.user_id === m.id) // lần mở gần nhất
+          return (
+            <div key={m.id} className="premium-req">
+              <span className="rank-avatar"><Emoji e={m.avatar || '🐢'} play="static" /></span>
+              <div className="premium-req-body">
+                <strong>
+                  {m.display_name || m.username}{' '}
+                  <span className={`tag ${req?.auto ? 'new' : 'ok'}`}>{req ? (req.auto ? tr('Tự động') : tr('Duyệt tay')) : tr('Mở tay, không bill')}</span>
+                </strong>
+                <span className="muted small">@{m.username}{m.premium_since && tr(' · từ {0}', fmtTime(m.premium_since))}{req && ` · ${fmtVnd(req.amount)}`}</span>
+                {req?.note && <span className="small mono">{req.note}</span>}
+              </div>
+              <BillThumb url={bills[req?.bill_path]} />
+              <Toggle checked disabled={busyId === m.id} onChange={() => setPremium(m.id, false, m.display_name || m.username)} />
             </div>
-            <Toggle checked disabled={busyId === m.id} onChange={() => setPremium(m.id, false, m.display_name || m.username)} />
-          </div>
-        ))}
+          )
+        })}
       </section>
     </>
   )
