@@ -875,7 +875,7 @@ export default {
   'Khoảnh khắc nhận Giải Quán quân NextGen Tourism Leader 2026': 'Receiving the NextGen Tourism Leader 2026 Champion award',
   'Khoảnh khắc nhận giải': 'The winning moment',
   'HANOI GO! xin phép': 'HANOI GO! is taking',
-  'tạm nghỉ một chút': 'a little break',
+  'tạm ngưng một thời gian': 'a break for a while',
   'Cảm ơn bạn đã cùng HANOI GO! dạo khắp Hà Nội! Dự án đã khép lại chặng đường thi thật đẹp với': 'Thank you for exploring Hanoi with HANOI GO! Our competition journey ended beautifully with the',
   'Giải Quán quân NextGen Tourism Leader 2026': 'NextGen Tourism Leader 2026 Champion award',
   'tại Trường Đại học Văn hoá Hà Nội.': 'at Hanoi University of Culture.',

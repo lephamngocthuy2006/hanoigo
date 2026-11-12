@@ -81,7 +81,7 @@ export default function SitePaused({ mode = 'guest' }) {
 
         <h1 className="paused-title">
           <span className="line1">{tr('HANOI GO! xin phép')}</span>
-          <span className="line2">{tr('tạm nghỉ một chút')}</span>
+          <span className="line2">{tr('tạm ngưng một thời gian')}</span>
         </h1>
 
         <p className="paused-text">
