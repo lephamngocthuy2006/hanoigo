@@ -39,5 +39,5 @@ export async function setSitePaused(paused) {
 
 // Liên hệ admin khi web tạm ngưng
 export const ADMIN_CONTACTS = [
-  { name: 'Lê Ngọc Thuỷ', role: 'Admin · Quán quân', url: 'https://web.facebook.com/le.ngoc.thuy.373839' },
+  { name: 'Lê Phạm Ngọc Thuỷ', role: 'Admin · Quán quân', url: 'https://web.facebook.com/le.ngoc.thuy.373839' },
 ]
