@@ -41,5 +41,5 @@ export const journalPending = (profile, settings) =>
 
 export const fmtVnd = (n) => `${Number(n || 0).toLocaleString('vi-VN')}đ`
 
-// Nội dung chuyển khoản để quản trị viên đối chiếu
-export const transferNote = (username) => `HANOIGO ${username || ''}`.trim().toUpperCase()
+// Nội dung chuyển khoản (dùng chung cho chữ và mã QR) để quản trị viên đối chiếu
+export { transferNote } from './vietqr'

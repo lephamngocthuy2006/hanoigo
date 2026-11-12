@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
+import QRCode from 'qrcode'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { fmtVnd, transferNote } from '../lib/premium'
+import { findBank, vietQrPayload } from '../lib/vietqr'
 import Emoji from './Emoji'
 import { tr } from '../lib/i18n'
 
@@ -43,6 +45,15 @@ export default function PremiumPaywall({ settings, friendName }) {
 
   const hasBank = settings?.bank_account && settings?.bank_holder
   const note = transferNote(profile?.username)
+  const price = settings?.premium_price ?? 13000
+
+  // Mã VietQR: quét bằng app ngân hàng là điền sẵn tài khoản, số tiền, nội dung
+  const [qr, setQr] = useState(null)
+  const payload = hasBank ? vietQrPayload({ bankName: settings.bank_name, account: settings.bank_account, amount: price, note }) : null
+  useEffect(() => {
+    if (!payload) return setQr(null)
+    QRCode.toDataURL(payload, { width: 520, margin: 1, errorCorrectionLevel: 'M', color: { dark: '#1f1815', light: '#ffffff' } }).then(setQr)
+  }, [payload])
 
   const report = async () => {
     setBusy(true)
@@ -79,10 +90,22 @@ export default function PremiumPaywall({ settings, friendName }) {
         <h3><Emoji e="🏦" play="static" />{tr(' Chuyển khoản để mua gói')}</h3>
         {hasBank ? (
           <>
-            {settings.bank_name && <CopyRow label={tr('Ngân hàng')} value={settings.bank_name} />}
+            {qr && (
+              <div className="vietqr">
+                <div className="vietqr-frame">
+                  <img src={qr} alt={tr('Mã VietQR chuyển khoản {0}', fmtVnd(price))} />
+                  <span className="vietqr-badge">VietQR · NAPAS 247</span>
+                </div>
+                <p className="small"><strong>{tr('Mở app ngân hàng → Quét mã QR')}</strong><br />
+                  <span className="muted">{tr('Số tiền {0} và nội dung chuyển khoản đã được điền sẵn.', fmtVnd(price))}</span></p>
+                <a className="btn small" href={qr} download={`hanoigo-premium-${profile?.username || 'qr'}.png`}><Emoji e="⬇️" play="static" />{tr(' Lưu ảnh QR')}</a>
+              </div>
+            )}
+            {qr && <div className="pay-or"><span>{tr('hoặc chuyển khoản thủ công')}</span></div>}
+            {settings.bank_name && <CopyRow label={tr('Ngân hàng')} value={findBank(settings.bank_name)?.name || settings.bank_name} />}
             <CopyRow label={tr('Số tài khoản')} value={settings.bank_account} mono />
             <CopyRow label={tr('Chủ tài khoản')} value={settings.bank_holder} />
-            <CopyRow label={tr('Số tiền')} value={fmtVnd(settings.premium_price ?? 13000)} copy={settings.premium_price ?? 13000} mono />
+            <CopyRow label={tr('Số tiền')} value={fmtVnd(price)} copy={price} mono />
             <CopyRow label={tr('Nội dung chuyển khoản')} value={note} mono />
             <p className="muted small">{tr('Ghi đúng nội dung để quản trị viên nhận ra tài khoản của bạn. Bấm vào từng dòng để sao chép.')}</p>
             {pending === null ? <div className="spinner small" /> : pending ? (

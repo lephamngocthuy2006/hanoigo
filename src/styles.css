@@ -1284,3 +1284,16 @@ body.table-slam #root { animation: table-slam 0.65s cubic-bezier(.36,.07,.19,.97
 .premium-req:first-of-type { border-top: 0; }
 .premium-req-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .premium-req-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Mã VietQR trên trang mua Premium */
+.vietqr { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 6px 0 4px; }
+.vietqr-frame { position: relative; padding: 12px 12px 22px; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(60, 30, 20, 0.14), inset 0 0 0 1px var(--line); }
+.vietqr-frame img { display: block; width: min(240px, 64vw); height: auto; image-rendering: pixelated; }
+.vietqr-badge { position: absolute; left: 50%; bottom: 5px; transform: translateX(-50%); white-space: nowrap; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.06em; color: #8f2d3a; }
+.vietqr p { margin: 4px 0 0; }
+.vietqr .btn { text-decoration: none; }
+.pay-or { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; color: var(--muted); font-size: 0.78rem; font-weight: 600; }
+.pay-or::before, .pay-or::after { content: ''; flex: 1; border-top: 1px dashed var(--line); }
+.qr-ok-text { color: var(--ok); font-weight: 700; }
+.qr-preview-admin { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 12px; margin-bottom: 12px; border-radius: 14px; background: var(--paper); border: 1px dashed var(--line); }
+.qr-preview-admin img { width: 112px; height: 112px; border-radius: 10px; background: #fff; padding: 6px; flex-shrink: 0; image-rendering: pixelated; }

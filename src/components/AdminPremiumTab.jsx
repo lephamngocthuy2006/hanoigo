@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
+import QRCode from 'qrcode'
 import { supabase, friendlyError } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
 import { useConfirm } from '../context/ConfirmContext'
 import { fmtVnd, useAppSettings } from '../lib/premium'
+import { BANKS, findBank, vietQrPayload } from '../lib/vietqr'
 import Emoji from './Emoji'
 import { tr, locale } from '../lib/i18n'
 
@@ -34,6 +36,14 @@ export default function AdminPremiumTab() {
   const [busyId, setBusyId] = useState(null)
 
   useEffect(() => { if (settings && !form) setForm({ ...settings }) }, [settings, form])
+
+  // Xem trước mã VietQR người dùng sẽ thấy (nội dung mẫu)
+  const [qrPreview, setQrPreview] = useState(null)
+  const previewPayload = form && vietQrPayload({ bankName: form.bank_name, account: form.bank_account, amount: form.premium_price, note: 'HANOIGO TEN DANG NHAP' })
+  useEffect(() => {
+    if (!previewPayload) return setQrPreview(null)
+    QRCode.toDataURL(previewPayload, { width: 360, margin: 1 }).then(setQrPreview)
+  }, [previewPayload])
 
   const loadLists = useCallback(async () => {
     const [r, m] = await Promise.all([
@@ -111,7 +121,14 @@ export default function AdminPremiumTab() {
             <small className="muted">{tr('Hiển thị: ')}{fmtVnd(form.premium_price)}</small>
           </label>
           <label className="field"><span>{tr('Ngân hàng')}</span>
-            <input value={form.bank_name} onChange={(e) => set('bank_name')(e.target.value)} placeholder={tr('vd: Vietcombank, MB Bank, Momo…')} maxLength={80} />
+            <input value={form.bank_name} onChange={(e) => set('bank_name')(e.target.value)} list="vietqr-banks"
+              placeholder={tr('Chọn trong danh sách, vd: Vietcombank, MB Bank…')} maxLength={80} />
+            <datalist id="vietqr-banks">{BANKS.map((b) => <option key={b.bin} value={b.name} />)}</datalist>
+            <small className={findBank(form.bank_name) ? 'qr-ok-text' : 'muted'}>
+              {findBank(form.bank_name)
+                ? tr('✅ {0} — tạo được mã QR', findBank(form.bank_name).name)
+                : tr('Chọn ngân hàng trong danh sách để có mã QR (ví điện tử như Momo chưa hỗ trợ VietQR)')}
+            </small>
           </label>
           <label className="field"><span>{tr('Số tài khoản')}</span>
             <input value={form.bank_account} onChange={(e) => set('bank_account')(e.target.value)} inputMode="numeric" placeholder="0123456789" maxLength={40} />
@@ -119,6 +136,12 @@ export default function AdminPremiumTab() {
           <label className="field"><span>{tr('Tên chủ tài khoản')}</span>
             <input value={form.bank_holder} onChange={(e) => set('bank_holder')(e.target.value)} placeholder="NGUYEN VAN A" maxLength={80} autoCapitalize="characters" />
           </label>
+          {qrPreview && (
+            <div className="qr-preview-admin">
+              <img src={qrPreview} alt={tr('Xem trước mã QR')} />
+              <span className="muted small">{tr('Xem trước mã QR người dùng sẽ quét (nội dung thật sẽ là tên đăng nhập của họ). Hãy thử quét bằng app ngân hàng của bạn — không cần chuyển tiền.')}</span>
+            </div>
+          )}
           <button className="btn primary" disabled={saving || !dirty}>{saving ? tr('Đang lưu…') : tr('Lưu thông tin thanh toán')}</button>
         </form>
       </section>
