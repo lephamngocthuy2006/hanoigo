@@ -68,7 +68,11 @@ export default function PremiumPaywall({ settings, friendName }) {
       setStep('upload')
       const [path, check] = await Promise.all([
         uploadBill(user.id, file),
-        scanBill(file, { amount: price, note, onProgress: (p) => setStep(p) }).catch(() => ({ ok: false, summary: 'Bill: không đọc được ảnh' })),
+        // mạng chậm không tải được bộ đọc chữ → sau 60 giây thôi đọc, gửi quản trị viên duyệt tay
+        Promise.race([
+          scanBill(file, { amount: price, note, onProgress: (p) => setStep(p) }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 60000)),
+        ]).catch(() => ({ ok: false, summary: 'Bill: không đọc được ảnh' })),
       ])
       setStep('save')
       const { data, error } = await supabase.rpc('submit_premium_bill', { p_bill_path: path, p_auto: check.ok, p_ocr: check.summary })
@@ -145,6 +149,7 @@ export default function PremiumPaywall({ settings, friendName }) {
                 <button className="btn gold block big" disabled={step !== null} onClick={() => billRef.current.click()}>
                   {step === null ? tr('📸 Tải ảnh bill chuyển khoản')
                     : step === 'upload' ? tr('Đang tải bill lên…')
+                    : step === 'load' ? tr('Đang chuẩn bị bộ đọc bill…')
                     : step === 'save' ? tr('Đang mở gói…')
                     : tr('Đang kiểm tra bill… {0}%', step)}
                 </button>

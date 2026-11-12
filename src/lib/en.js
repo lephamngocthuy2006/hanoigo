@@ -855,6 +855,7 @@ export default {
   'Gửi lại ảnh bill rõ hơn': 'Send a clearer receipt',
   '📸 Tải ảnh bill chuyển khoản': '📸 Upload payment receipt',
   'Đang tải bill lên…': 'Uploading receipt…',
+  'Đang chuẩn bị bộ đọc bill…': 'Preparing receipt reader…',
   'Đang mở gói…': 'Unlocking…',
   'Đang kiểm tra bill… {0}%': 'Checking receipt… {0}%',
   'Chuyển khoản xong, chụp màn hình giao dịch thành công rồi tải lên — web tự kiểm tra số tiền và nội dung, đúng là mở Premium ngay.': 'After paying, screenshot the successful transfer and upload it — we check the amount and note and unlock Premium right away.',
